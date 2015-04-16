@@ -1,0 +1,29 @@
+
+
+	 -- RECT-WINDOW AMPLITUDE DISTRIBUTION
+	 -----------------------------------------------------------------
+	 display N1 |  display C8 |  display Q |  scale=1/4
+	 --
+	 --                     create a standard normal sample 
+	 n=10000 |  --                     sample size
+	 ARRAY X[n],f[n]
+	 for i=1 to n
+	   X[i]=sqrt(-2*ln(abs(ran())))*cos(2*PI*abs(ran()))
+	   next
+	 --                          estimate the probability density
+	 Ascale=16
+	 h=0.3 |  --  window width /2 (rect function)
+	 -----------------------------------------------------------------
+	 t=0 |  TMAX=4 |  NN=10000 |  -- sweep
+	 drun
+	 -----------------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------------
+	 xx=2*t-TMAX |  --                display sweep
+	 Vector f=rect((X-xx)/h)/(2*n*h)
+	 DOT F=f*1
+	 --
+	 normal=exp(-0.5*xx^2)/(sqrt(2*PI))-scale
+	 xx=xx*scale/TMAX |  --    rescale sweep
+	 F=F-scale |  dispxy xx,F,normal
+

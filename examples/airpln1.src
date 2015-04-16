@@ -1,0 +1,22 @@
+
+
+	 --                           PITCH-PLANE FLIGHT SIMULATION
+	 ------------------------------------------------------------------
+	 DT=0.05 |  TMAX=20 |  NN=400
+	 w=0.6
+	 B=0.16
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 elevtr=B*sgn(sin(w*t)) |  --      elevator forcing function
+	 gamma=phi-theta |  --             angle of attack
+	 d/dt theta=gamma-0.1*elevtr |  -- flight path angle
+	 d/dt phi=phidot |  --             pitch angle
+	 --
+	 d/dt phidot=-10*gamma-0.5*phidot+10*elevtr |  -- pitch rate
+	 -----------------------------------------------------------
+	 ELEVTR=elevtr-0.5 |  --           RUN-TIME DISPLAY
+	 dispt ELEVTR,phi
+	 stash phi,theta
+

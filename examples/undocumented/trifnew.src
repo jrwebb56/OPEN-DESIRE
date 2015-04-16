@@ -1,0 +1,26 @@
+
+
+	 --                                  TRIFFET NEURON
+	 --------------------------------------------------
+	 FUNCTION f(x$)=lim(x$)-lim(x$-1.001) |  -- saturates at 0, 1.001
+	 display C8
+	 ARRAY y[3],switch[3],yy[3]
+	 fire1=0.7 |  fire2=0.9 |  bound=1 |  --     levels
+	 a=0.007 |  --                      input amplitude
+	 b=0.14 |  --                        internal input
+	 NN=6500 |  t=0 |  TMAX=3
+	 display N1 |  display R |  --        thick curves
+	 drun
+	 --------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------
+	 x=a*cos(2*t) |  --              external input
+	 c=b-x
+	 Vector switch=swtch(y-fire1)-swtch(y-fire2)
+	 Vectr delta y=x+c*switch-swtch(y-bound)
+	 Vector y=f(y)
+	 --------------------------------------------------
+	 X=40*x+0.5*scale |  --        offset display curves
+	 Y=y[1]-scale |  SWITCH=0.5*switch[1]+0.5*scale
+	 dispt X,Y,SWITCH
+

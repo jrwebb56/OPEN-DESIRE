@@ -1,0 +1,29 @@
+
+
+	 --                             EUROSIM COMPARISON PROBLEM 1
+	 ------------------------------------------------------------------
+	 ln10=ln(10) |  loge=1/ln10
+	 kr=1 |  kf=0.1 |  dr=0.1 |  dm=1 |  --         coefficients
+	 f=9.975 |  m=1.674 |  r=84.99 |  --          initial values
+	 p=0
+	 -----------------------------------------------------------
+	 irule 15 |  ERMAX=0.001 |  --           GEAR integration
+	 t0=3 |  --                             shift log time scale
+	 TMAX=1+t0 |  NN=6000 |  DT=0.0001 |  scale=2
+	 display N1
+	 -----------------------------------------------------------
+	 lf=50 |  drunr  |  display 2 |  --            run and reset
+	 lf=100 |  drunr  |  lf=200 |  drunr  |  lf=500 |  drunr
+	 lf=1000 |  drunr  |  lf=5000 |  drunr  |  lf=10000 |  drun
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 A=kr*m*f-dr*r |  --          we precompute these for speed!
+	 B=kf*f*f-dm*m
+	 tt=ln10*(10^(t-t0)) |  --           NOTE:  logarithmic time scale
+	 --
+	 d/dt r=A*tt |  d/dt m=(B-A)*tt
+	 d/dt f=(p-lf*f-A-2*B)*tt
+	 -----------------------------------------------------------    log
+	 lgfplus1=loge*ln(f)+1 |  dispt lgfplus1
+

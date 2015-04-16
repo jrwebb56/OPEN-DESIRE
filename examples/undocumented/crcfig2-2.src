@@ -1,0 +1,38 @@
+
+
+	 --                       RIGID PENDULUM
+	 --------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 scale=5*PI |  b=1.5
+	 TMAX=10 |  DT=0.001 |  NN=6500
+	 -----------   precompute model parameters (faster)
+	 --
+	 weight=5 |  g=32.1 |  mass=weight/g
+	 length=2 |  kk=g/length
+	 kdamp=0.03 |  kkdamp=kdamp/mass
+	 -----------------------------------
+	 display N14
+	 theta=0 |  thedot=10 |  drunr
+	 write 'type go to continue' |  STOP
+	 display N12
+	 thedot=-10 |  drunr
+	 write 'type go to continue' |  STOP
+	 display N11
+	 theta=-15 |  thedot=6 |  drunr
+	 write 'type go to continue' |  STOP
+	 display N10
+	 theta=15 |  thedot=-6 |  drunr
+	 write 'type go to continue' |  STOP
+	 display N11
+	 theta=10 |  thedot=-5 |  drunr
+	 write 'type go to continue' |  STOP
+	 go to 310
+	 --------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------
+	 d/dt theta=thedot
+	 d/dt thedot=-kk*sin(theta)-kkdamp*thedot
+	 --------------------------------------------------
+	 THEDOT=b*thedot |  --        scaled runtime display
+	 dispt theta,THEDOT
+

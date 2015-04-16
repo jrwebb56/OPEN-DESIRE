@@ -1,0 +1,97 @@
+
+
+	 -- 2-DIMENSIONAL TORPEDO SIMULATION
+	 -- average over n effective simulation runs
+	 -- try n=500, 2000, 4000
+	 -- solves 6n differential equtions!
+	 --------------------------------------
+	 display N1 |  display C8 |  display R |  scale=1.5
+	 DT=0.001 |  TMAX=100 |  NN=1500
+	 irule 4 |  ERRMAX=0.1
+	 -------------------------------------------------------
+	 ARRAY RT[48] |  -- RUDDER-COMMAND BREAKPOINT TABLES
+	 data 19,20,25,26 |  --                                     circle
+	 data 32,33,34,40,41,42,47,48,49 |  --         snake
+	 data 55,56,57,63,64,65,71,72,73
+	 data 74,75 |  --                                               at
+	 ------------------------
+	 data 0,0.25,0.25,0 |  --                                   circle
+	 data 0,-0.25,0,0,0.25,0,0,-0.25,0,0,-0.25 |  -- snake
+	 data 0,0,-0.25,0,0,0.25,0
+	 data 0,-0.125 |  --                                attack
+	 read RT
+	 -------------------------------------------------------
+	 n=1000
+	 STATE u[n],v[n],psi[n],psidot[n],x[n],y[n] |  -- state variables
+	 ARRAY f[n]
+	 ARRAY cosp[n],sinp[n],rr[n] |  --   defined variables
+	 ARRAY rrnoise[n] |  --                noisy steering 
+	 ------------------------------------------------------
+	 --              TORPEDO PARAMETERS
+	 UC=0.25
+	 X1=0.8155 |  X2=0.8155 |  --             u-equation parameters
+	 UT=X1*UC*UC
+	 Y1=-15.701 |  Y2=-0.23229 |  Y3=2.0002 |  --         v-params.
+	 N1=-303.801 |  N2=-44.866 |  N3=-243.866 |  --    r-params.
+	 noise=0.002 |  --                     noise amplitude
+	 --------------------------------------------------------
+	 for k=1 to n |  x[k]=-2.4 |  y[k]=2.2 |  --  initialize
+	   --
+	   --        noise-perturbed steering command
+	   --
+	   rrnoise[k]=noise*(ran()+ran()+ran()+ran())
+	   next
+	 ------------------------------------------------------------------
+	 aa=tim(0) |  --  time measurement
+	 drun
+	 bb=tim(0)
+	 write (bb-aa)/n;" sec per effective run"
+	 write "type go to continue" |  STOP
+	 ------------------------------------------------------------------
+	 --            Parzen-window probability density
+	 irule 0
+	 TMAX=6 |  NN=2000 |  scale=TMAX
+	 flag=0 |  h=0.22
+	 --
+	    label GORUN
+	 --
+	 --
+	 alpha=1/(2*h*h)
+	 beta=20/(h*n*sqrt(2*PI))
+	 t=0 |  drun PARZEN
+	 if flag=0 then flag=1 |  h=0.3
+	   display N12 |  display 2 |  go to GORUN
+	   else proceed
+	 --------------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------------
+	 func rudder=RT(t |  --         rudder command function
+	 Vector rr=(rudder+rrnoise)*u |  --      noise-perturbed!
+	 --
+	 Vectr d/dt u=UT-X2*u*u
+	 Vectr d/dt v=u*(Y1*v+Y2*psidot+Y3*rr)
+	 Vectr d/dt psidot=u*(N1*v+N2*psidot+N3*rr)
+	 Vectr d/dt psi=psidot
+	 Vector cosp=cos(psi) |  Vector sinp=sin(psi)
+	 Vectr d/dt x=u*cosp-v*sinp |  Vectr d/dt y=u*sinp+v*cosp
+	 --------------------------------------------------------
+	 --                                  compute Monte Carlo statistics
+	 OUT
+	 DOT xSum=x*1 |  DOT xxSum=x*x
+	 xAvg=xSum/n |  xxAvg=xxSum/n
+	 DOT ySum=y*1 |  DOT yySum=y*y
+	 yAvg=ySum/n |  yyAvg=yySum/n
+	 sigmax=sqrt(abs(xxAvg-xAvg^2))
+	 sigmay=sqrt(abs(yyAvg-yAvg^2))
+	 --
+	 SIGMAX=sigmax-scale |  SIGMAY=sigmay-scale
+	 dispt SIGMAX,SIGMAY
+	 -- DISPXY xAvg,yAvg,x[12],y[12],x[20],y[20]
+	 ------------------------------------------------------------------
+	    label PARZEN
+	 --
+	 xx=2*t-TMAX |  --                      display sweep
+	 Vector f=beta*exp(alpha*(xx-x+xAvg)*(x-xx-xAvg))
+	 DOT F=f*1 |  F=2*F-scale
+	 dispxy xx,F
+

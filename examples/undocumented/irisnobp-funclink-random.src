@@ -1,0 +1,75 @@
+
+
+	 --          IRIS - FUNCTIONAL-LINK CLASSIFIER
+	 --               estimates a posteriori probabilities
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 --
+	 nx=4 |  -- number of features
+	 N=3 |  -- number of categories
+	 nv=11 |  -- number of hidden neurons
+	 --
+	 Ntrain=114 |  Ntest=36
+	 ARRAY trainDATA[Ntrain,nx+N],testDATA[Ntest,nx+N]
+	 ARRAY input[nx]+target[N]=data
+	 ARRAY x[nx]+f2[nx]+f3[nx]+f4[nx]+f5[nx]=f
+	 ARRAY p[N],error[N]
+	 ARRAY WW[N,5*nx]
+	 --
+	 --  small random initial weights "break spmmetrp"
+	 --
+	 for i=1 to N |  for k=1 to 5*nx
+	     WW[i,k]=0.1*ran() |  next  |  next
+	 ------------------------------------------------      parameters
+	 lrate=0.05
+	 Tnoise=0.0 |  Rnoise=0
+	 NN=30000
+	 --------------------------------------------------
+	 connect './iris/iristrain.txt' as input 3
+	 input #3,trainDATA
+	 disconnect 3
+	 ----	 
+	 TWOPI=2*PI
+	 drun  |  -- training run
+	 --
+	 write 'type go for successive recall tests' |  STOP
+	 connect './iris/iristest.txt' as input 3
+	 input #3,testDATA
+	 disconnect 3
+	 -----
+	 NN=2
+	 for i=1 to Ntest
+	   drun RECALL
+	   write target,p,error |  -- show probabilities
+	   write 'type go to continue' |  STOP
+	   next
+	 ---------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------
+	 iRow=1000*abs(ran()) |  Vector data=trainDATA#
+	 Vector x=input+Tnoise*ran()
+	 Vector f2=sin(PI*x) |  Vector f3=sin(TWOPI*x)
+	 Vector f4=cos(PI*x) |  Vector f5=cos(TWOPI*x)
+	 --	 
+	 Vector p=exp(WW*f) |  DOT psum=p*1
+	 Vector p=p/psum |  -- probability estimates
+	 Vector error=target-p
+	 ------------------------------------------------
+	 DELTA WW=lrate*error*f
+	 --
+	 DOT enormsq=error*error
+	 msqavg=msqavg+(enormsq-msqavg)/1500
+	 msqavgx10=10*msqavg-scale |  -- offset display
+	 dispt msqavgx10,p[1],p[2],p[3]
+	 ----------------------------------------
+	    label RECALL
+	 iRow=1000*abs(ran()) |  Vector data=testDATA#
+	 Vector x=input+Rnoise*ran()
+	 --
+	 Vector f2=sin(PI*x) |  Vector f3=sin(TWOPI*x)
+	 Vector f4=cos(PI*x) |  Vector f5=cos(TWOPI*x)
+	 --	 
+	 Vector p=exp(WW*f) |  DOT psum=p*1
+	 Vector p=p/psum |  -- probability estimate
+	 Vector error=target-p
+

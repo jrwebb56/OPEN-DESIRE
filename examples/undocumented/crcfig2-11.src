@@ -1,0 +1,23 @@
+
+
+	 --                       SIMPLE AUTOPILOT                         
+	 ------------------------------------------------------------------
+	 DT=0.0002 |  TMAX=3 |  NN=2000
+	 display N1 |  display C8 |  display R
+	 gain=3 |  damp=0.75 |  a=1 |  b=7 |  --   set parameters
+	 phi=0.9999 |  --                                                 
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 --                                                                
+	 u=-gain*phi-damp*phidot |  --         autopilot
+	 d/dt elevtr=b*(a*u-elevtr) |  --    simplified servo
+	 ------------------------------------------------------------------
+	 --                                                                
+	 gamma=phi-theta
+	 d/dt theta=gamma-0.1*elevtr
+	 d/dt phi=phidot |  d/dt phidot=-10*gamma-0.5*phidot+10*elevtr
+	 ------------------------------------------------------------------
+	 ELEVTR=0.1*elevtr-0.5 |  dispt ELEVTR,phi
+

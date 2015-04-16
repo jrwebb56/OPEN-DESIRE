@@ -1,0 +1,47 @@
+
+
+	 --                               ANALOG FILTER
+	 ---------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 NN=16384 |  scale=0.01
+	 n=10 |  --           number of delays 
+	 --
+	 ARRAY x[n],a[n],b[n]
+	 ARRAY outputx[NN],outputy[NN] |  -- for FFT
+	 --  
+	 a[1]=0.8 |  b[1]=-1 |  -- other a[i], b[i] are 0
+	 bb=0
+	 x[1]=1 |  -- for impulse response
+	 --
+	 drun
+	 write 'type go for FFT' |  STOP
+	 -----------------------------------
+	 scale=4 |  t=1
+	 FFT F,NN,outputx,outputy
+	 drunr FFT |  -- drunr resets t=1
+	 write 'type go for amplitude/phase display' |  STOP
+	 scale=10
+	 drunr SECOND |  --                second display
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 input=0 |  -- ran() |  --     input signal
+	 --
+	 DOT v=b*x |  DOT feedback=a*x
+	 Vector outputx=outputx{-1} |  outputx[1]=bb*(input-feedback)+v
+	 Vector x=x{-1} |  x[1]=input-feedback
+	 -------------------------------------
+	 dispt outputx[1]
+	 ---------------------------------------------------------
+	    label FFT
+	 get xx=outputx |  get yy=outputy |  --        FFT DISPLAY
+	 OUTPUTX=0.5*xx
+	 OUTPUTY=0.5*(yy-scale) |  --             offset
+	 dispt OUTPUTX,OUTPUTY
+	 ----------------------------   AMPLITUDE/PHASE DISPLAY
+	    label SECOND
+	 get xx=outputx |  get yy=outputy
+	 r=sqrt(xx*xx+yy*yy)
+	 phi=atan2(yy,xx)-0.5*scale |  --     offset
+	 dispt r,phi
+

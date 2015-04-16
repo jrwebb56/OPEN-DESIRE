@@ -1,0 +1,35 @@
+
+
+	 --                  AUTOMATIC DISPLAY SCALING
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=4
+	 TMAX=8 |  DT=0.0001 |  NN=10000
+	 ARRAY X1D[NN] |  --   array stores display values
+	 min=1.0E+30 |  MAX=-1.0E+30 |  --     initial settings
+	 --------------------------------------------------------
+	 ww=200 |  --     determines frequency
+	 k=40 |  --            coupling coefficient
+	 r=-0.8 |  --          damping coefficient 
+	 x1=-.04
+	 drunr  |  --                  scaling run
+	 -------------------------------------------------------
+	 write "type go to continue" |  STOP
+	 scale=MAX |  -- computed scale value
+	 drun SCALED
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 d/dt x1=x1dot |  d/dt x2=x2dot
+	 d/dt x1dot=-(ww+k)*x1-k*x2
+	 d/dt x2dot=-k*x1-(ww+k)*x2-r*x2dot
+	 -----------
+	 OUT
+	 MAX=abs(x1dot)+lim(MAX-abs(x1dot))
+	 min=x1dot-lim(x1dot-min)
+	 store X1D=x1dot
+	 dispt x1dot,MAX,min
+	 --------------------------------------------------------
+	    label SCALED
+	 get x1dot=X1D
+	 dispt x1dot
+

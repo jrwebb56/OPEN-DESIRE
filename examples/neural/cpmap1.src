@@ -1,0 +1,31 @@
+
+
+	 --           FUNCTION-LEARNING COUNTERPROPAGATION NETWORK
+	 ---------------------------------------------------------
+	 n=64 |  --                           number of categories
+	 ARRAY x[1],v[n],h[n],y[1],error[1]
+	 ARRAY W[n,1],U[1,n] |  --      connection-weight matrices
+	 --
+	 for i=1 to n |  W[i,1]=ran() |  next  |  --    initialize W
+	 ---------------------------------------------------------
+	 display N1 |  --                      set display colors
+	 --                                         set parameters
+	 noise=0
+	 lratex=0.01 |  lratef=0.16
+	 crit=-1 |  --                (crit=0 for FSCL conscience)
+	 NN=8000
+	 ---------------------------------------------------------
+	 drun  |  STOP
+	 lratex=0 |  lratef=0 |  drun  |  --            recall run
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 x[1]=ran() |  --                            training pairs
+	 target=cos(5*x[1])+noise*ran()
+	 CLEARN v=W(x)lratex,crit |  --              compete/learn
+	 Vectr delta h=v |  --              optional conscience counter
+	 Vector y=U*v |  --                        function output
+	 Vector error=target-y |  --                  output error
+	 DELTA U=lratef*error*v |  --        learn function values
+	 dispxy x[1],y[1],target |  --                      display
+

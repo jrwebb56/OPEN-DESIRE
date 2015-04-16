@@ -1,0 +1,95 @@
+
+
+	 --               TWO-LAYER (DIRECT) AUTOASSOCIATOR
+	 --                        no bias terms are needed
+	 --------------------------------------------------
+	 --                              Network Definition
+	 m=25 |  N=6
+	 ARRAY input[m],INput[m],x[m],y[m]
+	 ARRAY INPUT[N,m],error[m]
+	 ARRAY W[m,m]
+	 --------------------------------    input patterns
+	 --                         A
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 --                         B
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,-1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         C
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         D
+	 data 1,1,1,1,-1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,-1
+	 --                         E
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,1,1,1,1
+	 --                         F
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,1,1,1,-1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,-1
+	 --
+	 read INPUT
+	 ---------------------------------------
+	 lrate=.07 |  Tnoise=0.1 |  Rnoise=0.2
+	 scale=1 |  cc=9.5
+	 thresh=0.2 |  --  for optional thresholding
+	 NN=300
+	 display N1 |  display C8 |  display R
+	 ---------------------------------------
+	 drun
+	 write 'type go for a recall run' |  STOP
+	 ----------
+	 display F
+	 t=1 |  NN=10 |  restore
+	 for i=1 to N
+	   read input
+	   drun RECALL
+	   STOP
+	   next
+	 ----------------------------------------
+	 DYNAMIC
+	 ----------------------------------------
+	 iRow=t
+	 Vector input=INPUT# |  Vector x=input+Tnoise*ran()
+	 Vector y=W*x
+	 --
+	 Vector error=input-y
+	 DELTA W=lrate*error*x
+	 --
+	 DOT enormsq=error*error
+	 ENORMSQ=enormsq-scale |  -- offset display
+	 dispt ENORMSQ
+	 ----------------------------------------
+	    label RECALL
+	 --
+	 Vector x=input+Rnoise*ran()
+	 Vector y=W*x
+	 Vector y=sgn(y-thresh) |  -- for optional thresholding
+	 --
+	 Vector error=y-input
+	 --
+	 DOT measure=error*error
+	 MEASURE=measure-scale |  -- offset display
+	 dispt MEASURE
+	 -------------------------------------------------------
+	 Vector INput=cc*input |  Vector x=cc*x |  Vector y=cc*y
+	 SHOW  |  SHOW INput,5 |  SHOW x,5 |  SHOW y,5
+

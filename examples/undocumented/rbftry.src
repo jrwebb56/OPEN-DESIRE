@@ -1,0 +1,83 @@
+
+
+	 --   SPIRAL-LEARNING CLASSIFIER NETWORK
+	 ------------------------------------------------------------
+	 display N1 |  display C8 |  display Q
+	 -- 
+	 N=194 |  -- number of patterns
+	 n=2 |  -- number of categories
+	 nx=2 |  -- pattern dimension	 
+	 ---------------	 
+	 ARRAY INPUT[N,nx],TARGET[N,n]
+	 --  make 97 patterns for each of two spirals
+	 --	 
+	 ARRAY r[N/2],phi[N/2]
+	 for k=1 to N/2
+	   r[k]=0.8*(7+k)/104 |  phi[k]=PI*(97-k)/16
+	   INPUT[2*k,1]=r[k]*cos(phi[k]) |  INPUT[2*k,2]=r[k]*sin(phi[k])
+	   INPUT[2*k-1,1]=-INPUT[2*k,1] |  INPUT[2*k-1,2]=-INPUT[2*k,2]
+	   TARGET[2*k,1]=1 |  TARGET[2*k,2]=0
+	   TARGET[2*k-1,1]=0 |  TARGET[2*k-1,2]=1
+	   next
+	 ---------------
+	 ARRAY x[nx]
+	 ARRAY ff[N]+ff0[1]=f |  ff0[1]=1 |  --  N RBFs and bias
+	 ARRAY W[n,N+1]
+	 ARRAY v[n],error[n],y[nx],yy[nx]
+	 ARRAY P[N,nx],pp[N]
+	 ------------------------------------  
+	 --   use random initial weights 
+	 for i=1 to n |  for k=1 to N+1
+	     W[i,k]=0.1*ran() |  next  |  next
+	 ------------------------------------------------------------ 
+	 --                                          set   parameters
+	 lrate=0.02 |  kappa=0.9999999 |  lrate0=0.00
+	 Tnoise=0 |  Rnoise=0 |  c=0.4 |  a=0.01
+	 NN=40000
+	 ------------------------------------------------------------
+	 ---     template matrix P generates squared radii
+	 MATRIX P=INPUT
+	 for k=1 to N
+	   pp[k]=0
+	   for j=1 to nx |  pp[k]=pp[k]+P[k,j]^2 |  next
+	   next
+	 ----------------------------------------------------------------
+	 --                  train radial-basis-function network
+	 drun
+	 write "type go to continue" |  STOP
+	 ----------------------------------------------------------------
+	 --                              run with test input (recall)
+	 NN=5000 |  t=1
+	 drun RECALL
+	 ------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------	 
+	 lratef=kappa*lratef+lrate0 |  --  reduce learn rate
+	 --                                                       network
+	 iRow=abs(ran())*4
+	 Vector x=INPUT#+Tnoise*ran()
+	 --
+	 --  rr=xx-2* P*x + pp is the vector of squared radii 
+	 DOT xx=x*x |  Vector ff=exp(a*(2*P*x-xx-pp))
+	 -- 
+	 --             softmax radial-basis-function expansion 
+	 Vector v=exp(c*W*f) |  DOT vsum=v*1
+	 Vector v=v/vsum |  -- probability estimate
+	 ------------------------------------------------
+	 Vector error=TARGET#-v
+	 DELTA W=lratef*error*f |  -- LMS algorithm
+	 DOT enormsq=error*error
+	 -- 
+	 ENORMSQ=enormsq-scale |  -- offset display
+	 dispt ENORMSQ
+	 ------------------------------------------------------------------
+	    label RECALL
+	 --
+	 -- Vector x=ran() |  Vector X=x
+	 Vector x=ran()
+	 DOT xx=x*x |  Vector ff=exp(a*(2*P*x-xx-pp))
+	 Vector v=exp(c*W*f) |  DOT vsum=v*1
+	 Vector v=v/vsum |  -- probability estimate
+	 Vector x=v[1]*x
+	 dispxy x[1],x[2]
+

@@ -1,0 +1,37 @@
+
+
+	 --    Herault/Jutten Algorithm (Cohen et al. IJCNN '91 I-211)
+	 -------------------------------------------------------------
+	 m=2
+	 ARRAY e12345678[m],s[m],ss[m],A[m,m],W[m,m],MASK[m,m],f[m],g[m]
+	 STATE x[m]
+	 ------------------------------------------------------------
+	 for i=1 to m |  for k=1 to m |  --        create diagonal mask
+	     MASK[i,k]=1 |  next
+	   MASK[i,i]=0 |  next
+	 data 1,0.4,0.9,1 |  read A
+	 display N1 |  display C8 |  scale=3
+	 DT=0.0001 |  TMAX=1 |  NN=10000
+	 lrate=0.002
+	 repeat  |  drun
+	   write 'type go to continue' |  STOP
+	   until 1<0
+	 STOP
+	 ------------
+	    label eee |  --          editing screen
+	 edit 500-700
+	 -----------------------------------------
+	 DYNAMIC
+	 ----------------------------------------
+	 d/dt x[1]=7.5*sgn(sin(25*t))
+	 x[2]=0.5*cos(40*t)
+	 Vector e12345678=A*x |  --          mix 2 signals
+	 --
+	 Vector ss=e12345678-W*s |  Vector s=ss
+	 Vector f=s*s*s |  Vector g=tanh(s)
+	 DELTA W=lrate*MASK*f*g
+	 --
+	 X2=x[2]-0.5*scale |  s2=s[2]-0.5*scale
+	 e1=e12345678[1]+0.5*scale |  e2=e12345678[2]+0.5*scale
+	 dispt x[1],X2,s[1],s2,e1,e2
+

@@ -1,0 +1,70 @@
+
+
+	 --    PSEUDO-ART COMPETITIVE LEARNING  - new version
+	 --  patterns in random sequence, noise; try fast-learn 
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=0.25
+	 ------------------------------------------------------
+	 nx=25 |  --        number of input pixels
+	 n=nx+2 |  --      number of templates
+	 N=26 |  --          number of patterns
+	 --
+	 null=0 |  minus=-1
+	 --
+	 ARRAY x[nx],v[n],h[n],w[nx],error[nx] |  --     3 layers, error
+	 ARRAY W[n,nx] |  --                     template matrix
+	 ARRAY INPUT[N,nx],input[nx]
+	 --------------------------------------------------------------
+	 connect './competitive/alphabet.txt' as input 2
+	 input #2,INPUT
+	 disconnect 2
+	 --------------------------------------------------------------
+	 --                      initial weights
+	 for i=1 to n
+	   for k=1 to nx
+	     W[i,k]=ran()
+	     next
+	   next
+	 ------------------------------------------------------
+	 --                set experiment parameters
+	 lrate=0.9 |  -- learn rate 
+	 crit=0.3 |  --  resolution
+	 cc=5.5 |  --    scales template SHOW operation
+	 NN=30*N
+	 Tnoise=1.0 |  Rnoise=1.1
+	 drun
+	 write 'learning is done; type go' |  STOP
+	 ------------------------------------------------------
+	 NN=2 |  restore
+	 for i=1 to N
+	   drun RECALL
+	   -- write v |  -- show probabilities
+	   for k=1 to 12000 |  write "wait" |  next
+	   next
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 --                                   weight-learning run
+	 iRow=1000*abs(ran())
+	 Vector x=INPUT#+Tnoise*ran()
+	 Vector x=sgn(x)
+	 CLEARN v=W(x)lrate,crit |  --            compete/learn
+	 ------------------------------------------------------            
+	 Vector w=W%*v |  --                          get template 
+	 Vector error=w-x |  --          get error norm for display
+	 DOT enormsqr=error*error |  --       squared error norm
+	 --
+	 ENORMSQR=enormsqr-scale |  --   offset for display
+	 dispt ENORMSQR
+	 ---------------------------------------------------------
+	    label RECALL
+	 iRow=i
+	 Vector input=INPUT#
+	 Vector x=input+Rnoise*ran()
+	 CLEARN v=W(x)null,minus |  --       compete/select               
+	 Vector w=W%*v |  --                     get template 
+	 -------------------------------------------------------
+	 Vector x=cc*x |  --        scale and show input and
+	 Vector w=cc*w |  --                   template arrays
+	 SHOW  |  SHOW input,5 |  SHOW x,5 |  SHOW w,5
+

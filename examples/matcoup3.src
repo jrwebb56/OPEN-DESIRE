@@ -1,0 +1,31 @@
+
+
+	 --                             COUPLED OSCILLATORS
+	 --------------------------------------------------
+	 display N1 |  display C8 |  --    set display colors
+	 TMAX=10 |  DT=0.0001 |  NN=10000 |  --       timing
+	 ww=300
+	 k=50 |  --                    coupling coefficient
+	 ARRAY A[2,2],B[2,2]
+	 --------------------------------------------------
+	 STATE X[1],Y[1] |  --        dummy argument arrays
+	 --
+	 SUBMODEL oscill(X,Y)
+	   MAT d/dt X=A*X+B*Y |  --   matrix ODE
+	   end
+	 --------------------------------------------------
+	 STATE x[2],y[2] |  --       actual argument arrays
+	 data 0,1;-ww-k,0 |  read A
+	 data 0,0;k,0 |  read B
+	 x[1]=0.4 |  --        initial value; other 3 are 0
+	 --------------------
+	 drun
+	 ---------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------
+	 invoke oscill(x,y) |  --    invoke submodel twice
+	 invoke oscill(y,x)
+	 --------------------------------------------------
+	 X1=x[1]+0.5 |  Y1=y[1]-0.5 |  --    offset display
+	 dispt X1,Y1
+

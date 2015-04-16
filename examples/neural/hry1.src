@@ -1,0 +1,42 @@
+
+
+	 --                                     PRINCIPAL COMPONENTS
+	 m=2 |  --                                   input dimension
+	 n=2
+	 ARRAY input[m],bias[m],x[m],y[n],error[m],z[m]
+	 ARRAY b[m]
+	 ARRAY W[n,m]
+	 --
+	 ----------------------------------------------------------
+	 for i=1 to n
+	   for k=1 to m
+	     g=0.05
+	     W[i,k]=0.1*ran()
+	     next  |  next
+	 ------
+	 NN=40000
+	 scale=2 |  display Q |  display N1 |  display C8
+	 --------------------------------------
+	 a1=-.2 |  a2=0.7 |  c1=0.5 |  c2=0.7
+	 gain=0.02 |  bgain=0.02
+	 drun
+	 STOP
+	 --------------------------------------
+	    label eee
+	 edit 230,235,340-380
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 v1=a1*ran() |  v2=a2*ran()
+	 input[1]=v1+v2+c1 |  input[2]=v1-v2+c2
+	 Vector x=input-bias
+	 Vectr delta bias=bgain*x
+	 PLEARN y=W*x;gain
+	 Vector z=W%*y
+	 -----------------------  shorter symbols for display label
+	 --
+	 i1=input[1] |  i2=input[2]
+	 x1=x[1] |  x2=x[2] |  y1=y[1] |  y2=y[2]
+	 w1=2*W[1,1] |  w2=2*W[1,2] |  W1=2*W[2,1] |  W2=2*W[2,2]
+	 DISPXY i1,i2,x1,x2,y1,y2,w1,w2,W1,W2
+

@@ -1,0 +1,21 @@
+
+
+	 --     Step Response of a System
+	 --------------------------------
+	 display N1 |  display C8
+	 TMAX=0.5 |  DT=0.0002 |  NN=2500
+	 scale=1
+	 xdot=0.1
+	 ww=400
+	 u=440
+	 for r=3 to 50 step 10
+	   drunr  |  display 2
+	   next
+	 --------------------------------
+	 DYNAMIC
+	 --------------------------------
+	 X=x-scale |  dispt X
+	 if xdot
+	   d/dt x=xdot
+	   d/dt xdot=-ww*x-r*xdot+u
+

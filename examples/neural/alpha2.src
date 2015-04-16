@@ -1,0 +1,60 @@
+
+
+	 --  PSEUDO-ART COMPETITIVE LEARNING - new version
+	 --                   each pattern is presented repeatedly
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=0.5
+	 ------------------------------------------------------
+	 nx=25 |  --                            number of inputs
+	 nv=26 |  --         number of competitive-layer neurons
+	 N=26 |  --                          number of patterns
+	 --
+	 ARRAY input[nx],INPUT[N,nx] |  --                     input patte
+	 ARRAY x[nx],v[nv],h[nv],w[nx],error[nx] |  --     3 layers, error
+	 ARRAY W[nv,nx] |  --                     template matrix
+	 --------------------------------------------------------------
+	 connect './compete/alphabet.txt' as input 2
+	 input #2,INPUT
+	 disconnect 2
+	 --------------------------------------------
+	 --                     small initial weights
+	 for i=1 to nv
+	   for k=1 to nx
+	     W[i,k]=0.02*ran()
+	     next
+	   next
+	 ------------------------------------------------------
+	 --                           set experiment parameters
+	 lrate=0.3 |  -- learn rate (intentionally slow for display)
+	 crit=0 |  --  for psuo-ART; crit=0 for FSCL
+	 cc=5.5 |  --    scales template SHOW operation
+	 NN=50 |  --     trials per run
+	 Tnoise=0.1
+	 ------------------------------------------------------
+	 for i=1 to N |  --                        run sequence
+	   drun  |  --        make a simulation run (NN trials)
+	   -- write 'type go to continue' |  STOP
+	   for k=1 to 13000 |  write "wait" |  next
+	   next
+	 -----------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 --                               weight-learning run
+	 iRow=i
+	 Vector input=INPUT#
+	 Vector x=input+Tnoise*ran()
+	 CLEARN v=W(x)lrate,crit |  --    compete/learn
+	 ------------------------------------------------------            
+	 Vector w=W%*v |  --    get template 
+	 -------------------------------------------------------
+	 Vector error=w-x |  --    get error norm for display
+	 DOT enormsqr=error*error |  --     squared error norm
+	 --
+	 ENORMSQR=sat(enormsqr)-scale |  --  offset squared
+	 -------------------------------------------------------
+	 Vector input=cc*input
+	 Vector x=cc*x |  --            scale and show input and
+	 Vector w=cc*w |  --                   template arrays
+	 SHOW  |  SHOW input,5 |  SHOW x,5 |  SHOW w,5
+	 dispt ENORMSQR
+

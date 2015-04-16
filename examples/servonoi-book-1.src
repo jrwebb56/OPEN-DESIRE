@@ -1,0 +1,48 @@
+
+
+	 --   MONTE CARLO SIMULATION OF A NOISY SERVO
+	 --                 note noise sampling 
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 A=0.05 |  omega=1.2 |  --           input-signal parameters
+	 a=4000 |  w=100 |  --                                           
+	 k=40 |  r=2 |  g1=10000 |  --      controller parameters
+	 B=100 |  maxtrq=1 |  g2=2 |  R=0.6 |  --  servo paraeters
+	 ------------------------------------------------------------------
+	 TMAX=7.5 |  DT=0.001 |  NN=5000
+	 --------
+	 n=1000
+	 STATE p[n],unoise[n],x[n],xdot[n],v[n]
+	 ARRAY noise[n],voltage[n],torque[n],e[n]
+	 -----------
+	 drun
+	 write "eAvg = ";eAvg;"     eeAvg = ";eeAvg
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 Vectr d/dt p=-w*p+noise |  --   two-section
+	 Vectr d/dt unoise=-w*unoise+p |  --  low-pass filter 
+	 --
+	 u=A*cos(omega*t) |  --   servo input for all n models
+	 Vector e=x-u |  --                                               
+	 Vector voltage=-k*e-r*xdot+unoise |  --  noisy motor voltage
+	 Vectr d/dt v=-B*v+g1*voltage |  --             motor-field buildu
+	 --
+	 Vector torque=maxtrq*tanh(g2*v/maxtrq) |  --       dynamics
+	 Vectr d/dt x=xdot |  Vectr d/dt xdot=torque-R*xdot
+	 ------------------------------------------------------------------
+	 --                                                  sample at peri
+	 OUT
+	 Vector noise=a*gauss(0) |  --        sampled noi
+	 ------------------------------------------
+	 AVG eAvg=e*1 |  AVG eeAvg=e*e |  --       compute averages
+	 ------------------------------------------------------------------
+	 --                                 offset curves for a rescaled st
+	 --
+	 X=5*x[17]+0.5*scale
+	 U=5*u+0.5*scale |  Unoise=0.5*unoise[17]+0.5*scale
+	 errorx10=10*e[17]
+	 eAvgx10=10*eAvg-0.5*scale
+	 eeAvgx100=100*eeAvg-scale
+	 dispt X,U,Unoise,errorx10,eAvgx10,eeAvgx100
+

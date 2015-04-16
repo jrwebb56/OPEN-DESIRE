@@ -1,0 +1,68 @@
+
+
+	 --     DELAY-LINE/BACKPROP PREDICTOR
+	 --     predicts Mackey-Glass chaos generator
+	 ----------------------------------------------------------------
+	 display N3 |  display C8 |  display R |  scale=2
+	 --                                            for Mackey-Glass	 
+	 TMAX=400 |  DT=0.04 |  NN=10000
+	 a=0.2 |  b=0.1 |  c=10
+	 tau=25
+	 --
+	 ARRAY DD[1000] |  --       time-delay buffer
+	 s=10 |  --             initialize time delay buffer
+	 ---------------------------------------------------------------
+	 m=50 |  --         predictor delay (try m=100)
+	 nx=10 |  --      number of delay-line neurons
+	 nv2=13 |  --  number of hidden-layer neurons
+	 --
+	 ARRAY signal[m],y[1],deltay[1],error[1]
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=0 |  --  delay line
+	 ARRAY v1[nx+1] |  --                combiner layer 
+	 ARRAY deltav1[nx+1]
+	 ARRAY v2[nv2],deltav2[nv2] |  --              hidden layer
+	 ARRAY WW1[nx+1,nx+1],W2[nv2,nx+1],W3[1,nv2]
+	 --
+	 for i=1 to nx+1 |  for k=1 to nx+1 |  -- initialize
+	     WW1[i,k]=0.1*ran()
+	     next  |  next
+	 for i=1 to nv2 |  for k=1 to nx+1
+	     W2[i,k]=0.1*ran()
+	     next  |  next
+	 -----------------------------------------------------------
+	 lrate1=0.25 |  lrate2=0.2 |  lrate3=0.2
+	 --
+	 N=10
+	 for i=1 to N |  drun  |  next  |  --  N training runs
+	 write "type go for a test" |  STOP
+	 lrate1=0 |  lrate2=0 |  drun  |  -- test run
+	 write "delay is TMAX/";NN/m
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 tdelay Sd=DD,s,tau |  --       Mackey-Glass time series
+	 d/dt s=a*Sd/(1+Sd^c)-b*s
+	 -----------------------------------------------------------
+	 OUT  |  --                  sampled data from here on!
+	 target=s-1
+	 Vector signal=signal{-1} |  signal[1]=target
+	 Vector x=x{-1} |  x[1]=signal[m]
+	 -------------
+	 Vector v1=WW1*xx
+	 Vector v2=tanh(W2*v1)
+	 Vector y=tanh(W3*v2)
+	 --
+	 Vector error=target-y |  --                  backprop
+	 Vector deltay=error*(1-y^2)
+	 Vector deltav2=W3%*deltay*(1-v2^2)
+	 Vector deltav1=W2%*deltav2
+	 --
+	 DELTA WW1=lrate1*deltav1*xx
+	 DELTA W2=lrate2*deltav2*v1
+	 DELTA W3=lrate3*deltay*v2
+	 --
+	 TARGET=target+0.5*scale
+	 errorx10=10*error[1]-0.5*scale
+	 Y=y[1]+0.5*scale
+	 dispt Y,errorx10,TARGET
+

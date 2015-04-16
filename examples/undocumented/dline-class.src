@@ -1,0 +1,48 @@
+
+
+	 --     DELAY-LINE CLASSIFIER
+	 ------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=4
+	 NN=50000
+	 ---------------
+	 nx=20 |  --     number of delay-line neurons
+	 nv=17 |  --      number of hidden neurons
+	 --
+	 --                input delay line, input bias
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=1
+	 ARRAY v[nv],deltav[nv]
+	 ARRAY y[2],target[2],error[2],deltay[2]
+	 ARRAY WW1[nv,nx+1],W2[2,nv]
+	 ---------------
+	 for i=1 to 2 |  for k=1 to nx+1 |  -- initialize
+	     WW1[i,k]=0.1*ran()
+	     next  |  next
+	 -----------------------------------------------------------
+	 lrate1=0.8 |  lrate2=0.4 |  Tnoise=0.0
+	 -------------
+	 N=4 |  --                  number of training runs
+	 for i=1 to N |  drun  |  next
+	 ---------
+	 write 'type go for a recall test' |  STOP
+	 lrate1=0 |  lrate2=0 |  drun  |  -- test run
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 switch=swtch(sin(10*t/NN)) |  --  alternate patterns
+	 p=0.8*switch*cos(200*t/NN) |  -- sine waves
+	 q=(1-switch)*sin(100*t/NN) |  --  sine waves
+	 x[1]=p+q+Tnoise*ran()
+	 target[1]=p |  target[2]=q
+	 -------	
+	 Vector v=tanh(WW1*xx)
+	 Vector y=tanh(W2*v)
+	 --
+	 Vector error=target-y
+	 Vector deltay=error*(1-y^2)
+	 Vector deltav=W2%*deltay*(1-v^2)
+	 DELTA WW1=lrate1*deltav*xx
+	 DELTA W2=lrate2*deltay*v
+	 -----------------------------
+	 X=x[1]+0.7*scale |  errorx=error[1]-0.5*scale
+	 dispt X,y[2],errorx
+

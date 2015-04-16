@@ -1,0 +1,20 @@
+
+
+	 nx=100 |  ARRAY x[nx]
+	 ny=20 |  ARRAY y[ny]
+	 for i=1 to ny |  y[i]=1 |  next
+	 for i=1 to nx |  x[i]=i |  next
+	 ---  x[nx]=nx
+	 for i=1 to nx |  q=q+x[i] |  p=p+x[i]*x[i] |  next
+	 --
+	 NN=2
+	 drun
+	 write "xsum=";xsum |  write "xxsum=";xxsum
+	 write "xAvg=";xAvg |  write "xxAvg=";xxAvg
+	 write q,p |  write xsum/nx,xxsum/nx
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 DOT xsum=x*1 |  DOT xxsum=x*x
+	 AVG xAvg=x*1 |  AVG xxAvg=x*x
+

@@ -1,0 +1,79 @@
+
+
+	 --    PSEUDO-ART COMPETITIVE LEARNING  - new version
+	 --  patterns in random sequence, noise; try fast-learn 
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 ------------------------------------------------------
+	 null=0 |  minus=-1
+	 --
+	 nx=4 |  -- number of features
+	 ny=3 |  -- number of categories
+	 nv=3 |  -- number of templates
+	 Ntrain=114 |  Ntest=36
+	 ARRAY trainDATA[Ntrain,nx+ny]
+	 ARRAY testDATA[Ntest,nx+ny]
+	 ARRAY input[nx]+target[ny]=data
+	 --
+	 ARRAY x[nx],v[nv],h[nv],w[nx],error[nx] |  --     3 layers, error
+	 ARRAY W[nv,nx] |  --                     template matrix
+	 --------------------------------------------
+	 --                      initial weights
+	 for i=1 to nv
+	   for k=1 to nx
+	     W[i,k]=ran()
+	     next
+	   next
+	 ------------------------------------------------------
+	 --                set experiment parameters
+	 lrate=0.9 |  -- learn rate 
+	 crit=-1 |  --  resolution (conscience if <0)
+	 scale=0.25 |  -- display scale
+	 --------------------------------------------------
+	 connect './xnewiris/iristrain.txt' as input 3
+	 input #3,trainDATA
+	 disconnect 3
+	 -----------------------------	 
+	 NN=200000
+	 drun  |  -- training run
+	 write 'learning is done; type go' |  STOP
+	 ------------------------------------------------------
+	 connect './xnewiris/iristest.txt' as input 3
+	 input #3,testDATA
+	 disconnect 3
+	 -----
+	 NN=2
+	 for i=1 to Ntest
+	   drun RECALL
+	   write target,v |  -- show probabilities
+	   write 'type go to continue' |  STOP
+	   next
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 --                                   weight-learning run
+	 --
+	 iRow=10001*abs(ran())+1 |  Vector data=trainDATA#
+	 Vector x=input
+	 CLEARN v=W(x)lrate,crit |  --            compete/learn
+	 ------------------------------------------------------            
+	 Vector w=W%*v |  --                          get templates 
+	 Vector error=w-x |  --          get error norm for display
+	 DOT enormsqr=error*error |  --    squared error norm
+	 --
+	 ENORMSQR=enormsqr-scale |  --   offset for display
+	 dispt ENORMSQR
+	 ---------------------------------------------------------
+	    label RECALL
+	 --
+	 iRow=10001*abs(ran())+1 |  Vector data=testDATA#
+	 Vector x=input
+	 CLEARN v=W(x)null,minus |  --       compete/select               
+	 ------------------------------------------------------            
+	 Vector w=W%*v |  --                          get template 
+	 Vector error=w-x |  --          get error norm for display
+	 DOT enormsqr=error*error |  --       squared error norm
+	 --
+	 ENORMSQR=enormsqr-scale |  --   offset for display
+	 dispt ENORMSQR
+

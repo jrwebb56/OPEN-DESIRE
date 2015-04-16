@@ -1,0 +1,51 @@
+
+
+	 --                   GROSSBERG LATERAL-FEEDBACK ENHANCER
+	 --------------------------------------------------------
+	 n=200 |  ARRAY x[n],y[n],fy[n],yy[n]
+	 --------------------------------------------------------
+	 NN=n |  TMAX=NN-1 |  t=1
+	 scale=0.3
+	 display N14 |  display R |  --                thick dots
+	 w=0.15 |  r=0.05 |  k=0.3
+	 drun SHIFTIN |  --              shift input into x-array
+	 display 2
+	 --------------------------------------------------------
+	 --                                       main experiment
+	 NN=250 |  TMAX=NN-1 |  t=1 |  h=0.02
+	 ymax=8 |  ymaxh=ymax*h
+	 A=0.1 |  bias=0.045
+	 drun
+	 --------------------------------------------------------
+	 --                         shift y-array out for display
+	 NN=n |  TMAX=NN-1 |  t=1
+	 display N11 |  --                   change display color
+	 drun SHIFTOUT
+	 STOP
+	 --------------------------------------------------------
+	    label eee
+	 edit 230,280-289,315-325 |  --     for parameter editing
+	 --------------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------------
+	 --                     Grossberg lateral-feedback filter
+	 --
+	 Vector fy=SAT(k*y-bias) |  DOT fySUM=fy*1
+	 a=(A+fySUM)*h
+	 Vectr delta y=-a*y-x*y*h+ymaxh*x+ymaxh*fy
+	 --------------------------------------------------------
+	    label SHIFTIN
+	 --
+	 input=r*abs(sin(0.1*w*t)*sin(w*t)) |  --   input pattern
+	 Vector x=x{-1} |  x[1]=input |  --     input is reversed
+	 X=input+0.5*scale
+	 FY=-0.5*scale |  --                  draws abscissa axis
+	 dispt X,FY
+	 --------------------------------------------------------
+	    label SHIFTOUT
+	 --
+	 X=0.5*scale
+	 Y=y[n] |  Vector y=y{-1}
+	 FY=k*Y-bias-0.5*scale
+	 dispt X,FY
+

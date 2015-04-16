@@ -1,0 +1,55 @@
+
+
+	 --            DELAY-LINE/BACKPROP PREDICTOR
+	 --               predicts Lorenz chaotic time series
+	 ------------------------------------------------------------------
+	 display N3 |  display C8 |  display R |  scale=2
+	 TMAX=50 |  DT=0.0001 |  NN=500000
+	 ------------------------------------------------------------------
+	 --                              Lorenz-system parameters
+	 b=28 |  c=2.6667 |  A=10
+	 ------------------------------------------------------------------
+	 m=50 |  --                                    predictor delay
+	 nx=20 |  --                 number of delay-line taps
+	 nv=27 |  --     number of hidden-layer neurons
+	 --
+	 ARRAY signal[m]
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=1 |  --   delay line
+	 ARRAY v[nv],deltav[nv] |  --              hidden layer
+	 ARRAY y[1],error[1] |  --                      output layer
+	 ARRAY WW1[nv,nx+1],W2[1,nv]
+	 --
+	 for i=1 to nv |  for k=1 to nx+1 |  --   initialize
+	     WW1[i,k]=0.1*ran()
+	     next  |  next
+	 --------
+	 lrate1=0.001 |  lrate2=0.0003
+	 --
+	 N=2
+	 for i=1 to N |  drun  |  next  |  --  N training runs
+	 write "type go for a test" |  STOP
+	 lrate1=0 |  lrate2=0 |  drun  |  -- test run
+	 ---------------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------------
+	 d/dt X=A*(Y-X)+0.001 |  --      Lorenz attractor
+	 d/dt Y=X*(b-Z)-Y
+	 d/dt Z=X*Y-c*Z
+	 OUT  |  --            sampled data from here on!
+	 target=0.05*X
+	 -----------------------------------------------------------
+	 Vector signal=signal{-1} |  signal[1]=target
+	 Vector x=x{-1} |  x[1]=signal[m]
+	 -------------
+	 Vector v=tanh(WW1*xx) |  --            note bias
+	 Vector y=W2*v |  --        no limiter  on output
+	 --
+	 Vector error=target-y
+	 Vector deltav=W2%*error*(1-v^2)
+	 DELTA WW1=lrate1*deltav*xx
+	 DELTA W2=lrate2*error*v
+	 ---------------------------------    stripchart-type display
+	 Y=y[1]+0.5*scale |  TARGET=target+0.5*scale
+	 errorx10=10*error[1]-0.5*scale
+	 dispt Y,errorx10,TARGET
+

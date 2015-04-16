@@ -1,0 +1,47 @@
+
+
+	 --    ONE-STEP LINEAR PREDICTOR
+	 --         predicts Mackey-Glass  time series
+	 -------------------------------------------------------------
+	 display N3 |  display C8 |  display R |  scale=1
+	 -------------------------------------------------------------
+	 TMAX=300 |  DT=0.04 |  NN=TMAX/DT+1
+	 a=0.2 |  b=0.1 |  c=10 |  --   for Mackey-Glass
+	 tau=25 |  s=10 |  --         s=10 initializes buffer
+	 ARRAY DD[1000] |  --           time-delay buffer
+	 -------------------------------------------------------------
+	 nx=20 |  --             number of delay-line taps
+	 ARRAY x[nx],y[1],deltay[1],error[1],W[1,nx]
+	 --
+	 for k=1 to nx |  --      initialize
+	   W[1,k]=0.1*ran()
+	   next
+	 -------------------------------------    parameters
+	 lrate=0.001
+	 Tnoise=0.1 |  cc=0.4 |  --               try more noise!
+	 --
+	 drun
+	 ---------
+	 write 'type go fora test' |  STOP
+	 lrate=0 |  drun  |  -- test run
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 tdelay Sd=DD,s,tau |  -- Mackey-Glass
+	 d/dt s=a*Sd/(1+Sd^c)-b*s+cc*gauss(0)
+	 OUT  |  --        sampled data from here on!
+	 target=0.5*s-0.4
+	 ---------------------------------------------------------------
+	 noise=Tnoise*gauss(0)
+	 Vector x=x{-1} |  x[1]=target+noise
+	 Vector y=tanh(W*x)
+	 --
+	 Vector error=target-y |  --     LMS Algorithm
+	 Vector deltay=error*(1-y^2)
+	 DELTA W=lrate*deltay*x
+	 ---------------------------------------  stripchart-type display  
+	 TARGET=target+0.5*scale |  Y=y[1]+0.5*scale
+	 ERROR=error[1]-0.75*scale
+	 NOISE=noise-0.25*scale
+	 dispt Y,TARGET,ERROR,NOISE
+

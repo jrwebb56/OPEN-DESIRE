@@ -1,0 +1,23 @@
+
+
+	 --     TABLE-LOOKUP AND LINEARINTERPOLATION
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  --    thick dots
+	 --
+	 --                                      create a function table
+	 ARRAY x[25]+y[25]=F
+	 for i=1 to 25 |  --                               25 breakpoints 
+	   temp=(i-1)/12.5
+	   x[i]=temp |  y[i]=sin(4*temp)
+	   next
+	 -------------
+	 NN=250 |  TMAX=2.5 |  DT=0.01
+	 X=-0.2 |  --                                               initia
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 d/dt X=1 |  --    creates X = t - 0.2 for display sweep
+	 Y=func1(X;F) |  --     table lookup and interpolation
+	 YY=0.9999*Y |  dispt YY |  --   scaled, offset display
+

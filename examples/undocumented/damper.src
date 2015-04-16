@@ -1,0 +1,18 @@
+
+
+	 --     Step Response of Linear System
+	 ----------------------------------------------------------
+	 scale=1
+	 display N1
+	 TMAX=2 |  DT=0.0001 |  NN=10001
+	 w=20 |  u=0 |  x=1
+	 -------
+	 r=5
+	 drunr  |  display 2
+	 --------------------------------
+	 DYNAMIC
+	 --------------------------------
+	 d/dt x=w*xdot
+	 d/dt xdot=-w*x-r*xdot
+	 dispxy x,xdot
+

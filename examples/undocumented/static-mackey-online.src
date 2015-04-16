@@ -1,0 +1,69 @@
+
+
+	 --     QUASI-STATIC BACKPROP PREDICTOR
+	 --     predicts Mackey-Glass chaos generator
+	 ----------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=1
+	 ----------------------------------------------------------------
+	 TMAX=400 |  DT=0.04 |  NN=10000
+	 a=0.2 |  b=0.1 |  c=10 |  --   for Mackey-Glass
+	 tau=25 |  s=10 |  --         s=10 initializes buffer
+	 ARRAY DD[1000] |  --           time-delay buffer
+	 --------------------------------------------------------------
+	 m=50 |  --                                 predictor delay
+	 nx=1 |  --                                        single input
+	 nv=17 |  --   number of hidden-layer neurons
+	 --
+	 ARRAY signal[2*m] |  --        signal delay line
+	 ------------------------------
+	 --                                             training network
+	 ARRAY x[1]+x0[1]=xx |  x0[1]=1
+	 ARRAY v[nv],deltav[nv]
+	 ARRAY y[1],error[1],deltay[1]
+	 ARRAY WW1[nv,nx+1],W2[1,nv]
+	 --
+	 for i=1 to nv |  for k=1 to nx+1 |  -- initialize
+	     WW1[i,k]=0.1*ran()
+	     next  |  next
+	 -------------------------------          online network
+	 ARRAY X[1]+X0[1]=XX |  X0[1]=1
+	 ARRAY V[nv],Y[1],ERROR[1]
+	 -----------------------------------------------------------
+	 lrate1=0.002 |  lrate2=0.0015
+	 Tnoise=0.0
+	 --
+	 N=18 |  --                   number of training runs
+	 for i=1 to N |  drun  |  next
+	 write "delay is TMAX/";NN/m
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 tdelay Sd=DD,s,tau |  -- Mackey-Glass time series
+	 d/dt s=a*Sd/(1+Sd^c)-b*s
+	 OUT  |  --                         sampled data from here on!
+	 TARGET=0.5*s-0.4 |  --     "future" signal to be predicted
+	 --------------------------------- 
+	 Vector signal=signal{-1} |  signal[1]=TARGET+Tnoise*ran()
+	 -----------          
+	 target=signal[m] |  --  training net trains on delayed sighnal   
+	 x[1]=signal[2*m] |  --                          training network 
+	 Vector v=tanh(WW1*xx) |  --                  includes bias
+	 Vector y=tanh(W2*v)
+	 --
+	 Vector error=target-y |  --                     training error
+	 Vector deltay=error*(1-y^2)
+	 Vector deltav=W2%*deltay*(1-v^2) |  --    backprop
+	 DELTA WW1=lrate1*deltav*xx
+	 DELTA W2=lrate2*deltay*v
+	 -----------------------------
+	 X[1]=signal[m] |  --         "present" input for online network  
+	 Vector V=tanh(WW1*XX) |  --              includes bias
+	 Vector Y=tanh(W2*V)
+	 -----------------------------
+	 YY=Y[1]+0.5*scale |  --           stripchart-type display        
+	 Target=TARGET+0.5*scale
+	 Vector ERROR=TARGET-Y
+	 ERSQx20=20*ERROR[1]^2-0.5*scale
+	 ERRORx5=5*ERROR[1]-0.5*scale
+	 dispt YY,ERSQx20,Target,ERRORx5
+

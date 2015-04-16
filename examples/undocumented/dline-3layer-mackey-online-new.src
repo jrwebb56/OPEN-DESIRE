@@ -1,0 +1,81 @@
+
+
+	 --      BACKPROP PREDICTOR
+	 --     predicts Mackey-Glass chaos generator
+	 ----------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=2
+	 ----------------------------------------------------------------
+	 TMAX=400 |  DT=0.04 |  NN=10000
+	 a=0.2 |  b=0.1 |  c=10 |  --   for Mackey-Glass
+	 tau=25 |  s=10 |  --         s=10 initializes buffer
+	 ARRAY DD[1000] |  --           time-delay buffer
+	 --------------------------------------------------------------
+	 m=60 |  --                  size of signal delay line
+	 mmm=20 |  -- m-mmm-1 is the prediction delay -1
+	 nx=20 |  --              number of delay-line taps               
+	 nv2=13 |  --  number of hidden-layer neurons
+	 --
+	 ARRAY signal[2*m] |  --        signal delay line
+	 ------------------------------
+	 --                                                   training netw
+	 ARRAY y[1],deltay[1],error[1]
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=0
+	 ARRAY v1[nx+1],deltav1[nx+1] |  -- linear layer 
+	 ARRAY v2[nv2],deltav2[nv2] |  --     hidden layer
+	 ARRAY WW1[nx+1,nx+1],W2[nv2,nx+1],W3[1,nv2]
+	 --
+	 for i=1 to nx |  for k=1 to nx+1 |  --      initialize
+	     WW1[i,k]=0.1*ran()
+	     next  |  next
+	 for i=1 to nv2 |  for k=1 to nx+1
+	     W2[i,k]=0.1*ran()
+	     next  |  next
+	 -------------------------------           predictor network
+	 ARRAY X[nx]+X0[1]=XX |  X0[1]=1
+	 ARRAY V1[nx+1],V2[nv2],Y[1],ERROR[1]
+	 -----------------------------------------------------------
+	 lrate1=0.005 |  lrate2=0.002 |  lrate3=0.002
+	 Tnoise=0.0
+	 drun
+	 write "delay is TMAX/";NN/m
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 tdelay Sd=DD,s,tau |  -- Mackey-Glass time series
+	 d/dt s=a*Sd/(1+Sd^c)-b*s
+	 OUT  |  --                         sampled data from here on!
+	 SIGNAL=s-0.85 |  --     "future" signal to be predicted
+	 -------------------------------------
+	 Vector signal=signal{-1}
+	 signal[1]=SIGNAL+Tnoise*ran()
+	 TARGET=signal[mmm]
+	 -----------          
+	 target=signal[m+1] |  --   trains on delayed signal 
+	 Vector x=x{-1} |  x[1]=signal[2*m]
+	 Vector v1=WW1*xx
+	 Vector v2=tanh(W2*v1)
+	 Vector y=tanh(W3*v2)
+	 --
+	 Vector error=target-y |  --               training error
+	 Vector deltay=error*(1-y^2)
+	 Vector deltav2=W3%*deltay*(1-v2^2)
+	 Vector deltav1=W2%*deltav2
+	 --
+	 DELTA WW1=lrate1*deltav1*xx
+	 DELTA W2=lrate2*deltav2*v1
+	 DELTA W3=lrate3*deltay*v2
+	 -----------------------------
+	 Vector X=X{-1}
+	 X[1]=signal[m+mmm+1] |  --  "present" predictor input
+	 Vector V1=WW1*XX
+	 Vector V2=tanh(W2*V1)
+	 Vector Y=tanh(W3*V2)
+	 Vector ERROR=TARGET-Y |  --  prediction error
+	 -----------------------------
+	 YY=Y[1]+0.5*scale |  --     stripchart-type display        
+	 Target=TARGET+0.5*scale
+	 ERSQx20=20*ERROR[1]^2-0.5*scale
+	 ERRORx5=5*ERROR[1]-0.5*scale
+	 errorx5=5*error[1]-0.5*scale
+	 dispt YY,Target,ERRORx5,errorx5
+

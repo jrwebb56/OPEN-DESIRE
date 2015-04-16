@@ -1,0 +1,26 @@
+
+
+	 ----                             FUNCTION STORAGE
+	 ------------------------------------------------------------------
+	 display N1 |  display R
+	 DT=0.0005 |  TMAX=1 |  NN=200
+	 ARRAY X[4*NN]
+	 w=5
+	 x=0.8
+	 drun  |  drun  |  drun  |  drun  |  -- no reset
+	 write 'type go to continue' |  STOP
+	 ------------------------------------------------------
+	 irule 0
+	 NN=4*NN |  t=0 |  TMAX=4*TMAX
+	 drun RETRIEVE
+	 -----------------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------------
+	 d/dt x=w*y |  d/dt y=-w*x
+	 store X=x
+	 dispt x
+	 -----------------------------------------------
+	    label RETRIEVE
+	 get x=X
+	 dispt x
+

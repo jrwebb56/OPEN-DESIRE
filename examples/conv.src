@@ -1,0 +1,18 @@
+
+
+	 --       CYCLICAL CONVOLUTION OF TWO PULSES
+	 ------------------------------------------------------------------
+	 NN=512 |  scale=200
+	 display N1 |  display R
+	 ARRAY x[NN],y[NN]
+	 for i=1 to 120
+	   x[i]=1 |  y[i+100]=1.5
+	   next
+	 FFT C,NN,x,y
+	 drun
+	 ----------------------------------------------
+	 DYNAMIC
+	 ----------------------------------------------
+	 get X=x
+	 dispt X
+

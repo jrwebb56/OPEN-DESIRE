@@ -1,0 +1,60 @@
+
+
+	 --  BIDIRECTIONAL ASSOCIATIVE MEMORY (BAM)
+	 ---------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=100
+	 --
+	 --                                  Network Definition
+	 --
+	 nx=25 |  --                    neuron-layer size
+	 N=26 |  --                      number of pattern pairs
+	 --
+	 ARRAY x[nx],y[nx],YY[nx] |  --  neuron and SHOW arrays
+	 ARRAY INPUT[N,nx],TARGET[N,nx] |  -- pattern-row arrays
+	 ARRAY W[nx,nx] |  --                  connection weights
+	 --
+	 ARRAY input[nx]
+	 ----------------------------------------------------------       f
+	 connect './hop/alphabet.txt' as input 2
+	 input #2,INPUT
+	 disconnect 2
+	 ---
+	 MATRIX TARGET=INPUT
+	 ------------------------------------------------------
+	 NN=N |  --   training run (N trials)
+	 drun  |  --       - use first DYNAMIC segment
+	 ------------------------------------------------------
+	 --  after training, do recall runs for each of N INPUT
+	 --      patterns; reset layers, but keep connections
+	 ------------------------------------------------------
+	 --                           set experiment parameters
+	 ---   was   Ah=0.4 |  h=0.005 |  ah=0.05 |  noise=3
+	 Ah=0.3 |  h=0.0002 |  ah=0.005 |  noise=0.0
+	 NN=1000
+	 ---------------------------
+	 for i=1 to N
+	   Vector x=0 |  Vector y=0
+	   iRow=i
+	   drunr RECALL |  --  DYNAMIC segment for recall
+	   STOP
+	   next
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 --                                 weight-learning run
+	 iRow=t
+	 Vector x=INPUT# |  Vector y=TARGET#
+	 DELTA W=y*x |  --    Hebb learning; direct product
+	 ------------------------------------------------------
+	 --                                          recall run
+	    label RECALL
+	 Vector input=INPUT#+noise*ran()
+	 Vectr delta x=-Ah*x+h*W%*y+ah*input
+	 Vectr delta y=-Ah*y+h*W*x
+	 --
+	 DOT measure=y*W*x |  --            for runtime display
+	 Measure=11E-26*measure-scale |  --           offset the curve
+	 dispt measure
+	 Vector YY=sgn(y)+3
+	 SHOW  |  SHOW input,5 |  SHOW YY,5
+

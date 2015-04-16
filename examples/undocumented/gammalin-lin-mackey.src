@@ -1,0 +1,55 @@
+
+
+	 --              LINEAR GAMMA-LINE PREDICTOR
+	 --     predicts Mackey-Glass chaos generator
+	 ------------------------------------------------------------------
+	 display N3 |  display C8 |  display R |  scale=2
+	 ------------------------------------
+	 TMAX=300 |  DT=0.04 |  NN=TMAX/DT+1
+	 a=0.2 |  b=0.1 |  c=10 |  --        for Mackey-Glass
+	 tau=25
+	 --
+	 ARRAY DD[1000] |  --       time-delay buffer
+	 s=10 |  --           initialize time delay buffer
+	 ------------------------------------------------------------------
+	 m=50 |  --                        predictor delay     
+	 nx=10 |  --     number of gamma-line neurons
+	 --
+	 --                input and error delay lines, input bias
+	 ARRAY signal[m]
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=1
+	 ARRAY y[1],error[1],WW[1,nx+1]
+	 --
+	 for k=1 to nx+1 |  --      initialize
+	   WW[1,k]=0.1*ran()
+	   next
+	 -------------------------------------  parameters
+	 lrate=0.002
+	 Tnoise=0.00 |  --               try more noise!
+	 mu=0.0005 |  --                for gamma delay line
+	 --
+	 N=8 |  --                   make N training runs
+	 for i=1 to N |  drun  |  next
+	 ---------
+	 write 'type go for prediction tests' |  STOP
+	 lrate=0 |  drun  |  drun  |  -- test runs
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 tdelay Sd=DD,s,tau |  -- Mackey-Glass time series
+	 d/dt s=a*Sd/(1+Sd^c)-b*s
+	 ---------------------------------------------------------------
+	 OUT  |  --  sampled data from here on!
+	 target=s-1
+	 Vector signal=signal{-1} |  signal[1]=target+Tnoise*ran()
+	 Vectr delta x=mu*(x{-1}-x) |  x[1]=signal[m] |  -- gamma lin
+	 Vector y=WW*xx
+	 --
+	 Vector error=target-y
+	 DELTA WW=lrate*error*xx |  -- LMS algorithm
+	 --------------------------------------------------    
+	 errorx5=5*error[1]-0.5*scale |  -- offset display
+	 Y=y[1]+0.5*scale
+	 TARGET=target+0.5*scale
+	 dispt Y,errorx5,TARGET
+

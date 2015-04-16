@@ -1,0 +1,23 @@
+
+
+	 --                    Van der Pol's Differential Equation
+	 --         vector compiler exercises N different models in one run
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 NN=3001 |  scale=4
+	 DT=0.0035 |  TMAX=11
+	 --
+	 N=4
+	 STATE x[N],xdot[N] |  -- state variables for N models
+	 ARRAY A[N] |  --      define different model parameters
+	 A[1]=0.5 |  for i=2 to N |  A[i]=A[i-1]+0.5 |  next
+	 --
+	 for i=1 to N |  x[i]=1 |  next  |  --  initial values
+	 --
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 Vectr d/dt x=xdot |  Vectr d/dt xdot=-x-A*(x*x-1)*xdot
+	 DISPXY x[1],xdot[1],x[2],xdot[2],x[3],xdot[3],x[4],xdot[4]
+

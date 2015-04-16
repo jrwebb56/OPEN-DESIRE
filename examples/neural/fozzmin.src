@@ -1,0 +1,34 @@
+
+
+	 --                FUZZY VARIABLE-STEP INTERPOLATION
+	 ---------------------------------------------------
+	 scale=6
+	 n=14
+	 gain=-0.002 |  d=1.9 |  D=-2/d
+	 ARRAY X[n],member[n],mb[n],b[n],W[n],q[n]
+	 for i=1 to n |  X[i]=(i-(n+1)/2+1)*d |  next
+	 --
+	 NN=7000
+	 x=-scale |  --                   start display sweep
+	 display N14 |  display Q |  --         display colors
+	 for i=1 to 5 |  drun  |  next
+	 ------------------------------------
+	 DYNAMIC
+	 ------------------------------------
+	 x=scale*ran()
+	 Vector mb=atan(D*(X-x)/(X{1}-X))
+	 Vector member=mb-mb{1}
+	 --
+	 target=0.9*cos(0.6*x)
+	 DOT y=W*member |  --                 defuzzification
+	 error=y-target |  Vectr delta W=gain*error*member
+	 Vector q=gain*b*error*W |  Vectr delta X=q{-1}-q
+	 ----------------------------------------------------
+	 --
+	 mbr4=scale*(member[4]-1) |  mbr5=scale*(member[5]-1)
+	 mbr6=scale*(member[6]-1) |  mbr7=scale*(member[7]-1)
+	 mbr8=scale*(member[8]-1)
+	 TARGET=0.5*scale*(target+1) |  Y=0.5*scale*(y+1)
+	 ERRx10=10*error
+	 dispxy x,Y,TARGET,ERRx10,mbr4,mbr5,mbr6,mbr7
+

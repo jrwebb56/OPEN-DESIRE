@@ -1,0 +1,74 @@
+
+
+	 --                               EUROSIM PENDULUM
+	 -------------------------------------------------
+	 NN=101
+	 ARRAY BUF[1000],BUFlin[1000]
+	 -------------------------------------------------
+	 m=1.02 |  l=1 |  lp=0.7 |  ls=0.3 |  g=9.81
+	 d=0.2
+	 kl=g/l |  ks=g/ls |  r=d/m |  a=l/ls |  A=1/a
+	 Tmax=1 |  --               length of compound run
+	 phip=-PI/12
+	 TMAX=1 |  DT=0.005
+	 scale=1
+	 display N1 |  display C8 |  --   display colors
+	 -------------------------------------------------
+	 irule 1 |  --             needed for later reruns
+	 P=1 |  Q=0 |  --     switch to nonlinear pendulum
+	 -------------------------------------------------
+	    label START
+	 phi=PI/6
+	    label LONGSTR
+	 k=kl |  ctrl=1 |  --                  long string
+	 drun  |  display 2 |  --         keep display on!
+	 --
+	 if T>Tmax then go to NONLIN |  else proceed
+	 -------------------------------------------------
+	 k=ks |  ctrl=-1 |  --                short string
+	 phidot=phidot*a
+	 drun
+	 phidot=phidot*A |  --  run again with long string
+	 -------------------------------------------------
+	 go to LONGSTR
+	 -------------------------------------------------
+	 --                      switch to nonlinear case,
+	 --                            or are we done?
+	    label NONLIN
+	 if P=0 then go to GETDATA |  else proceed
+	 P=0 |  Q=1 |  reset  |  t=0 |  phidot=0
+	 --
+	 go to START |  --                  nonlinear case
+	 -------------------------------------------------
+	 --    2nd DYNAMIC segment gets data from buffers!
+	 --
+	 --                  k, ctrl set for string length
+	    label GETDATA
+	 display 1 |  NN=1000 |  TMAX=NN
+	 write "type go to continue" |  STOP
+	 irule 0
+	 drun BUFFER
+	 --                  k, ctrl set for string length
+	 --    irule is automatically set to 0 (no d/dt)
+	 -------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------
+	 --                 	 run repeatedly, store results
+	 --            P,Q switch nonlinear/linear cases
+	 d/dt phi=phidot
+	 d/dt phidot=-k*(P*sin(phi)+Q*phi)-r*phidot
+	 term ctrl*(phip-phi) |  --         change length!
+	 T=0.2*t-scale |  --             compound-run time
+	 term T-Tmax |  --             end of compound run
+	 store BUFlin=phi
+	 if P-0.1 |  store BUF=phi
+	   dispxy T,phi
+	   -----------------------------------------------
+	   --                     get results from buffers
+	      label BUFFER
+	   get phi=BUF |  get philin=BUFlin
+	   PHI=0.5*(phi+scale)
+	   PHIlin=0.5*(philin-scale)
+	   delta=phi-philin
+	   dispt PHI,delta,PHIlin
+

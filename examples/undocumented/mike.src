@@ -1,0 +1,14 @@
+
+
+	 a=0
+	 b=0
+	 c=0
+	 d=0
+	 ARRAY aa[3]
+	 write "note that aa is an array"
+	 input aa
+	 input b
+	 input c
+	 input d
+	 write aa,b,c,d
+

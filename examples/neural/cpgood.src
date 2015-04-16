@@ -1,0 +1,57 @@
+
+
+	 --    FUNCTION-LEARNING COUNTERPROPAGATION
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=2
+	 ------------------------------------------------------------------
+	 nv=64 |  --                        number of pattern pairs
+	 --
+	 ARRAY INPUT[nv,1],TARGET[nv,1] |  --  input and output
+	 ARRAY x[1],v[nv],h[nv],y[1] |  --                3 neuron layers
+	 ARRAY xx[1],error[1]
+	 ARRAY X[1],Y[1] |  --        duplicates for error display
+	 ARRAY W[nv,1],U[1,nv]
+	 --
+	 for i=1 to nv |  --                            fill arrays
+	   W[i,1]=0.01*ran()
+	   q=PI*(2*i-nv-1)/(nv-1)
+	   INPUT[i,1]=q |  TARGET[i,1]=cos(q)
+	   next
+	 ---------------------------------------------------------
+	 --                             set  learning parameters
+	 lratex=0.2 |  lratef=0.2 |  noise=0.0
+	 nlearn=160 |  crit=0.0001
+	 ---------------------------------------------------------
+	 NN=nlearn*nv+60 |  --     learn input, output
+	 drun
+	 write 'type go to continue' |  STOP
+	 ---------------------------------------------------------
+	 --                         run with test input (recall)
+	 NN=401 |  TMAX=2*PI |  scale=1
+	 t=-PI
+	 lratex=0 |  crit=0.005 |  -- note value of crit !!
+	 drun RECALL
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 iRow=t/nlearn+1 |  Vector x=INPUT#
+	 x[1]=x[1]+noise*ran()
+	 CLEARN v=W(x)lratex,crit |  -- learn/select input values
+	 --
+	 Vector error=TARGET#-U*v |  --               output error
+	 DELTA U=lratef*error*v |  --        learn function values
+	 ---------------------------------------------------------
+	 Vector X=W%*v |  --    reconstruct learned x values
+	 XERROR=0.5*(X[1]-x[1]+scale) |  -- offset x-error display
+	 YERROR=error[1]-0.5*scale |  --    offset y-error display
+	 dispt XERROR,YERROR
+	 ---------------------------------------------------------
+	 --                                 test run (no learning)
+	    label RECALL
+	 x[1]=t |  --                                   test input	 --
+	 CLEARN v=W(x)lratex,crit |  -- select; NOTE crit!>0 !!          
+	 Vector y=U*v
+	 ------------------------------------------------------------
+	 YY=y[1] |  target=cos(t) |  --  runtime display
+	 dispt YY,target
+

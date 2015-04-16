@@ -1,0 +1,60 @@
+
+
+	 --  MATCHING A JORDAN NETWORK TO A PLANT 
+	 ------------------------------------------------------------------
+	 display N3 |  display C8 |  display R |  scale=0.5
+	 --
+	 nX=4 |  nf=5
+	 ARRAY X[4],Y[nf] |  --  plant input and output samples 
+	 nv=7 |  --                               number of hidden neurons
+	 ARRAY x[1]+x0[1]+y[1]=xx |  x0[1]=1
+	 ARRAY error[1],WW1[nv,3],W2[1,nv]
+	 ARRAY v[nv],deltav[nv]
+	 --                                               initiallze weight
+	 for i=1 to nv
+	   WW1[i,1]=ran() |  W2[1,i]=ran()
+	   next
+	 ----------------------------------------------------------------
+	 TMAX=1000
+	 w=2*PI/250 |  ww=10*w
+	 lrate1=0.02 |  lrate2=0.15
+	 ----------------------------------------------------------------
+	 NN=30000 |  drunr  |  --  training 
+	 write "type go for a test run" |  STOP
+	 NN=8000 |  Y[1]=0 |  drun RECALL |  -- recall
+	 ----------------------------------------------------------------
+	 DYNAMIC
+	 ----------------------------------------------------------------
+	 --                                            Narendra's plant
+	 Vector X=X{-1} |  X[1]=0.25*(ran()+ran()+ran()+ran())
+	 --
+	 f=(Y[1]*Y[2]*Y[3]*X[2]*(Y[3]-1)+X[1])/(1+Y[2]^2+Y[3]^2)
+	 Vector Y=Y{-1} |  Y[1]=f |  --     plant feedback
+	 target=f
+	 ---------------------------------------------  NEURAL NETWORK 
+	 x[1]=X[1] |  --        net input is the same as plant input
+	 Vector v=tanh(WW1*xx)
+	 Vector y=W2*v |  --         no limiter needed on output
+	 --                              
+	 error[1]=target-y[1] |  --                            backprop
+	 Vector deltav=W2%*error*(1-v^2)
+	 DELTA WW1=lrate1*deltav*xx
+	 DELTA W2=lrate2*error*v
+	 dispt error[1]
+	 --------------------------------------------------------------    
+	    label RECALL
+	 s=0.5*((1-0.2*swtch(t-500))*sin(w*t)+0.2*swtch(t-500)*sin(ww*t))
+	 Vector X=X{-1} |  X[1]=s
+	 ----------------------------------------  
+	 --                                                    Narendra's p
+	 f=(Y[1]*Y[2]*Y[3]*X[1]*(Y[3]-1)+X[2])/(1+Y[2]^2+Y[3]^2)
+	 Vector Y=Y{-1} |  Y[1]=f |  --            plant feedback
+	 target=f
+	 ----------------------------------------------  NEURAL NETWORK
+	 x[1]=X[1] |  --       net input is the same as plant input
+	 Vector v=tanh(WW1*xx)
+	 Vector y=W2*v |  --         no limiter needed on output
+	 error[1]=target-y[1]
+	 --
+	 dispt target,y[1],error[1]
+

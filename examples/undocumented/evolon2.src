@@ -1,0 +1,32 @@
+
+
+	 -- Simulation of a EVOLON (Peschel)
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 n=100 |  ab=0.02 |  ak=0.0 |  aK=0.2 |  aw=0.05
+	 STATE x[n]
+	 ARRAY bb[n],kk[n],k[n],w[n]
+	 l=1.0
+	 TMAX=20 |  DT=0.01 |  NN=1000
+	 for i=1 to n
+	   x[i]=0.001
+	   bb[i]=1.0+ab*gauss(0)
+	   k[i]=1.0+ak*gauss(0)
+	   w[i]=1.0+aw*gauss(0)
+	   kk[i]=1.0+aK*gauss(0)
+	   -- write bb[i], k[i], w[i], kk[i]
+	   next
+	 --
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 Vectr d/dt x=kk*x^k*(bb-x^w)^l
+	 ------------------------------------------------------------------
+	 OUT  |  --
+	 DOT xSum=x*1 |  DOT xxSum=x*x
+	 xAvg=xSum/n |  xxAvg=xxSum/n
+	 xvar=abs(xxAvg-xAvg^2)
+	 sigma=sqrt(xvar)
+	 dispt sigma,xAvg
+

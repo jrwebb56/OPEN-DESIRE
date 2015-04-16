@@ -1,0 +1,67 @@
+
+
+	 --           COUNTERPROP SPIRAL CLASSIFIER
+	 --                         try fast-learn mode, too!
+	 --------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 null=0 |  minus=-1
+	 ---------------------------------------------------------
+	 N=194
+	 --   create N points X on two 97-point spirals 
+	 --      and an N-by-2 pattern-row matrix TARGET with
+	 --                  alternate binary-selector rows for 2 spirals
+	 --
+	 ARRAY r[97],phi[97],X[194,2]
+	 ARRAY TARGET[194,2]
+	 --
+	 for k=1 to 97
+	   r[k]=0.8*(7+k)/104 |  phi[k]=PI*(97-k)/16
+	   X[2*k,1]=r[k]*cos(phi[k]) |  X[2*k,2]=r[k]*sin(phi[k])
+	   X[2*k-1,1]=-X[2*k,1] |  X[2*k-1,2]=-X[2*k,2]
+	   --   
+	   TARGET[2*k,1]=1 |  TARGET[2*k,2]=0
+	   TARGET[2*k-1,1]=0 |  TARGET[2*k-1,2]=1
+	   next
+	 ------------------------------------------------------------------
+	 nv=N |  --                             number of templates
+	 ARRAY W[nv,2] |  --                   template matrix
+	 ARRAY x[2],w[2],v[nv],h[nv],U[2,nv],p[2],error[2]
+	 --
+	 for i=1 to nv |  for k=1 to 2 |  --               initialize
+	     W[i,k]=ran()
+	     next  |  next
+	 ---------------------------------------------------------------
+	 --    set  training parameters (slow for demo)
+	 lratex=0.2 |  lratef=0.3 |  nlearn=30
+	 crit=0.000025
+	 noise=0.001
+	 ----------------------
+	 NN=6000 |  --                              training run
+	 drun
+	 write "type go to continue" |  STOP
+	 ------------------------------------------------------------
+	 --         run with random-point input (recall)
+	 NN=50000
+	 drun RECALL
+	 write p |  --                        show preobabilities
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 iRow=t/nlearn |  Vector x=X#+noise*ran()
+	 CLEARN v=W(x)lratex,crit |  --   learn/select input values
+	 --
+	 Vector p=exp(U*v) |  DOT psum=p*1
+	 Vector p=p/psum
+	 Vector error=TARGET#-p |  --           counterpropagation
+	 DELTA U=lratef*error*v
+	 Vector w=W%*v |  --  reconstruct the selected templates
+	 dispxy w[1],w[2]
+	 -----------------------------------------------------------
+	    label RECALL
+	 Vector x=ran() |  --                            test input
+	 CLEARN v=W(x)null,minus |  --             select
+	 Vector p=exp(U*v) |  DOT psum=p*1
+	 Vector p=p/psum
+	 Vector x=swtch(p[1]-p[2])*x |  -- kills pixel if p[1]=0 (second s
+	 dispxy x[1],x[2]
+

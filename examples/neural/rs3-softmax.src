@@ -1,0 +1,101 @@
+
+
+	 -- CREEPING PATTERN CLASSIFIER
+	 --     implements associative memory
+	 --   uses softmax for optimization, probabilities
+	 ---------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 nx=25 |  -- pattern dimension (5x5 pixel grid)
+	 N=26 |  -- number of categories (A to Z)
+	 nv=32 |  -- hidden-layer dimension - 1
+	 ARRAY INPUT[N,nx] |  -- prototype-pattern array
+	 ARRAY TARGET[N,N] |  -- binary-selector-pattern array
+	 --
+	 -------------------                                        network
+	 ARRAY input[nx],INput[nx],x[nx]+x0[1]=xx |  x0[1]=1
+	 ARRAY v[nv]+v0[1]=vv |  v0[1]=1
+	 ARRAY y[N],P[N],error[N],s[nx]
+	 ARRAY W1[nv+1,nx+1],W2[N,nv+1]
+	 ------------------------------------------------  error measures
+	 --   random initial weights 
+	 --
+	 for i=1 to nv+1 |  for k=1 to nx+1
+	     W1[i,k]=ran() |  next  |  next
+	 for i=1 to N |  for k=1 to nv+1
+	     W2[i,k]=ran() |  next  |  next
+	 -----------------------------------------  	 
+	 MATRIX TARGET=1 |  --               (one-of-N classifier)
+	 --
+	 connect '.\pattern\alphabet.txt' as input 2
+	 input #2,INPUT
+	 disconnect 2
+	 ----------------------------------------------------------------
+	 fsav=1000 |  fmin=1000 |  --   initialize optimization
+	 --
+	 --                                                  set parameters
+	 Tnoise=0.0 |  Rnoise=0.0 |  cc=20
+	 gain=0.00002 |  crit=0.0002
+	 scale=1 |  NN=10000
+	 ------------------------------------------------------------------
+	 drun  |  --           simulation runs (NN trials) 
+	 write fmin,measure,checksum
+	 write "PLEASE WAIT!"
+	 scale=fmin |  gain=gain/20 |  crit=0.000001
+	 drun
+	 write fmin,measure,checksum
+	 ------------------------------------------------------------------
+	 drun
+	 write 'type go for successive recall runs' |  STOP
+	 display F
+	 ----------
+	 NN=20
+	 for i=1 to N
+	   drun TEST
+	   write P |  -- show probabilities
+	   STOP
+	   for k=1 to 4000 |  write "wait" |  next
+	   next
+	 ---------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------
+	 --                                                        network
+	 iRow=t |  Vector input=INPUT#
+	 Vector x=input+Tnoise*ran()
+	 --
+	 Vector vv=tanh(W1*xx)
+	 Vector y=exp(W2*vv) |  DOT ysum=y*1
+	 Vector P=y/ysum
+	 --------------------------------------       BACKPROP
+	 Vector error=TARGET#-P
+	 DOT measure=error*error
+	 DOT checksum=P*1
+	 -------------------------------------------------------
+	 term crit-measure |  --                terminate run on success
+	 delf=comp(fsav-measure,-1,gain) |  --  kills unsuccessful changes
+	 fsav=measure |  --                                   save measure
+	 FSAV=fsav-scale |  --                  offset the curves
+	 ------------------------------------------------------------
+	 --                       try pseudorandom perturbations
+	 --
+	 DELTA W1=delf*ran() |  DELTA W2=delf*ran()
+	 --------------------------------------------------------
+	 if fmin-fsav
+	   fmin=fsav
+	   FMIN=fmin-scale |  --                 offset the curve
+	   -------------------------------------------
+	   dispt FMIN,FSAV |  --  display error measures
+	   -------------------------------------------------------------
+	      label TEST
+	   -------------------------------------------------------------
+	   iRow=i
+	   Vector input=INPUT#
+	   Vector x=input+Rnoise*ran()
+	   Vector vv=tanh(W1*xx)
+	   Vector y=exp(W2*vv) |  DOT ysum=y*1
+	   Vector P=y/ysum
+	   ------------------------------------------------
+	   Vector s=INPUT%*P |  -- associative memory
+	   -------------------------------------------------------
+	   Vector INput=2*cc*input |  Vector x=cc*x |  Vector s=cc*s
+	   SHOW  |  SHOW INput,5 |  SHOW x,5 |  SHOW s,5
+

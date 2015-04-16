@@ -1,0 +1,57 @@
+
+
+	 --    ONE-LAYER NONLINEAR PREDICTOR
+	 --         predicts Mackey-Glass  time series
+	 -------------------------------------------------------------
+	 display N3 |  display C8 |  display R |  scale=1
+	 -------------------------------------------------------------
+	 TMAX=300 |  DT=0.04 |  NN=TMAX/DT+1
+	 a=0.2 |  b=0.1 |  c=10 |  --   for Mackey-Glass
+	 tau=25 |  s=10 |  --         s=10 initializes buffer
+	 ARRAY DD[1000] |  --           time-delay buffer
+	 -------------------------------------------------------------
+	 --           input and error delay lines, input bias
+	 m=50 |  --                                predictor delay 
+	 nx=10 |  --                 number of delay-line taps
+	 ARRAY signal[m]
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=1
+	 ARRAY v[nx+1],deltav[nx+1] |  --         extra linear layer
+	 ARRAY y[1],deltay[1],error[1]
+	 ARRAY WW1[nx+1,nx+1],W2[1,nx+1]
+	 --
+	 for k=1 to nx+1 |  --      initialize
+	   W2[1,k]=0.1*ran()
+	   next
+	 -------------------------------------  parameters
+	 lrate=0.001
+	 Tnoise=0.00 |  --               try more noise!
+	 --
+	 N=8 |  --                   make N training runs
+	 for i=1 to N |  drun  |  next
+	 ---------
+	 write 'type go for prediction tests' |  STOP
+	 lrate=0 |  drun  |  drun  |  -- test runs
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 tdelay Sd=DD,s,tau |  -- Mackey-Glass time series
+	 d/dt s=a*Sd/(1+Sd^c)-b*s
+	 OUT  |  --                   sampled data from here on!
+	 target=0.5*s-0.4
+	 ---------------------------------------------------------------
+	 Vector signal=signal{-1} |  signal[1]=target+Tnoise*ran()
+	 Vector x=x{-1} |  x[1]=signal[m] |  -- input delay line
+	 Vector v=WW1*xx
+	 Vector y=tanh(W2*v)
+	 --
+	 Vector error=target-y
+	 Vector deltay=error*(1-y^2)
+	 Vector deltav=W2%*deltay
+	 DELTA WW1=lrate*deltav*xx
+	 DELTA W2=lrate*deltay*v |  -- LMS algorithm
+	 --------------------------------------------------    
+	 errorx5=5*error[1]-0.5*scale |  -- offset display
+	 Y=y[1]+0.5*scale
+	 TARGET=target+0.5*scale
+	 dispt Y,errorx5,TARGET
+

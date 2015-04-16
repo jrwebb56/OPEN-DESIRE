@@ -1,0 +1,39 @@
+
+
+	 --          EUROSIM Benchmark PROBLEM 1
+	 --                  demonstrates model replication, log/log plot
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 ln10=ln(10) |  loge=1/ln10
+	 kr=1 |  kf=0.1 |  dr=0.1 |  dm=1 |  p=0
+	 ------------------------------------------------------------------
+	 irule 15 |  ERMAX=0.001 |  --           GEAR integration
+	 t0=3 |  --                                            shift log t
+	 TMAX=1+t0 |  NN=6000 |  DT=0.0001 |  scale=2
+	 display N1 |  --                           set display color
+	 ------------------------------------------------------------------
+	 --          variables and initial values for 7 replicated models
+	 --
+	 ARRAY lf[7],F[7],A[7],B[7] |  STATE r[7],m[7],f[7]
+	 data 50,100,200,500,1000,5000,10000 |  read lf
+	 for k=1 to 7 |  --  set equal initial values for all 7
+	   f[k]=9.975 |  m[k]=1.674 |  r[k]=84.99
+	   next
+	 --                            
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 tt=ln10*(10^(t-t0)) |  --   log time COMPUTED ONCE ONLY!
+	 --
+	 Vector A=kr*m*f-dr*r |  --  precompute these for speed!
+	 Vector B=kf*f*f-dm*m
+	 --
+	 Vectr d/dt r=A*tt |  --       7 times 3 differential equations
+	 Vectr d/dt m=(B-A)*tt
+	 Vectr d/dt f=(p-lf*f-A-2*B)*tt
+	 ------------------------------------------------------------------
+	 OUT
+	 Vector F=loge*ln(f)+1 |  --              logarithmic ordinates
+	 dispt F[1],F[2],F[3],F[4],F[5],F[6],F[7]
+

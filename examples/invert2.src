@@ -1,0 +1,23 @@
+
+
+	 dimension x[4],b[4],c[4]
+	 dimension A[4,4],B[4,4],C[4,4]
+	 data 1,3,50,3;2,3,0,-1;0,-1,2,0;-90,0,1,3 |  read A
+	 data 2,3,5,-7 |  read b
+	 MATRIX B=$In(A)
+	 write A,B
+	 write "type go to continue" |  STOP
+	 MATRIX C=A*B
+	 write C
+	 write "type go to continue" |  STOP
+	 MATRIX C=B*A
+	 write C
+	 write "type go to continue" |  STOP
+	 VECTOR x=B*b
+	 write x
+	 VECTOR c=A*x-b
+	 write c
+	 write "type go to continue" |  STOP
+	 MATRIX C=$In(B)
+	 write A,C
+

@@ -1,0 +1,133 @@
+
+
+	 --         ENTROPY MEASUREMENT BY COMPETITIVE LEARNING
+	 ------------------------------------------------------
+	 --                 number of competitive-layer neurons
+	 nx=128 |  ny=128 |  n=nx*ny
+	 ------------
+	 ARRAY x[1]+y[1]=r,v[n],h[n],W[n,2]
+	 ARRAY vx[nx],hx[nx],vy[ny],hy[ny]
+	 ARRAY Wx[nx,1],Wy[ny,1],z[2]
+	 --
+	 for i=1 to nx |  --        make quantization templates
+	   Wx[i,1]=(2*i-(nx-1))/nx
+	   next
+	 for i=1 to ny
+	   Wy[i,1]=(2*i-(ny-1))/ny
+	   next
+	 -------------------------
+	 for i=1 to nx
+	   for k=1 to ny
+	     W[i+nx*(k-1),1]=(2*i-(nx+1))/nx
+	     W[i+ny*(k-1),2]=(2*k-(ny+1))/ny
+	     next  |  next
+	 ------------------------------------------------------
+	 display Q |  display N1 |  display C8 |  --  display colors
+	 scale=1
+	 ------------------------------------------------------
+	 noise=1
+	 lrate=0.01
+	 kappa=0.9993 |  --                    for lrate decay
+	 crit=0 |  --                          Ahalt conscience
+	 NN=24000
+	 drun  |  --                           quantization run
+	 write 'type go to continue'
+	 STOP
+	 go to measure
+	 ------------------------------------------------------
+	 --                        display quantization entropy
+	 NN=3000 |  --                               for check
+	 crit=-1 |  -- no conscience
+	 lrate=0 |  a=1/NN
+	 for i=1 to n |  h[i]=0 |  next  |  --  initialize to 0
+	 drun recall
+	 ---------------------
+	 ONE=0 |  H=0 |  --     initialize checksums and entropies
+	 for i=1 to n
+	   h[i]=a*h[i] |  --   statistical relative frequencies
+	   ONE=ONE+h[i] |  --               accumulate checksum
+	   H=H-h[i]*ln(h[i]+1.0E-25) |  --   accumulate entropy
+	   next
+	 write 'H=  ';H/ln(2);' bits','       checksum=  ';ONE
+	 write 'log2(n) = ';ln(n)/ln(2);'   for comparison'
+	 write 'type go to continue'
+	 STOP
+	 -----------------------------          display results
+	    label measure
+	 display R
+	 NN=9000 |  --                          for measurement
+	 crit=-1 |  --                            no conscience
+	 lrate=0 |  a=1/NN
+	 for i=1 to n |  h[i]=0 |  next
+	 for i=1 to nx |  hx[i]=0 |  next
+	 for i=1 to ny |  hy[i]=0 |  next
+	 drun newrun
+	 ------------------------------------------------------
+	 ONE=0 |  H=0 |  --     initialize checksums and entropies
+	 ONEx=0 |  Hx=0
+	 ONEy=0 |  Hy=0
+	 for i=1 to n
+	   h[i]=a*h[i] |  --   statistical relative frequencies
+	   ONE=ONE+h[i] |  --               accumulate checksum
+	   H=H-h[i]*ln(h[i]+1.0E-25) |  --   accumulate entropy
+	   next
+	 write 'H=  ';H/ln(2);' bits','          checksum =  ';ONE
+	 -----------------------------          display results
+	 for i=1 to nx
+	   hx[i]=a*hx[i] |  --   statistical relative frequencies
+	   ONEx=ONEx+hx[i] |  --               accumulate checksum
+	   Hx=Hx-hx[i]*ln(hx[i]+1.0E-25) |  --   accumulate entropy
+	   next
+	 write 'Hx=  ';Hx/ln(2);' bits','          checksum =  ';ONE
+	 -----------------------------          display results
+	 for i=1 to ny
+	   hy[i]=a*hy[i] |  --   statistical relative frequencies
+	   ONEy=ONEy+hy[i] |  --               accumulate checksum
+	   Hy=Hy-hy[i]*ln(hy[i]+1.0E-25) |  --   accumulate entropy
+	   next
+	 -----------------------------          display results
+	 write 'Hy=  ';Hy/ln(2);' bits','          checksum =  ';ONE
+	 -----------------------------
+	 write 'I(x,y) = ';(Hx+Hy-H)/ln(2);' bits'
+	 STOP
+	 -------------------------------------------------------
+	    label eee
+	 display F |  --                        edit parameters
+	 edit 240,460-490,730
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 --                                    quantization run
+	 lrate=lrate*kappa |  --            decrease learn rate
+	 Vector r=ran()
+	 CLEARN v=W(r)lrate,crit |  --            compete,learn
+	 Vectr delta h=v |  --                            conscience
+	 --                               reconstruct templates
+	 Vector z=W%*v
+	 dispxy z[1],z[2]
+	 ------------------------------------------------------
+	 --                          shows quantization entropy
+	    label recall
+	 Vector r=ran()
+	 CLEARN v=W(r)lrate,crit
+	 Vectr delta h=v |  --                  accumulate histogram
+	 ------------------------------------------------------
+	 --                                     measurement run
+	    label newrun
+	 iRow=t
+	 Vector x=ran()
+	 -- y[1]=0
+	 -- y[1]=x[1]
+	 y[1]=x[1]*x[1]
+	 Vector r=noise*r
+	 -----------------------------------------------------
+	 CLEARN v=W(r)lrate,crit |  --                 compete
+	 Vectr delta h=v
+	 Vector z=W%*v
+	 CLEARN vx=Wx(x)lrate,crit |  --                 compete
+	 delta hx=vx
+	 CLEARN vy=Wy(y)lrate,crit |  --                 compete
+	 delta hy=vy
+	 X=x[1] |  Y=y[1] |  zx=z[1] |  zy=z[2]
+	 DISPXY zx,zy,X,Y
+

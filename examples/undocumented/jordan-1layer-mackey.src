@@ -1,0 +1,53 @@
+
+
+	 --  JORDAN ONE-LAYER NONLINEAR PREDICTOR
+	 --     predicts Mackey-Glass chaos generator
+	 -------------------------------------------------------------
+	 display N3 |  display C8 |  display R |  scale=0.5
+	 -------------------------------------------------------------
+	 TMAX=300 |  DT=0.04 |  NN=7500
+	 a=0.2 |  b=0.1 |  c=10 |  --   for Mackey-Glass
+	 tau=17 |  s=10 |  --         s=10 initializes buffer
+	 ARRAY DD[1000] |  --           time-delay buffer
+	 --------------------------------------------------------------
+	 m=50 |  --                                 predictor delay
+	 nx=1 |  --                                        single input
+	 nv=17 |  --   number of hidden-layer neurons
+	 --
+	 ARRAY signal[m],error[1]
+	 --
+	 --  input, bias, hidden layer (context layer)
+	 ARRAY x[1]+x0[1]+y[1]=xx |  x0[1]=1
+	 ARRAY WW1[1,nx+2],deltay[1]
+	 --
+	 for k=1 to nx+2 |  -- initialize
+	   WW1[1,k]=0.1*ran()
+	   next
+	 -----------------------------------------------------------
+	 lrate1=0.001 |  Tnoise=0.0
+	 --
+	 N=10 |  --                   number of training runs
+	 for i=1 to N |  drun  |  next
+	 ---------
+	 write 'type go for prediction test' |  STOP
+	 lrate1=0 |  lrate2=0 |  drun  |  -- test run
+	 write "delay is ";TMAX*m/NN
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 tdelay Sd=DD,s,tau |  -- Mackey-Glass time series
+	 d/dt s=a*Sd/(1+Sd^c)-b*s
+	 OUT  |  --                   sampled data from here on!
+	 target=0.5*s-0.2
+	 --------------------------------- 
+	 Vector signal=signal{-1} |  signal[1]=target+Tnoise*ran()
+	 x[1]=signal[m]
+	 Vector y=tanh(WW1*xx) |  --              includes bias
+	 Vector error=target-y
+	 Vector deltay=error*(1-y^2)
+	 DELTA WW1=lrate1*deltay*xx
+	 -----------------------------
+	 errorx5=5*error[1]-0.5*scale
+	 ersqx10=10*error[1]^2-0.5*scale
+	 dispt y[1],ersqx10,target,errorx5
+

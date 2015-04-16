@@ -1,0 +1,60 @@
+
+
+	 --                         ONLINE STATIC CLASSIFIER
+	 -----------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=4
+	 -----------------------------------------------------------------
+	 TMAX=PI/1.5 |  NN=25000
+	 nx=1 |  --                  number of delay-line taps            
+	 nv=7 |  --      number of hidden-layer neurons
+	 --
+	 m=10000
+	 ARRAY signal[m] |  --    delay line to get past
+	 ------------------------------
+	 --                                             training network
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=1
+	 ARRAY v[nv],deltav[nv]
+	 ARRAY y[1],deltay[1],error[1]
+	 ARRAY WW1[nv,nx+1],W2[1,nv]
+	 --
+	 for i=1 to nv |  for k=1 to nx+1 |  -- initialize
+	     WW1[i,k]=0.1*ran()
+	     next  |  next
+	 -------------------------------          online network
+	 ARRAY X[nx]+X0[1]=XX |  X0[1]=1
+	 ARRAY V[nv],Y[1],ERROR[1]
+	 -----------------------------------------------------------
+	 --      intentionally slow for better display!
+	 lrate1=0.0025 |  lrate2=0.0005
+	 Tnoise=0.0
+	 drun
+	 write "delay is TMAX/";NN/m
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 switch=swtch(sin(10*t)) |  --  alternate patterns
+	 p=0.8*switch*cos(300*t) |  --             sine waves
+	 q=(1-switch)*sgn(sin(100*t)) |  -- square waves
+	 TARGET=p+q |  --                alternating patterns
+	 ------------------------------
+	 Vector signal=signal{-1} |  signal[1]=TARGET+Tnoise*ran()
+	 -----
+	 target=signal[m] |  --  training net trains on delayed signal
+	 Vector x=target
+	 Vector v=tanh(WW1*xx) |  --                            includes b
+	 Vector y=W2*v |  --                  no limiter needed on output
+	 --
+	 Vector error=target-y |  --                    training error
+	 Vector deltav=W2%*error*(1-v^2) |  --     backprop
+	 DELTA WW1=lrate1*deltav*xx
+	 DELTA W2=lrate2*error*v
+	 -----------------------------
+	 Vector X=TARGET |  --                          online input 
+	 Vector V=tanh(WW1*XX) |  --             includes bias
+	 Vector Y=W2*V
+	 Vector ERROR=TARGET-Y |  -- online prediction error
+	 -----------------------------------------          rescaled stripc
+	 Error=ERROR[1]-0.5*scale
+	 YYY=Y[1] |  Target=TARGET+0.5*scale
+	 dispt Target,YYY,Error
+

@@ -1,0 +1,24 @@
+
+
+	 --                Response of a Linear System
+	 --   vectorized parameter-influence study
+	 ---------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 TMAX=0.5 |  DT=0.00001 |  NN=10000
+	 ww=400 |  -- fixed system parameter
+	 ---------------------------------------------------------
+	 n=5
+	 STATE x[n],xdot[n] |  ARRAY r[n]
+	 --------------------------------------------------------	 
+	 for i=1 to n
+	   x[i]=1 |  --               set n initial values
+	   r[i]=5*i |  -- set n parameter values
+	   next
+	 drun
+	 --------------------------------
+	 DYNAMIC
+	 --------------------------------
+	 Vectr d/dt x=xdot
+	 Vectr d/dt xdot=-ww*x-r*xdot
+	 dispt x[1],x[2],x[3],x[4],x[5]
+

@@ -1,0 +1,96 @@
+
+
+	 -- BACKPROP PATTERN CLASSIFIER
+	 --     implements associative memory
+	 --   uses Softmax for optimization, probabilities
+	 --------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 nx=25 |  -- pattern dimension (5x5 grid)
+	 N=26 |  -- number of categories (A to Z)
+	 nv=32 |  -- hidden-layer dimension - 1
+	 ARRAY INPUT[N,nx] |  -- prototype-pattern array
+	 ARRAY TARGET[N,N] |  -- binary-selector-pattern array
+	 --
+	 -------------------                                        network
+	 ARRAY input[nx],INput[nx],x[nx]+x0[1]=xx |  x0[1]=1
+	 ARRAY v[nv],deltav[nv]
+	 ARRAY y[N],P[N],s[nx]
+	 ------------------------------------------- connection weights
+	 ARRAY W1[nv,nx+1],W2[N,nv]
+	 ARRAY Dw1[nv,nx+1],Dw2[N,nv]
+	 ---------------------------------------------------   error measur
+	 ARRAY error[N],ERROR[N]
+	 -----------------------------------------------------------------
+	 --   random initial weights "break symmetry"
+	 --
+	 for i=1 to nv |  for k=1 to nx+1
+	     W1[i,k]=ran() |  next  |  next
+	 for i=1 to N |  for k=1 to nv
+	     W2[i,k]=ran() |  next  |  next
+	 -----------------------------------------  	 --
+	 MATRIX TARGET=1 |  --               (one-of-N classifier)
+	 ------------------------------------------------------------------
+	 --                                set experiment parameters
+	 lrate1=0.06 |  lrate2=0.02 |  mom1=0.4 |  mom2=0.4
+	 scale=1
+	 NN=500
+	 --
+	 Tnoise=0.35 |  Rnoise=0.35
+	 cc=20
+	 NN=2000
+	 ---------------------------------------------------------------
+	 connect './pattern/alphabet.txt' as input 2
+	 input #2,INPUT
+	 disconnect 2
+	 --------------------------------------------------------------
+	 drun
+	 write 'type go for successive recall runs'
+	 STOP
+	 display F
+	 ----------
+	 NN=2
+	 for i=1 to N
+	   drun RECALL
+	   write P |  -- show probabilities
+	   --  STOP
+	   for k=1 to 22000 |  write "wait" |  next
+	   next
+	 ---------------------------------------------
+	 DYNAMIC
+	 ----------------------------------------
+	 --                                                        network
+	 iRow=t |  Vector input=INPUT#
+	 Vector x=input+Tnoise*ran()
+	 --
+	 Vector v=tanh(W1*xx)
+	 Vector y=exp(W2*v) |  DOT ysum=y*1
+	 Vector P=y/ysum
+	 --
+	 --------------------------------------       BACKPROP
+	 Vector error=TARGET#-P
+	 Vector deltav=W2%*error*(1-v^2)
+	 --
+	 --    "momentum" adds part of last change
+	 MATRIX Dw1=lrate1*deltav*xx+mom1*Dw1
+	 MATRIX Dw2=lrate2*error*v+mom2*Dw2
+	 DELTA W1=Dw1 |  DELTA W2=Dw2
+	 --
+	 DOT enormsqr=error*error
+	 msqavg=msqavg+(enormsqr-msqavg)/300
+	 msqavgx5=5*msqavg-scale |  -- offset display
+	 dispt msqavgx5
+	 ------------------------------------------------------------------
+	    label RECALL
+	 --------------------------------------------------------
+	 iRow=i
+	 Vector input=INPUT#
+	 Vector x=input+Rnoise*ran()
+	 Vector v=tanh(W1*xx)
+	 Vector y=exp(W2*v) |  DOT ysum=y*1
+	 Vector P=y/ysum
+	 ------------------------------------------------
+	 Vector s=INPUT%*P |  -- associative memory
+	 -------------------------------------------------------
+	 Vector INput=2*cc*input |  Vector x=cc*x |  Vector s=cc*s
+	 SHOW  |  SHOW INput,5 |  SHOW x,5 |  SHOW s,5
+

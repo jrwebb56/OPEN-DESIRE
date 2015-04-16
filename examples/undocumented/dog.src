@@ -1,0 +1,47 @@
+
+
+	 -- Modell einer Hundekurve
+	 -- Ein Hund sieht am gegenueberliegenden Ufer seinen Herren
+	 -- und versucht zu ihm zu schwimmen. Dabei wird er von der
+	 -- Stroemung des Flusses vf(y) abgetrieben. Der Hund versucht das
+	 -- zu korrigieren indem er seine Schwimmrichtung in die Richtung
+	 -- seines Herren korrigiert. Welche Kurve entsteht?
+	 -- Formale Beschreibung:
+	 -- 	Richtung vom Hund zum Herren wird mit y bezeichnet
+	 -- 	Richtung des Flusses mit x
+	 -- 	Geschwindigkeit des Hundes ist c=konst
+	 --	Breite des Flusses ist b
+	 --	Geschwindigkeit in x-Richtung: u
+	 --	Geschwindigkeit in y-Richtung: v
+	 --	Es gilt: c^2=u^2+v^2
+	 --	Die Fliessgeschwindigkeit ist am Rand=0 und in der Mitte
+	 --	gleich vf0, dazwischen wird linear interpoliert
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 -- parameters
+	 b=100 |  B=b/2 |  --	b=100m Breite
+	 c=1.0 |  --	Geschwindigkeit des Hundes 1m/s (schneller Hund)
+	 vf0=1.5 |  --	Geschwindigkeit in der Flussmitte 1m/s
+	 VV=2*vf0
+	 ------------------------------------------------------------------
+	 -- Steuerung der Simulation
+	 x=0.1 |  y=0.1 |  vf=0 |  -- Startbedingung 
+	 DT=0.05 |  TMAX=300 |  NN=1000 |  -- Schrittweiten
+	 scale=50 |  -- Display
+	 drun  |  -- Start Simulation
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 q=1/sqrt(y^2-2*b*y+x^2+b^2)
+	 d/dt x=-c*x*q+vf
+	 d/dt y=c*(b-y)*q
+	 --
+	 step
+	 vf=VV*(swtch(B-y)*(y/B-1)+1-y/b)
+	 term y-b+0.5 |  -- der Hund springt aus dem Wasser
+	 ------------------------------------------------------------------
+	 OUT  |  --
+	 y0=y-scale
+	 dispxy y0,x
+	 -- type y,x
+

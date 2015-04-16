@@ -1,0 +1,33 @@
+
+
+	 ---------------------------------------------------------
+	 --       FUNCTION-LEARNING FUZZY- OR RADIAL-BASIS NETWORK
+	 ---------------------------------------------------------
+	 --          set experiment parameters; try larger n
+	 n=9
+	 Wgain=0.05
+	 scale=0.5 |  b=n/2 |  D=1/b
+	 NN=12000
+	 --
+	 ARRAY v[n],X[n],xx[n],W[n]
+	 --
+	 for i=1 to n |  X[i]=D*(i-(n+1)/2) |  next
+	 display N1 |  display C8 |  display Q |  --
+	 drun  |  STOP
+	 -----------------------------------------------------------
+	    label eee
+	 edit 32-80 |  --                             editing screen
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 x=ran() |  target=0.4*cos(4*x) |  --  substitute other functions
+	 Vector v=SAT(tri(b*(X-x)))
+	 DOT y=W*v
+	 --
+	 error=target-y |  Vectr delta W=Wgain*error*v
+	 --
+	 ERRx10=10*error |  XIN=scale*x
+	 v4=0.25*v[4]-scale |  v5=0.25*v[5]-scale
+	 v6=0.25*v[6]-scale |  v7=0.25*v[7]-scale
+	 dispxy XIN,target,y,v4,v5,v6,v7,ERRx10
+

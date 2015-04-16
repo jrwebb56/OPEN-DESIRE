@@ -1,0 +1,66 @@
+
+
+	 --                          RADIAL-BASIS FUNCTION NETWORK
+	 ---------------------------------------------------------
+	 m=1 |  --                         input-pattern dimension
+	 n=8 |  --                           number of categories
+	 ARRAY x[m]+x0[1]+x1[1]=xx |  x0[1]=1
+	 ARRAY W[n,m],v[n],h[n]
+	 --
+	 ARRAY u[n]+u0[1]=uu |  u0[1]=1 |  --   has bias component
+	 ARRAY W2[n,m+2]
+	 ARRAY W3[1,n+1] |  --              weights include biases
+	 ARRAY y[1],error[1]
+	 ---------------------------------------------------------
+	 display N1 |  --                      set display colors
+	 --                                         set parameters
+	 lratex=0.2 |  lratef=0.3 |  kappa=0.9996 |  lrate0=0
+	 a=16
+	 crit=0 |  --                 (crit=0 for FSCL conscience)
+	 NN=30000
+	 ---------------------------------------------------------
+	 --                             learn radial-basis centers
+	 drun COMPETE
+	 ------------------      matrix W2 generates squared radii
+	 for i=1 to n
+	   W2[i,m+2]=1 |  --   unity multipliers for squared ||x||
+	   for k=1 to m
+	     W2[i,m+1]=W2[i,m+1]+W[i,k]*W[i,k] |  --  squared norm
+	     W2[i,k]=-2*W[i,k] |  --                 cross product
+	     next
+	   next
+	 ---------------------------------------------------------
+	 --                now train radial-basis-function network
+	 drun
+	 NN=2000 |  lratef=0 |  lrate0=0 |  --          recall run
+	 drun  |  STOP
+	 ---------------------------------------------------------
+	    label eee
+	 edit 220-240,330-380 |  --       parameter-editing screen
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 lratef=kappa*lratef+lrate0 |  --     reduce learning rate
+	 --
+	 Vector x=ran() |  --                       training pairs
+	 tgt=0.95*cos(4*x[1]) |  --     or other functions
+	 DOT x1[1]=x*x |  --                     squared norm of x
+	 Vector u=W2*xx |  --              vector of squared radii
+	 Vector u=-a*u |  Vector u=exp(u) |  --     Gaussian bumps
+	 Vector y=W3*uu
+	 --
+	 Vector error=tgt-y
+	 DELTA W3=lratef*error*uu
+	 ---------------------------------------------------------
+	 X=x[1] |  ERx100=100*abs(error[1])-scale |  Y=y[1]
+	 u1=u[1] |  u2=u[2] |  u3=u[3] |  u4=u[4]
+	 u5=u[5] |  u6=u[6] |  u7=u[7] |  u8=u[8]
+	 dispxy X,Y,tgt,ERx100,u1,u2,u3,u4,u5,u6,u7,u8
+	 ---------------------------------------------------------
+	    label COMPETE
+	 lratex=kappa*lratex+lrate0 |  --     reduce learning rate
+	 --
+	 Vector x=ran()
+	 CLEARN v=W(x)lratex,crit |  --              compete/learn
+	 Vectr delta h=v |  --                       conscience counter
+

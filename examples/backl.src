@@ -1,0 +1,19 @@
+
+
+	 --                                       SIMPLE BACKLASH
+	 --------------------------------------------------------
+	 display N1 |  display C8
+	 TMAX=5 |  DT=0.00005 |  NN=10001 |  --    timing               
+	 scale=2.5
+	 ---------------------------------------------                     
+	 x=0.7 |  --           initial value for input
+	 a=0.25 |  --           deadspace for backlash                    
+	 drun
+	 --------------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------------
+	 p=2*sgn(p-x) |  d/dt x=9*p |  --   square/triangle waves
+	 --
+	 y=y+a*deadz((x-y)/a)
+	 dispxy x,y
+

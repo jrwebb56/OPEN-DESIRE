@@ -1,0 +1,55 @@
+
+
+	 --     JORDAN PREDICTOR
+	 --     predicts Roessler-attractor time series
+	 ---------------------------------------------------------------
+	 display N3 |  display C8 |  display Q |  scale=1
+	 TMAX=400 |  DT=0.0002 |  NN=TMAX/DT+1
+	 --------------------------------------------------------------
+	 m=50 |  -- predictor delay (trynv+2nv+2nv+2 larger m too!)
+	 nv=17 |  --      number of hidden-layer neurons
+	 --
+	 ARRAY signal[m]
+	 --
+	 ARRAY x[1],v[nv],deltav[nv],y[1],error[1]
+	 ARRAY WW1[nv,1],W2[1,nv]
+	 --
+	 for i=1 to nv |  -- initialize
+	   WW1[i,1]=0.1*ran()
+	   next
+	 -----------------------------------------------------------
+	 lrate1=0.0025 |  lrate2=0.0005
+	 --|
+	 X=0.03 |  Y=0.01 |  Z=0.007
+	 a=0.2 |  b=0.2 |  c=5.7
+	 --------------------------------------------------------------	  
+	 N=1 |  --                           number of training runs
+	 for i=1 to N |  drun  |  next
+	 ---------
+	 write 'type go for prediction test' |  STOP
+	 lrate1=0 |  lrate2=0 |  drun  |  -- test run
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 d/dt X=-Y-Z |  --                  Roessler system
+	 d/dt Y=X+a*Y
+	 d/dt Z=b+Z*(X-c)
+	 OUT  |  --     we use sampled data from now on!
+	 target=0.05*X
+	 ---------------------------------------------------------------
+	 Vector signal=signal{-1} |  signal[1]=target
+	 x[1]=signal[m]
+	 Vector v=tanh(WW1*x) |  --                  note bias
+	 Vector y=W2*v |  -- no limiter needed on output!
+	 --
+	 Vector error=target-y
+	 Vector deltav=W2%*error*(1-v^2) |  -- backprop
+	 DELTA WW1=lrate2*deltav*x
+	 DELTA W2=lrate2*error*v
+	 --
+	 -----------------------------  stripchart-type display
+	 --
+	 yy=y[1]+0.5*scale |  TARGET=target+0.5*scale
+	 errorx10=10*error[1]-0.5*scale
+	 dispt yy,TARGET,errorx10
+

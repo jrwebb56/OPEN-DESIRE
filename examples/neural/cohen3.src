@@ -1,0 +1,31 @@
+
+
+	 --    Herault/Jutten Algorithm (Cohen et al. IJCNN '91 I-211)
+	 -------------------------------------------------------------
+	 display N1 |  display C8 |  scale=3
+	 nx=2
+	 ARRAY input[nx],x[nx],y[nx],yy[nx],A[nx,nx],W[nx,nx],MASK[nx,nx],f[_
+nx],g[nx]
+	 ------------------------------------------------------------
+	 for i=1 to nx |  for k=1 to nx |  --       create  diagonal mask
+	     MASK[i,k]=1 |  next  |  MASK[i,i]=0 |  next
+	 data 1,0.4,0.9,1 |  read A
+	 TMAX=1 |  NN=8000 |  t=0
+	 w=30
+	 lrate=0.02
+	 drun  |  drun  |  drun
+	 STOP
+	 -----------------------------------------
+	 DYNAMIC
+	 ----------------------------------------
+	 input[1]=0.5*swtch(sin(w*t)) |  input[2]=0.5*cos(4*w*t)
+	 Vector x=A*input |  --          mix 2 signals
+	 --
+	 Vector yy=x-W*y |  Vector y=yy
+	 Vector f=y*y*y |  Vector g=tanh(y) |  -- tan(y) works, too!
+	 DELTA W=lrate*MASK*f*g
+	 --
+	 input2=input[2]-0.5*scale |  y2=y[2]-0.5*scale
+	 x1=x[1]+0.5*scale |  x2=x[2]+0.5*scale
+	 dispt input[1],input2,y[1],y2,x1,x2
+

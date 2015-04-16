@@ -1,0 +1,36 @@
+
+
+	 --                            PRINCIPAL COMPONENTS
+	 -----------------------------------------------------------------
+	 display N1 |  display C8 |  display Q |  scale=4
+	 nx=2 |  --                                  input dimension
+	 ny=2
+	 MM=10 |  -- display only every MMth point
+	 ARRAY input[nx],x[nx],y[ny],error[ny]
+	 ARRAY W[ny,nx]
+	 -----------------------------------------------------------------
+	 for i=1 to ny |  for k=1 to nx
+	     W[i,k]=0.1*ran()
+	     next  |  next
+	 ------
+	 NN=300000
+	 --------------------------------------
+	 a1=-.2 |  a2=0.7
+	 lratep=0.003 |  drun
+	 write "type go to continue" |  STOP
+	 display F
+	 display N16 |  display C17
+	 drun
+	 ----------------------------------------------------------------
+	 DYNAMIC
+	 ----------------------------------------------------------------
+	 v1=a1*sqrt(-2*ln(abs(ran())))*cos(2*PI*abs(ran()))
+	 v2=a2*sqrt(-2*ln(abs(ran())))*cos(2*PI*abs(ran()))
+	 input[1]=v1+v2 |  input[2]=v1-v2
+	 Vector x=input
+	 PLEARN y=W*x;lratep
+	 -----------------------
+	 w11=4*W[1,1] |  w12=4*W[1,2]
+	 w21=4*W[2,1] |  w22=4*W[2,2]
+	 DISPXY x[1],x[2],y[1],y[2],w11,w21,w12,w22
+

@@ -1,0 +1,62 @@
+
+
+	 --       SIMPLE BUTTERWORTH LOW-PASS FILTER
+	 -- H = 1/(s^3 + a[1]s^2 + a[2]s + a[3]) 
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display Q |  --     display
+	 NN=16384 |  DT=0.001 |  TMAX=1024
+	 --
+	 n=3 |  STATE x[n] |  ARRAY a[n],b[n]
+	 L=365 |  n1=16384 |  ARRAY dat[L],inp[n1]
+	 connect 'tmit.dat' as input 3
+	 input #3,dat
+	 disconnect 3
+	 k=1
+	 ------------------------------------------------ 	
+	 --            specify the filter parameters 	 
+	 a[1]=0.1 |  a[2]=0.2 |  a[3]=1
+	 b[1]=0.2 |  b[2]=0.3 |  b[3]=0.5
+	 bb=1 |  --        feedforward coefficient
+	 -------------------------------------------------
+	 for i=1 to n1 |  inp[i]=dat[k] |  k=k+1
+	   if k>L then k=1 |  else proceed  |  next
+	 -- array OUTPUTx gets output samples for FFT
+	 ARRAY OUTPUTx[NN],OUTPUTy[NN]
+	 -------------------------------------------------   
+	 scale=20 |  --       display scale
+	 drun
+	 write 'type go for FFT' |  STOP
+	 -----------------------------------
+	 FFT F,NN,OUTPUTx,OUTPUTy
+	 scale=250000
+	 ---------------------------------------------------
+	 --  create abscissa and ordinate arrays 
+	 --       for interpolated frequency-response plot
+	 NN=8001
+	 ARRAY x1[NN]+OUT1x[NN]=OUTx |  -- extended arrays
+	 ARRAY x2[NN]+OUT1y[NN]=OUTy
+	 --
+	 for i=1 to NN
+	   x1[i]=i |  x2[i]=i
+	   OUT1x[i]=OUTPUTx[i] |  OUT1y[i]=OUTPUTy[i]
+	   next
+	 --
+	 t=1 |  TMAX=10
+	 drun FFT
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 get input=inp |  -- for impulse response
+	 output=x[n]+bb*input |  --      note the feedforward term
+	 Vectr d/dt x=x{-1}+b*input-a*output
+	 dispt output
+	 ----------                                
+	 store OUTPUTx=output |  --   fill FFT array 
+	 --	    
+	 ----------------------------   AMPLITUDE/PHASE DISPLAY
+	    label FFT
+	 xx=func1(t;OUTx) |  yy=func1(t;OUTy) |  --    interpolate
+	 r=sqrt(xx*xx+yy*yy)
+	 phix20K=20000*atan2(yy,xx)-0.5*scale |  -- offset display
+	 dispt r,phix20K
+

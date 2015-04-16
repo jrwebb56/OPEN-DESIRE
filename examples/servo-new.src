@@ -1,0 +1,23 @@
+
+
+	 --                                       A SIMPLE SERVO SI
+	 ------------------------------------------------------------------
+	 scale=2 |  display N1 |  display C8
+	 TMAX=11 |  NN=4000 |  DT=0.0005
+	 ------------------------------------------------------------------
+	 A=0.8 |  g2=2 |  maxtrq=0.85 |  gain=200
+	 w=0.5 |  r=26 |  R=0.6
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 u=A*cos(w*t) |  error=x-u |  --  input and error
+	 V=-gain*error-r*xdot |  --       controller output
+	 torque=maxtrq*tanh(g2*V/maxtrq) |  --   dynamics
+	 d/dt x=xdot |  d/dt xdot=torque-R*xdot
+	 ------------------------------------------------------------      
+	 X=x+0.5*scale |  U=u+0.5*scale
+	 TORQUE=torque-0.5*scale |  --           offset curves
+	 ERROR=error+0.5*scale
+	 dispt X,U,TORQUE,ERROR
+

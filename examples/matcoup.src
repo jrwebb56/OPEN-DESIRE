@@ -1,0 +1,21 @@
+
+
+	 --                             COUPLED OSCILLATORS
+	 --------------------------------------------------
+	 display N1 |  display C8
+	 TMAX=10 |  DT=1/6399 |  NN=6400 |  --         timing
+	 ww=500
+	 k=50 |  --                    coupling coefficient
+	 --------------------------------------------------
+	 STATE x[4] |  ARRAY A[4,4]
+	 data 0,1,0,0;-ww-k,0,k,0;0,0,0,1;k,0,-ww-k,0
+	 read A
+	 x[1]=0.4 |  --                       initial value
+	 --------------------------------------------------
+	 drun
+	 DYNAMIC
+	 --------------------------------------------------
+	 Vectr d/dt x=A*x
+	 X1=x[1]+0.5 |  X3=x[3]-0.5 |  --    offset display
+	 dispt X1,X3
+

@@ -1,0 +1,18 @@
+
+
+	 -- DEADSPACE COMPARATOR W> HYSTERESIS
+	 ------------------------------------------------------------------
+	 DT=0.0001 |  TMAX=1 |  NN=10000 |  scale=2
+	 display N1 |  display C8 |  display R
+	 A=0.4
+	 x=0.2 |  p=2 |  -- initialize
+	 drun
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------   
+	 d/dt x=15*p |  --        triangle waves
+	 step
+	 p=2*sgn(p-x) |  --      square waves
+	 y=deadc(A*y-x) |  --  transfer characteristic
+	 dispxy x,y
+

@@ -1,0 +1,113 @@
+
+
+	 -- NEW CONTROLLER
+	 --                          note membership-function-generator MAC
+	 --                          also simulates linear servo for compar
+	 ------------------------------------------------------------------
+	 --   NEW version of example in Chap. 11, NN and Fuzz Logic
+	 --    by G.A. Korn (MIT Press, 1995), uses DESIRE/2000 compiler
+	 --
+	 ARRAY X$[1],mb$[1] |  --  dummy-argument arrays
+	 --
+	 SUBMODEL fuzzmemb(N$,X$,mb$,input$)
+	   Vector mb$=SAT((X$-input$)/(X$-X${1}))
+	   mbb=mb$[1] |  mcc=mb$[N$-1]
+	   Vector mb$=mb${-1}-mb$
+	   mb$[1]=1-mbb |  mb$[N$]=mcc
+	   end
+	 ---------------------------------------------
+	 --   declare arrays for e, xdot fuzzy-set membership functions
+	 --
+	 N1=5
+	 ARRAY xx1[N1] |  --                   peak ordinates
+	 ARRAY mb1[N1] |  --                 membership functions
+	 -- 
+	 N2=5
+	 ARRAY xx2[N2] |  --                   peak ordinates
+	 ARRAY mb2[N2] |  --                 membership  functions
+	 ----------------------------------------------------
+	 --                                           MEMBERSHIP-PEAK ARRAY
+	 emax=1 |  xdotmax=1
+	 data -2*emax,-0.05*emax,0,0.05*emax,2*emax
+	 data -2*xdotmax,-0.5*xdotmax,0,0.5*xdotmax,2*xdotmax
+	 read xx1,xx2
+	 ------------------------------------------------------------------
+	 A=1.5 |  w=1
+	 B=300 |  maxtrq=1 |  g2=2 |  R=0.6 |  --  servo parameters
+	 k=3500 |  r=20000 |  --        fuzzy-controller parameters
+	 kk=100000 |  rr=1500 |  --        linear-controller parameters
+	 -----------------------------------------------------------------
+	 ARRAY M12[N1,N2]=m12 |  --                joint memberships
+	 ARRAY ruletabl[N1*N2] |  --        fuzzy-controller rule table
+	 --
+	 --                           RULE TABLE
+	 data -8*k-8*r,-8*k-r,-8*k,-8*k+r,-8*k+8*r |  -- high gain for
+	 data -2*k-2*r,-2*k-r,-5*k,-2*k+r,-2*k+2*r |  --    large errors
+	 data -2*r,-0.08*r,0,0.08*r,2*r |  --      and almost no damping 
+	 data 2*k-2*r,2*k-r,5*k,2*k+r,2*k+2*r
+	 data 8*k-8*r,8*k-r,8*k,8*k+r,8*k+8*r
+	 read ruletabl
+	 --------------------------------------------------------------
+	 NN=4000 |  TMAX=10 |  DT=0.001 |  --  simulation-run paramtrs.
+	 scale=0.08
+	 p=A*ran() |  --                          must initialize noise
+	 display N1 |  display C8 |  --       display colors
+	 drun  |  --                                 make a run
+	 write 'type go to see membership functions, go to eee to edit param_
+eters'
+	 STOP
+	 -------------------------------------------------------------=
+	 ARRAY member[N1]
+	 DT=0.00001 |  NN=40000
+	 scale=5 |  TMAX=0.5
+	 qq=-2.5
+	 drun members |  --                      show membership functions
+	 STOP
+	 --------------------------------------------------------------
+	    label eee
+	 edit 370,420,470-500,530-560,630-670,690-710
+	 --------------------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------------------
+	 d/dt pp=-w*pp+p |  d/dt u=-w*u+pp |  -- low-pass noise
+	 e=x-u |  --              				    servo error
+	 --
+	 --                                 compute membership functions
+	 --
+	 invoke fuzzmemb(N1,xx1,mb1,e) |  --    fuzzy sets for e
+	 invoke fuzzmemb(N2,xx2,mb2,xdot) |  -- fuzzy sets for xdot
+	 ---
+	 MATRIX M12=mb1*mb2 |  -- make joint membership functions
+	 DOT Voltage=m12*ruletabl |  --  rule table and singleton defuzz
+	 --
+	 d/dt V=-B*V+Voltage |  --              motor-field buildup
+	 torque=-maxtrq*tanh(g2*V/maxtrq) |  --             servo torque
+	 d/dt x=xdot |  d/dt xdot=torque-R*xdot |  --    servo dynamics
+	 ------------------------------------------------
+	 --                                    linear servo for comparison
+	 ee=xx-u
+	 VOLTAGE=-kk*ee-rr*xxdot |  --                 motor voltage
+	 d/dt VV=-B*VV+VOLTAGE |  --              motor-field buildup 
+	 --
+	 Torque=maxtrq*tanh(g2*VV/maxtrq) |  --             dynamics
+	 d/dt xx=xxdot |  d/dt xxdot=Torque-R*xxdot
+	 --
+	 OUT
+	 p=A*ran() |  --             noise must be sampled
+	 ------------------------------------------------
+	 --            offset curves for runtime stripchart  display
+	 --
+	 X=x+0.5*scale |  U=u+0.5*scale |  ERx20=20*e+0.5*scale
+	 XX=xx-0.5*scale |  UU=u-0.5*scale |  EERx20=20*ee-0.5*scale
+	 dispt X,U,ERx20,XX,UU,EERx20
+	 ------------------------------------------------------------------
+	    label members
+	 d/dt qq=2*scale |  --                                            
+	 invoke fuzzmemb[N1,xx1,mb1,qq) |  --    fuzzy sets for e
+	 Vector member=7.5*mb1-scale |  --    scale and offset display
+	 QQ=2*qq
+	 ------------------------------------------------------
+	 m1=member[1] |  m2=member[2]
+	 m3=member[3] |  m4=member[4] |  m5=member[5]
+	 dispxy QQ,m1,m2,m3,m4,m5
+

@@ -1,0 +1,66 @@
+
+
+	 --           FUNCTION-LEARNING DIODE FUNCTION GENERATOR
+	 -------------------------------------------------------
+	 --                                   Network Definition
+	 --
+	 n=10 |  --         number of pattern pairs for learning
+	 m=10 |  --                    number of linear segments
+	 --
+	 ARRAY x[1],v[m],y[1],error[1]
+	 ARRAY INPUT[n,1],TARGET[n,1]
+	 ARRAY w[1,m],b[m] |  --        segment gains and biases
+	 ARRAY W[1,m],B[m] |  --               duplicate w and b
+	 --
+	 --                                          fill arrays
+	 for i=1 to n
+	   h=i*PI/n |  INPUT[i,1]=-h |  TARGET[i,1]=sin(h)
+	   B[i]=-i*PI/n |  --           initial breakpoint biases
+	   next
+	 --
+	 f1=0 |  --        initialize error-measure accumulation
+	 -------------------------------------------------------
+	 --                            set experiment parameters
+	 crit=1.0E-07
+	 Wgain=0.1 |  Bgain=0.3 |  Ygain=0.9
+	 y0=0 |  --                               initial offset
+	 scale=0.0001 |  NN=16000
+	 --
+	 t=1 |  TMAX=NN-1 |  --                for display scale
+	 display N1 |  --                     set display colors
+	 display R |  --                              thick dots
+	 -------------------------------------------------------
+	 drun  |  --           make a simulation run (NN trials)
+	 -------------
+	 write 'type run to run, go to edit parameters'
+	 STOP
+	 edit 250,260,450-500 |  --   display to edit parameters
+	 -------------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------------
+	 --                                  weight-learning run
+	 iRow=t |  --                use successive input values
+	 Vector x=INPUT# |  xx=x[1]
+	 Vector v=lim(B-xx)
+	 Vector y=w*v+y0
+	 --
+	 Vector error=TARGET#-y
+	 y0=y0+Ygain*error[1]
+	 DELTA W=Wgain*error*v
+	 Vectr delta B=Bgain*w%*error*swtch(B-xx)
+	 --
+	 f1=f1+error[1]*error[1] |  --  accumulate error measure
+	 --                                over n patterns
+	 -------------------------------------------------------
+	 SAMPLE n |  --  execute subsequent code only after n
+	 --                successive trials to update weights
+	 --                         only after n patterns
+	 -------------------------------------------------------
+	 term crit-f1 |  --        terminate run when successful
+	 fsav=f1 |  --                                   save f1
+	 f1=0 |  --                     reset cumulative measure
+	 -------------------------------------------------------
+	 MATRIX w=W |  Vector b=B |  --   update weights, biases
+	 -------------------------------------------------------
+	 FSAV=fsav-scale |  dispt FSAV
+

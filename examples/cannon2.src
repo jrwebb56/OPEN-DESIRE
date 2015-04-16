@@ -1,0 +1,35 @@
+
+
+	 --      CANNONBALL TRAJECTORIES
+	 --         replicated-model study
+	 -----------------------------------------------------
+	 DT=0.008 |  TMAX=100 |  NN=5000
+	 display N1 |  display C8 |  display R
+	 scale=6000
+	 ----------------------------------
+	 R=7.5E-05 |  g=32.2
+	 v0=900 |  --            muzzle velocity
+	 ------------------------------------------------------
+	 n=8
+	 STATE x[n],y[n],xdot[n],ydot[n]
+	 ARRAY v[n],X[n],Y[n]
+	 ------------------------------------------------------
+	 --                              change elevation
+	 for i=1 to n
+	   THETA=10*i*PI/180 |  --  in radians
+	   xdot[i]=v0*cos(THETA)
+	   ydot[i]=v0*sin(THETA)
+	   next
+	 drun  |  --  only one simulation run!
+	 --------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------
+	 Vector v=sqrt(xdot*xdot+ydot*ydot)
+	 Vectr d/dt x=xdot |  Vectr d/dt y=ydot
+	 Vectr d/dt xdot=-R*v*xdot
+	 Vectr d/dt ydot=-R*v*ydot-g
+	 --------------------    runtime trajectory display
+	 Vector X=x-scale
+	 Vector Y=1.5*y-scale
+	 DISPXY X[2],Y[2],X[3],Y[3],X[4],Y[4],X[5],Y[5],X[6],Y[6],X[8],Y[8]
+

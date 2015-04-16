@@ -1,0 +1,16 @@
+
+
+	 -- orbit simulation with one sun
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=2
+	 TMAX=100 |  DT=0.001 |  NN=10000
+	 xdot=0 |  ydot=1 |  x=1 |  y=0
+	 drun
+	 ------------------------------------
+	 DYNAMIC
+	 ------------------------------------
+	 rr=(x^2+y^2)^(-1.5)
+	 d/dt x=xdot |  d/dt y=ydot
+	 d/dt xdot=-x*rr |  d/dt ydot=-y*rr
+	 dispxy x,y
+

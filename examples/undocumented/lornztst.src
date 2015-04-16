@@ -1,0 +1,23 @@
+
+
+	 --             LORENZ ATTRACTOR
+	 --      phase-plane plot of chaos-type nonlinear differential equa
+	 --             checks whether DT is small enough
+	 --------------------------------
+	 display N1 |  display C8 |  irule 1
+	 NN=10000 |  scale=25
+	 DT=0.0004 |  TMAX=19
+	 x=0.0095 |  y=0.001 |  z=0.001
+	 b=28 |  c=2.6667 |  A=10
+	 scale=19
+	 drunr  |  DT=0.01*DT |  display 2 |  display N12 |  drun
+	 ------------------------------
+	 DYNAMIC
+	 ------------------------------
+	 d/dt x=A*(y-x)
+	 d/dt y=x*(b-z)-y
+	 d/dt z=x*y-c*z
+	 -----------------
+	 zz=z-scale
+	 dispxy x,zz
+

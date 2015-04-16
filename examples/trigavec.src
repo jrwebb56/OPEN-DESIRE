@@ -1,0 +1,45 @@
+
+
+	 --                  Vector Model of the TRIGA Pulsed Nuclear React
+	 ------------------------------------------------------------------
+	 --    r is the reactivity in dollars (we change r with time)
+	 --    enp is the power in mw (proportional to neutron density)
+	 --    en0 is the initial power in mw 
+	 --    en = enp/en0 is the normalized power (initial value is 1.0)
+	 --    d[i] (i = 1, 2, ..., 6) are normalized precursor-product den
+	 --    bol = beta/l,  lambda = al[i]  (i = 1, 2, ..., 6)
+	 --    f[i]  (i = 1, 2, ..., 6) are normalized delayed neutron frac
+	 --    alf is the temperature coeff. of reactivity (dollar/cdeg)
+	 --    ak is the reciprocal heat capacity (cdeg/mj)
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display Q |  scale=200
+	 TMAX=0.2 |  NN=5001 |  DT=0.00001
+	 ------
+	 a=2.0 |  b=0.0 |  bol=140.0
+	 alf=0.016 |  ak=12.5 |  gamma=0.0267
+	 en0=0.001
+	 -------
+	 STATE d[6] |  ARRAY al[6],f[6]
+	 --                                                       fill the 
+	 data 0.0124,0.0305,0.111,0.301,1.14,3.01 |  read al
+	 data 0.033,0.219,0.196,0.395,0.115,0.042 |  read f
+	 --
+	 data 1,1,1,1,1,1 |  read d |  --  initial values of
+	 --                                                         precurs
+	 temprt=0 |  en=1.0 |  --                            initial valu
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 r=a+b*t-alf*temprt |  --   b * t is a control-rod input
+	 enp=en0*en
+	 DOT sum=f*d |  --                           note DOT product!
+	 endot=bol*((r-1.0)*en+sum)
+	 omega=endot/en |  enlog=0.4342945*ln(en)
+	 ------------------------------------------------------------------
+	 d/dt temprt=ak*enp-gamma*temprt
+	 d/dt en=endot
+	 Vectr d/dt d=al*(en-d)
+	 -----------------------------------                            
+	 ENP=enp-scale |  dispt ENP
+

@@ -1,0 +1,21 @@
+
+
+	 --        IMPLICIT-FUNCTION COMPUTATION
+	 ------------------------------------------------------------------
+	 display N1 |  display Q |  display C8
+	 TMAX=2.5 |  DT=0.0001 |  NN=3000
+	 w=10
+	 x=0.9
+	 y=x^(1/4) |  --  set correct initial value
+	 drunr
+	 -------------------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------------------
+	 d/dt dummy=0 |  -- dummy differential equation
+	 x=0.4*cos(w*t)+0.5 |  -- must be positive
+	 root=x^(1/4) |  --             for comparison
+	 error=y*y*y*y-x
+	 y=y-0.5*y*y*y*error |  --         optimize
+	 errx1000=1000*(y-root)
+	 dispt x,root,errx1000
+

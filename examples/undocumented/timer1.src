@@ -1,0 +1,9 @@
+
+
+	 n=10000
+	 N1=tim(0)
+	 for i=1 to n
+	   display A
+	   next
+	 N2=tim(0) |  write N2-N1
+

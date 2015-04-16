@@ -1,0 +1,11 @@
+
+
+	 n=5
+	 ARRAY gee[n]
+	 for i=1 to n |  gee[i]=i |  next
+	 connect './gerste/mufti' as output 1
+	 write gee
+	 write ##1,gee
+	 disconnect 1
+	 sh         cat ./gerste/mufti.dat
+

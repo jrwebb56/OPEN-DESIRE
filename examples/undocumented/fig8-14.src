@@ -1,0 +1,40 @@
+
+
+	 --                                              DIGITAL COMB FILTE
+	 ------------------------------------------------------------------
+	 --  H(z)  =  z^n )/(z^n + a[1]) 
+	 --  successive samples of the filter output are stored
+	 --     in an array that is then used to compute the FFT
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 NN=16384
+	 -- 
+	 n=10 |  ARRAY x[n],a[n],b[n]
+	 ARRAY OUTPUTx[NN],OUTPUTy[NN] |  --    for FFT
+	 ------------------------------------------------ 	
+	 --                                                           filte
+	 a[1]=-0.5 |  --                   other a[i],  b[i] default to 0
+	 bb=1 |  --                               feedforward coefficient
+	 --------------------------------------------
+	 t=0 |  --                            (default t0 would be t0 = 1)
+	 drunr  |  --                                                    r
+	 write 'type go for FFT' |  STOP
+	 -----------------------------------
+	 FFT F,NN,OUTPUTx,OUTPUTy |  scale=2.5
+	 drun FOURIER
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 input=swtch(1-t) |  --           produces impulse response
+	 output=x[n]+bb*input |  --   note feedforward term
+	 Vector x=x{-1}+b*input-a*output
+	 store OUTPUTx=output |  --                  fill FFT arrays
+	 dispt output
+	 --	
+	 ----------------------------        AMPLITUDE/PHASE DISPLAY
+	    label FOURIER
+	 get xx=OUTPUTx |  get yy=OUTPUTy |  --  FFT arrays
+	 r=sqrt(xx^2+yy^2)
+	 phi=atan2(yy,xx)-0.5*scale |  --  stripchart display             
+	 dispt r,phi
+

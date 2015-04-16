@@ -1,0 +1,32 @@
+
+
+	 -- Mackey-Glass Time Series
+	 ------------------------------------------------------------
+	 irule 1
+	 TMAX=350 |  DT=0.04 |  NN=TMAX/DT+1
+	 scale=0.75 |  dotscale=6 |  offset=-0.75
+	 a=0.2 |  b=0.1 |  c=10
+	 ARRAY DD[1000] |  --     time-delay buffer
+	 x=10 |  --                              initialize buffer
+	 -----------------------------------------------------------
+	    label restart
+	 display N1 |  display C8 |  display R
+	 write " try tau = 3, 5, 14, 23, 30"
+	 write " type ! to quit"
+	 for i=1 to 1000 |  DD[i]=x |  next
+	 -----------------------------------------------------
+	 input tau
+	 display F
+	 drunr
+	 write 'tau = ';tau
+	 go to restart
+	 -----------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------
+	 tdelay Xd=DD(x,tau
+	 xdot=a*Xd/(1+Xd^c)-b*x
+	 d/dt x=xdot
+	 ----------------------------------------------------------------- 
+	 X=x+offset |  XDOT=dotscale*xdot
+	 dispxy X,XDOT
+

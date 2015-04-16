@@ -1,0 +1,50 @@
+
+
+	 --   NARMAX/GAMMA-LINE PREDICTOR
+	 ------------------------------------------------------------
+	 display N3 |  display C8 |  display R |  scale=4
+	 ------------------------------------------------------------
+	 NN=10000
+	 m=50 |  --                        predictor delay    
+	 nx=10 |  --   number of gamma-line neurons
+	 nf=6 |  --     number of gamma-line neurons
+	 --
+	 --             input and error delay lines, input bias
+	 ARRAY signal[m]
+	 ARRAY x[nx]+x0[1]+feedback[nf]=xx |  x0[1]=1
+	 --                                            network
+	 ARRAY y[1],error[1],deltay[1],WW[1,nx+nf+1]
+	 --
+	 for k=1 to nx+nf+1 |  --      initialize
+	   WW[1,k]=0.1*ran()
+	   next
+	 -------------------------------------    parameters
+	 a=0.8 |  b=0.3
+	 lrate=0.003
+	 Tnoise=0.00 |  --                     try more noise!
+	 mu=0.05 |  --             for gamma delay lines
+	 --
+	 N=8 |  --                          make N training runs
+	 for i=1 to N |  drun  |  next
+	 ---------
+	 write 'type go for prediction tests' |  STOP
+	 lrate=0 |  drun  |  drun  |  -- test runs
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 target=a*sin(0.003*t)+b*cos(0.009*t)
+	 Vector signal=signal{-1} |  signal[1]=target+Tnoise*ran()
+	 Vectr delta x=mu*(x{-1}-x) |  x[1]=signal[m] |  -- gamma lin
+	 Vector y=tanh(WW*xx)
+	 --
+	 Vector error=target-y |  --  error feeds  delay line
+	 Vectr delta feedback=mu*(feedback{-1}-feedback)
+	 feedback[1]=y[1]
+	 -- 			                LMS algorithm
+	 Vector deltay=error*(1-y^2)
+	 DELTA WW=lrate*deltay*xx
+	 --------------------------------------------------      display
+	 errorx5=5*error[1]-0.5*scale
+	 Y=y[1]+0.5*scale |  TARGET=target+0.5*scale
+	 dispt Y,errorx5,TARGET
+

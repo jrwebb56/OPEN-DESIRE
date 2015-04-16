@@ -1,0 +1,50 @@
+
+
+	 --     ELMAN/SOFTMAX CLASSIFIER
+	 --       works only in training mode - no good
+	 ------------------------------------------------------------
+	 display N3 |  display C8 |  display R |  scale=4
+	 NN=5000
+	 ---------------
+	 nv=17 |  --  number of hidden neurons
+	 --  input, bias, hidden layer (context layer)
+	 ARRAY x[1]+x0[1]+v[nv]=xx |  x0[1]=1
+	 ARRAY deltav[nv]
+	 ARRAY y[2],error[2],P[2],target[2]
+	 ARRAY WW1[nv,nv+2],W2[2,nv]
+	 ---------------
+	 for i=1 to nv |  for k=1 to nv+2 |  -- initialize
+	     WW1[i,k]=0.1*ran()
+	     next  |  next
+	 -----------------------------------------------------------
+	 lrate1=0.1 |  lrate2=0.08
+	 noise=0.0
+	 -------------
+	 Switch=1
+	 N=4 |  --                  number of training runs
+	 for i=1 to N |  drun  |  next
+	 ---------
+	 write 'type go for a recall test' |  STOP
+	 Switch=0
+	 lrate1=0 |  lrate2=0 |  drun  |  -- test run
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 switch=swtch(sin(10*t/NN)) |  --  alternate patterns
+	 p=0.8*switch*cos(200*t/NN) |  -- sine waves
+	 q=(1-switch)*sin(100*t/NN) |  --  sine waves
+	 x[1]=p+q+noise*ran()
+	 target[1]=switch |  target[2]=1-switch
+	 -------	
+	 Vector v=tanh(WW1*xx) |  --               includes bias
+	 Vector y=exp(W2*v) |  DOT ysum=y*1 |  -- softmax
+	 Vector P=y/ysum
+	 --
+	 Vector error=Switch*(target-P)
+	 Vector deltav=W2%*error*(1-v^2) |  -- backprop
+	 DELTA WW1=lrate1*deltav*xx
+	 DELTA W2=lrate2*error*v
+	 -----------------------------
+	 X=x[1]+0.7*scale |  errorx1000=1000*(target[1]-P[1])-0.5*scale
+	 dispt X,P[1],errorx1000
+

@@ -1,0 +1,20 @@
+
+
+	 --                                        LINEAR SYSTEM
+	 ------------------------------------------------------------
+	 display N1 |  display C8 |  display Q
+	 TMAX=10 |  DT=0.0001 |  NN=10001
+	 ww=0.8 |  --                        parameter value
+	 x=0.9 |  --                                     initial value
+	 ------------------------------------------------------------
+	 for i=1 to 5 |  -- set parameter values
+	   r=0.2*i
+	   drunr  |  display 2 |  --  don't erase display
+	   next
+	 --------------------------------
+	 DYNAMIC
+	 --------------------------------
+	 d/dt x=xdot
+	 d/dt xdot=-ww*x-r*xdot
+	 dispt x
+

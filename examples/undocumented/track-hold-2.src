@@ -1,0 +1,23 @@
+
+
+	 --               TRACK/HOLD DEMONSTRATION            
+	 --------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 TMAX=15 |  DT=0.001 |  NN=10000 |  scale=10
+	 -------------------------------------------------------
+	 w=6 |  --  signal parameter                    
+	 x=1 |  u=5 |  --                     initial values
+	 p=1 |  -- initialize track/hold state variable
+	 drun
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 d/dt u=udot/2 |  d/dt udot=-u/2 |  --  sine wave
+	 d/dt x=w*p |  --  square/triangle waves
+	 step
+	 p=sgn(p-x)
+	 U=U+swtch(p)*(u-U) |  -- track-hold
+	 ---------------------      stripchart display--
+	 P=p+0.5*scale |  Q=U-0.5*scale
+	 dispt P,Q
+

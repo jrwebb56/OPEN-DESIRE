@@ -1,0 +1,235 @@
+
+
+	 --      RADIAL-BASIS FUNCTION NETWORK
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 cc=10 |  scale=2
+	 N=26 |  nx=25 |  -- number and dimension of patterns
+	 ARRAY input[nx],x[nx]
+	 ARRAY INPUT[N,nx],TARGET[N,N]
+	 ARRAY f[N]+f0[1]=ff |  f0[1]=1 |  --  N RBFs and bias 
+	 ARRAY P[N,nx],pp[N]
+	 ARRAY W[N,N+1] |  --               weights include biases
+	 ARRAY v[N],error[N],q[N]
+	 ARRAY y[nx],yy[nx],INput[nx]
+	 ------------------------------------------------------------------
+	 --	                                      set parameters
+	 lrate=3 |  a=0.05
+	 Tnoise=0.15 |  Rnoise=0.1
+	 NN=5000
+	 ----------------------------   input-pattern rows
+	 --                         A
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 --                         B
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,-1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         C
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         D
+	 data 1,1,1,1,-1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,-1
+	 --                         E
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,1,1,1,1
+	 --                         F
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,1,1,1,-1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,-1
+	 --                         G
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         H
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 --                         I
+	 data -1,1,1,1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,1,1,1,-1
+	 --                         J
+	 data -1,1,1,1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,1,1,-1,-1
+	 --                         K
+	 data 1,-1,-1,1,1
+	 data 1,-1,1,1,-1
+	 data 1,1,-1,-1,-1
+	 data 1,-1,1,1,-1
+	 data 1,-1,-1,1,1
+	 --                         L
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,-1
+	 data 1,1,1,1,1
+	 --                         M
+	 data 1,1,-1,1,1
+	 data 1,-1,1,-1,1
+	 data 1,-1,1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 --                         N
+	 data 1,-1,-1,-1,1
+	 data 1,1,-1,-1,1
+	 data 1,-1,1,-1,1
+	 data 1,-1,-1,1,1
+	 data 1,-1,-1,-1,1
+	 --                         O
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         P
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,-1
+	 --                         Q
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 data -1,-1,1,-1,-1
+	 --                         R
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 data 1,-1,1,1,-1
+	 data 1,-1,-1,1,1
+	 --                         S
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,1,1,1,1
+	 data -1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         T
+	 data 1,1,1,1,1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,1,1,1,-1
+	 --                         U
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         V
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data -1,1,-1,1,-1
+	 data -1,-1,1,-1,-1
+	 --                         W
+	 data 1,-1,-1,-1,1
+	 data 1,-1,1,-1,1
+	 data 1,-1,1,-1,1
+	 data 1,1,-1,1,1
+	 data 1,1,-1,1,1
+	 --                         X
+	 data 1,-1,-1,-1,1
+	 data -1,1,-1,1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,1,-1,1,-1
+	 data 1,-1,-1,-1,1
+	 --                         Y
+	 data 1,-1,-1,-1,1
+	 data -1,1,-1,1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 --                         Z
+	 data 1,1,1,1,1
+	 data -1,-1,-1,1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,1,-1,-1,-1
+	 data 1,1,1,1,1
+	 ----------------------
+	 read INPUT
+	 MATRIX TARGET=1 |  --  (binary-classifier rows)
+	 ------------------------------------------------------------------
+	 ---     template matrix P generates squared radii
+	 MATRIX P=INPUT
+	 for k=1 to N
+	   pp[k]=0
+	   for j=1 to nx |  pp[k]=pp[k]+P[k,j]^2 |  next
+	   next
+	 ----------------------------------------------------------------
+	 --                  train radial-basis-function network
+	 drun
+	 ---------------------------------------------------------------- 
+	 write 'type go for successive recall runs' |  STOP
+	 display F
+	 ----------
+	 NN=2
+	 for i=1 to N
+	   drun RECALL
+	   write v |  -- show probabilities
+	   --  STOP
+	   for k=1 to 16000 |  write "wait" |  next
+	   next
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 iRow=t |  Vector x=INPUT#+Tnoise*ran()
+	 --
+	 --       rr=xx -2* P*x + pp is the vector of squared radii
+	 DOT xx=x*x |  Vector f=exp(a*(2*P*x-xx-pp))
+	 -- 
+	 --                   softmax radial-basis-function expansion 
+	 Vector v=exp(W*ff) |  DOT vsum=v*1
+	 Vector v=v/vsum |  -- probability estimate
+	 ------------------------------------------------
+	 Vector error=TARGET#-v
+	 DELTA W=lrate*error*ff |  -- LMS algorithm
+	 DOT enormsq=error*error
+	 -- 
+	 ENORMSQ=enormsq-scale |  -- offset display
+	 dispt ENORMSQ
+	 ----------------------------------------
+	    label RECALL
+	 --
+	 iRow=i |  Vector input=INPUT#
+	 Vector x=input+Rnoise*ran()
+	 DOT xx=x*x |  Vector f=exp(a*(2*P*x-xx-pp))
+	 Vector v=exp(W*ff) |  DOT vsum=v*1
+	 Vector v=v/vsum |  -- probability estimate
+	 --
+	 Vector q^=v |  Vector q=swtch(q) |  -- binary selector
+	 Vector yy=INPUT%*v
+	 Vector y=INPUT%*q |  -- associative memory
+	 ---------------------------------------------------------------
+	 Vector INput=cc*input |  Vector x=2*cc*x
+	 Vector yy=2*cc*yy |  Vector y=0.5*cc*y
+	 SHOW  |  SHOW INput,5 |  SHOW x,5 |  SHOW yy,5 |  SHOW y,5
+

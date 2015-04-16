@@ -1,0 +1,44 @@
+
+
+	 --   2-LAYER BACKPROPAGATION NETWORK
+	 ------------------------------------------------------------------
+	 display Q |  display N1 |  display C8 |  scale=0.5
+	 --
+	 nx=1 |  ny=1
+	 nv=29 |  --                       number of hidden neurons
+	 --                         
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=1 |  --       unity bias term
+	 ARRAY v[nv],y[ny],target[ny],error[ny],delta[nv]
+	 ARRAY WW1[nv,nx+1],W2[ny,nv],Dww1[nv,nx+1],Dw2[ny,nv]
+	 --
+	 --                         random initial weights "break symmetry"
+	 for i=1 to nv
+	   WW1[i,1]=0.2*ran() |  WW1[i,2]=0.2*ran() |  W2[1,i]=0.2*ran()
+	   next
+	 ------------------------------------------------------------------
+	 --                                   set experiment parameters
+	 lrate1=0.7 |  lrate2=0.1
+	 mom1=0.4 |  mom2=0.4
+	 NN=100000
+	 ----
+	 for i=1 to 5 |  drun  |  next  |  --  training runs
+	 display R
+	 lrate1=0 |  lrate2=0 |  NN=50000 |  -- test run
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 x[1]=1.1*ran() |  target[1]=0.4*cos(2*x[1]) |  -- input, target
+	 --
+	 Vector v=tanh(WW1*xx) |  --  bias can be included in W2$
+	 Vector y=W2*v
+	 ----------------------------------------
+	 Vector error=target-y
+	 Vector delta=W2%*error*(1-v^2)
+	 MATRIX Dww1=lrate1*delta*xx+mom1*Dww1
+	 MATRIX Dw2=lrate2*error*v+mom2*Dw2
+	 DELTA WW1=Dww1 |  DELTA W2=Dw2
+	 --                                                                
+	 ABSERRx100=100*abs(error[1])-scale |  Xin=scale*x[1]
+	 dispxy Xin,target[1],y[1],ABSERRx100
+

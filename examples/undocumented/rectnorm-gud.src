@@ -1,0 +1,33 @@
+
+
+	 -- RECT-WINDOW AMPLITUDE DISTRIBUTION
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=1/4
+	 n=10000 |  --                     sample size
+	 ARRAY X[n],f[n]
+	 h=0.3 |  --  window width/2  (rect function)
+	 --
+	 NN=n
+	 drun  |  --                           measurememt run
+	 ---------------------------------------------
+	 maxx=4
+	 NN=10000
+	 drunr READOUT
+	 -----------------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------------
+	 --                                           measurement run
+	 --
+	 x=sqrt(-2*ln(abs(ran())))*cos(2*PI*abs(ran()))
+	 store X=x
+	 ----------------------------------------------------------
+	    label READOUT
+	 --
+	 xx=maxx*ran() |  --     scaled display sweep
+	 Vector f=rect((X-xx)/h)/(2*n*h)
+	 DOT F=f*1
+	 --
+	 normal=exp(-0.5*xx*xx)/sqrt(2*PI)-scale
+	 F=F-scale |  xx=xx*scale/maxx
+	 dispxy xx,F,normal
+

@@ -1,0 +1,19 @@
+
+
+	 --                             A HOST/PARASITE PROBLEM
+	 ------------------------------------------------------       
+	 display N1 |  display C8
+	 TMAX=1600 |  DT=0.01 |  NN=5000 |  scale=800
+	 k1=0.05 |  k2=0.1 |  k3=2.0E-04 |  k4=2.0E-04
+	 a=0.00001 |  b=0.000012
+	 host=100 |  parasite=200 |  --          initial values
+	 drun
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 d/dt host=(k1-k4*parasite-a*host)*host
+	 d/dt parasite=(-k2+k3*host-b*parasite)*parasite
+	 --
+	 HOST=host-scale |  PARASITE=parasite-scale
+	 dispt HOST,PARASITE |  --       scaled, offset display
+

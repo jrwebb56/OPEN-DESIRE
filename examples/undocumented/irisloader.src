@@ -1,0 +1,16 @@
+
+
+	 --  IRIS- PATTERN LOADER
+	 --------------------------------------------------------------
+	 nx=4 |  ny=3 |  N=114
+	 ARRAY DATA[N,nx+ny]
+	 -------------------------------------------------------------
+	 connect './iris/iristrain.txt' as input 3
+	 input #3,DATA
+	 disconnect 3
+	 write DATA
+	 -- STOP
+	 connect './iris/data.txt' as output 2
+	 write ##2,DATA
+	 disconnect 2
+

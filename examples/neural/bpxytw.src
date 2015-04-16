@@ -1,0 +1,64 @@
+
+
+	 --           FUNCTION-LEARNING BACKPROPAGATION NETWORK
+	 -- slowed down for good display (increase gains as needed)
+	 -------------------------------------------------------
+	 m1=8 |  m2=7 |  --             number of hidden neurons
+	 --
+	 ARRAY x[1],v1[m1],v2[m2],y[1]
+	 ARRAY error[1],v1delta[m1],v2delta[m2],ydelta[1]
+	 ARRAY w1[m1,1],w2[m2,m1],w3[1,m2]
+	 ARRAY b1[m1],b2[m2]
+	 ARRAY W1[m1,1],W2[m2,m1],W3[1,m2] |  --     duplicates
+	 ARRAY B1[m1],B2[m2]
+	 --                                          initialize
+	 for i=1 to m1
+	   W1[i,1]=ran() |  B1[i]=ran()
+	   for k=1 to m2
+	     W2[k,i]=ran() |  next  |  next
+	 for k=1 to m2 |  W3[1,k]=ran() |  B2[k]=ran()
+	   next
+	 --
+	 -------------------------------------------------------
+	 --                            set experiment parameters
+	 W1gain=.04 |  B1gain=.04
+	 W2gain=.01 |  B2gain=.05
+	 W3gain=.01 |  Ygain=.01
+	 Y0=0 |  --                               initial offset
+	 NN=20000 |  scale=2 |  MM=5 |  -- MM n eeded for Ubuntu
+	 --
+	 display N1 |  display C8 |  --         set display colors
+	 drun
+	 write "type go to continue" |  STOP
+	 drun  |  STOP
+	 -------------------------------------------------------
+	    label eee
+	 edit 230,260,440-510,1012
+	 -------------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------------
+	 x1=ran() |  Vector x=x1
+	 Vector v1=tanh(W1*x+B1)
+	 Vector v2=tanh(W2*v1+B2)
+	 Vector y=W3*v2+Y0
+	 --
+	 target=0.8*sin(3*x1)
+	 Vector error=target-y
+	 Vector ydelta=error
+	 Vector v2delta=W3%*ydelta*(1-v2*v2)
+	 Vector v1delta=W2%*v2delta*(1-v1*v1)
+	 --
+	 Y0=Y0+Ygain*ydelta[1]
+	 Vectr delta B2=B2gain*v2delta
+	 Vectr delta B1=B1gain*v1delta
+	 --
+	 DELTA W1=W1gain*v1delta*x
+	 DELTA W2=W2gain*v2delta*v1
+	 DELTA W3=W3gain*ydelta*v2
+	 --
+	 y1=y[1]+0.5*scale |  TARGET=target+0.5*scale
+	 v11=0.5*(v1[1]-scale) |  v21=0.5*(v2[1]-scale) |  X1=2*x1
+	 v22=0.5*(v2[2]-scale)
+	 ERRORx50=50*error[1]
+	 dispxy X1,TARGET,v11,v21,v22,y1,ERRORx50
+

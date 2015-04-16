@@ -1,0 +1,81 @@
+
+
+	 --   SPIRAL-LEARNING CLASSIFIER NETWORK
+	 ------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 -- 
+	 N=194 |  -- number of patterns
+	 n=2 |  -- number of categories
+	 nx=2 |  -- pattern dimension
+	 nv=232 |  -- hidden-layer dimension
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=1
+	 ARRAY v1[nv]+v0[1]=v |  v0[1]=1
+	 ARRAY y[n],error[n],P[n]
+	 ARRAY deltav[nv+1]
+	 ARRAY INPUT[N,nx],TARGET[N,n]
+	 ARRAY X[nx]
+	 ------------------	 
+	 --  make 97 patterns for each of two spirals
+	 --	 
+	 ARRAY r[N/2],phi[N/2]
+	 for k=1 to N/2
+	   r[k]=0.8*(7+k)/104 |  phi[k]=PI*(97-k)/16
+	   INPUT[2*k,1]=r[k]*cos(phi[k]) |  INPUT[2*k,2]=r[k]*sin(phi[k])
+	   INPUT[2*k-1,1]=-INPUT[2*k,1] |  INPUT[2*k-1,2]=-INPUT[2*k,2]
+	   TARGET[2*k,1]=1 |  TARGET[2*k,2]=0
+	   TARGET[2*k-1,1]=0 |  TARGET[2*k-1,2]=1
+	   next
+	 ---------------
+	 -- connection weights
+	 ARRAY W1[nv+1,nx+1],W2[n,nv+1]
+	 ARRAY Dw1[nv+1,nx+1],Dw2[n,nv+1]
+	 --
+	 --   random initial weights "break symmetry"
+	 for i=1 to nv+1 |  for k=1 to nx+1
+	     W1[i,k]=ran() |  next  |  next
+	 for i=1 to n |  for k=1 to nv+1
+	     W2[i,k]=ran() |  next  |  next
+	 ------------------------------------------------------------ 
+	 --                                          set   parameters
+	 lrate1=0.2 |  lrate2=0.06
+	 mom1=0.3 |  mom2=0.3
+	 Tnoise=0 |  Rnoise=0
+	 ------------------------------------------------------------
+	 NN=4000 |  --                                         train
+	 drun
+	 write "type go to continue" |  STOP
+	 ------------------------------------------------------------
+	 --                              run with test input (recall)
+	 NN=5000 |  t=1
+	 drun RECALL
+	 ------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------	 
+	 --                                                       network
+	 iRow=abs(ran())*17
+	 Vector x=INPUT#+Tnoise*ran()
+	 --
+	 Vector v=tanh(W1*xx)
+	 Vector y=exp(0.5*W2*v) |  DOT ysum=y*1
+	 Vector P=y/ysum
+	 --------------------------------------       BACKPROP
+	 Vector error=TARGET#-P
+	 Vector deltav=W2%*error*(1-v^2)
+	 --
+	 --    "momentum" adds part of last change
+	 MATRIX Dw1=lrate1*deltav*xx+mom1*Dw1
+	 MATRIX Dw2=lrate2*error*v+mom2*Dw2
+	 DELTA W1=Dw1 |  DELTA W2=Dw2
+	 --
+	 DOT enormsqr=error*error |  MSQERR=enormsqr-scale
+	 dispt MSQERR |  --    offset and display error measure
+	 ------------------------------------------------------------------
+	    label RECALL
+	 --
+	 Vector x=ran() |  Vector X=x
+	 Vector v=tanh(W1*xx)
+	 Vector y=exp(W2*v) |  DOT ysum=y*1
+	 Vector P=y/ysum
+	 Vector X=P[2]*X
+	 dispxy X[1],X[2]
+

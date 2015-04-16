@@ -1,0 +1,22 @@
+
+
+	 --      COMPLEX FREQUENCY RESPONSE PLOT
+	 --                   Z = R + j(wL-1/wC)
+	 ---------------------------------------
+	 display R
+	 A=3 |  --                     log scale
+	 b=0.0002 |  --  amplitude display scale
+	 c=0.4 |  --          phase display scale
+	 R=1000 |  --                       Ohms
+	 L=1 |  --                       Henries
+	 C=1.0E-06 |  --                  Farads
+	 ---------------------------------------
+	 COMPLEX Z
+	 display A
+	 for w=100 to 10000 step 50
+	   Z=R+j*(w*L-1/(w*C))
+	   plot log(w)-A,b*Cabs(Z)-0.999,1
+	   plot log(w)-A,c*Arg(Z),2
+	   next
+	 STOP
+

@@ -1,0 +1,69 @@
+
+
+	 --  SOFTMAX PATTERN CLASSIFIER
+	 --     estimates a posteriori probabilities
+	 --     implements associative memory
+	 ------------------------------------------------------------------
+	 cc=14 |  display N1 |  display C8 |  display R
+	 nx=25 |  N=26
+	 ARRAY input[nx],x[nx]
+	 ARRAY INPUT[N,nx],TARGET[N,N]
+	 ARRAY P[N],q[N],y[nx],yy[nx],W[N,nx]
+	 ARRAY error[N]
+	 --
+	 for i=1 to N |  for k=1 to nx |  -- initialize W
+	     W[i,k]=ran() |  next  |  next
+	 --
+	 MATRIX TARGET=1 |  --  (binary-classifier rows)
+	 -------------------------------------------------------------
+	 connect './/pattern//alphabet.txt' as input 2
+	 input #2,INPUT
+	 disconnect 2
+	 ------------------------
+	 NN=2000
+	 lrate=2 |  Tnoise=0 |  Rnoise=0.9
+	 drunr
+	 write 'type go to show effect of Tnoise!' |  STOP
+	 --                                                            
+	 for i=1 to N |  for k=1 to nx |  --    re-initialize W
+	     W[i,k]=ran() |  next  |  next
+	 Tnoise=0.5 |  Rnoise=0.9
+	 drun
+	 write 'type go for successive recall runs' |  STOP
+	 display F
+	 ----------
+	 NN=2
+	 for i=1 to N
+	   drun RECALL
+	   for k=1 to 5000 |  write "wait" |  next
+	   next
+	 ---------------------------------------------
+	 DYNAMIC
+	 ----------------------------------------
+	 iRow=t |  Vector x=INPUT#+Tnoise*ran()
+	 Vector P=exp(W*x) |  DOT Psum=P*1
+	 Vector P=P/Psum |  -- probability estimate
+	 ------------------------------------------------
+	 Vector error=TARGET#-P
+	 DELTA W=lrate*error*x |  -- LMS algorithm
+	 DOT enormsqr=error*error
+	 -- 
+	 msqavg=msqavg+(enormsqr-msqavg)/50
+	 ENORMSQR=0.4*enormsqr
+	 MSQAVG=msqavg-scale
+	 dispt MSQAVG,ENORMSQR
+	 ----------------------------------------
+	    label RECALL
+	 iRow=i
+	 Vector input=INPUT#
+	 Vector x=input+Rnoise*ran()
+	 Vector P=exp(W*x) |  DOT Psum=P*1
+	 Vector P=P/Psum |  -- probability estimate
+	 Vector q^=P |  Vector q=swtch(q) |  -- binary selector
+	 Vector yy=INPUT%*P
+	 Vector y=INPUT%*q |  -- associative memory
+	 -------------------------------------------------------
+	 Vector input=cc*input |  Vector x=cc*x
+	 Vector yy=cc*yy |  Vector y=cc*y
+	 SHOW  |  SHOW input,5 |  SHOW x,5 |  SHOW yy,5 |  SHOW y,5
+

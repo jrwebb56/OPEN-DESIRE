@@ -1,0 +1,43 @@
+
+
+	 --                           2D PARZEN-WINDOW 
+	 -----------------------------------------------------------
+	 display N1 |  display C16 |  display R |  scale=1.2
+	 n=500
+	 ARRAY X[n],Y[n],fxy[n]
+	 Ascale=0.05
+	 h=0.07 |  --                   Parzen-window width
+	 alpha=-1/(2*h*h)
+	 beta=Ascale/(2*n*PI*h*h)
+	 ------------------------------------------------
+	 sx=0.2 |  sy=0.2 |  --  distribution parameters
+	 ------------------------------------------------
+	 NN=n |  TMAX=40
+	 drun MEASURE
+	 ---------------------------------------------
+	 TMAX=1 |  NN=150
+	 delx=-0.3 |  dely=-scale |  dd=0.01
+	 for y=-1 to 0 step dd
+	   t=0
+	   delx=delx+0.005 |  dely=dely+dd
+	   drun
+	   display 2
+	   next
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 --     compute results: 2D Parzen window
+	 --
+	 x=ran() |  --                               display sweep
+	 Vector fxy=beta*exp(alpha*((x-X)^2+(y-Y)^2))
+	 DOT Fxy=fxy*1 |  -- average
+	 -----------------------------------------------------------
+	 xx=x+delx |  FFF=6*Fxy+dely |  -- 3-D display
+	 dispxy xx,FFF
+	 -------------------------------------------------------------
+	 --                                           measurement run
+	    label MEASURE
+	 x=sx*gauss(0)
+	 y=sy*gauss(0)
+	 store X=x |  store Y=y
+

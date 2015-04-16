@@ -1,0 +1,46 @@
+
+
+	 --            FUNCTION-LEARNING BACKPROPAGATION NETWORK
+	 -------------------------------------------------------
+	 N=7 |  --              number of table entries to learn
+	 n=8 |  --                      number of hidden neurons
+	 ARRAY x[1],v[n],y[1],INPUT[N,1],TARGET[N,1]
+	 ARRAY error[1],vdelta[n],ydelta[1]
+	 ARRAY W2[n,1],W3[1,n],B2[n] |  --    weights and biases
+	 --
+	 for i=1 to N |  --                          fill arrays
+	   f=(2*i-N-1)/(N-1)
+	   INPUT[i,1]=f |  TARGET[i,1]=cos(3*f)
+	   next
+	 for i=1 to n |  W2[i,1]=ran() |  W3[1,i]=ran() |  next
+	 -------------------------------------------------------
+	 --                            set experiment parameters
+	 lrate2=0.15 |  lrate3=0.15
+	 B3=0 |  --                               initial offset
+	 --------------------------------
+	 NN=80000 |  scale=0.1
+	 display N1 |  display Q |  --       colors, small dots
+	 drun  |  --           make a simulation run (NN trials)
+	 scale=1
+	 drun RECALL
+	 -------------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------------
+	 iRow=t |  Vector x=INPUT# |  --   successive input values
+	 Vector v=tanh(W2*x+B2)
+	 Vector y=tanh(W3*v+B3)
+	 -------------
+	 Vector error=TARGET#-y
+	 Vector ydelta=error-error*y*y
+	 Vector vdelta=W3%*ydelta-W3%*ydelta*v*v
+	 -------------
+	 DELTA W2=lrate2*vdelta*x |  DELTA W3=lrate3*ydelta*v
+	 Vectr delta B2=lrate2*vdelta |  B3=B3+lrate3*ydelta[1]
+	 -------------------------------------------------------
+	 dispt error[1]
+	 ------------------------------------------------------
+	    label RECALL
+	 x[1]=ran() |  target=cos(3*x[1])
+	 Vector v=tanh(W2*x+B2) |  Vector y=tanh(W3*v+B3)
+	 dispxy x[1],y[1],target
+

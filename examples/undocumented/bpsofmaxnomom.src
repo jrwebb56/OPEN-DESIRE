@@ -1,0 +1,252 @@
+
+
+	 -- BACKPROP PATTERN CLASSIFIER
+	 --     implements associative memory
+	 --    can use Softmax for optimization, probabilities
+	 --------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 nx=25 |  -- pattern dimension (5x5 grid)
+	 N=26 |  -- number of patterns (A to Z)
+	 nv=32 |  -- hidden-layer dimension - 1
+	 ARRAY INPUT[N,nx] |  -- prototype-pattern array
+	 ARRAY TARGET[N,N] |  -- binary-selector-pattern array
+	 --
+	 -------------------  network layers
+	 ARRAY input[nx],INput[nx],x[nx]+x0[1]=xx |  x0[1]=1
+	 ARRAY v1[nv]+v0[1]=v |  v0[1]=1
+	 ARRAY y[N],P[N],s[nx]
+	 ------------------------------------------- connection weights
+	 ARRAY W1[nv+1,nx+1],W2[N,nv+1]
+	 ---------------------------------------------------   error measur
+	 ARRAY error[N],ERROR[N]
+	 ARRAY deltav[nv+1],deltay[N]
+	 -----------------------------------------------------------------
+	 --   random initial weights "break symmetry"
+	 --
+	 for i=1 to nv+1 |  for k=1 to nx+1
+	     W1[i,k]=ran() |  next  |  next
+	 for i=1 to N |  for k=1 to nv+1
+	     W2[i,k]=ran() |  next  |  next
+	 --
+	 -----------------------------------------    input patterns
+	 --                         A
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 --                         B
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,-1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         C
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         D
+	 data 1,1,1,1,-1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,-1
+	 --                         E
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,1,1,1,1
+	 --                         F
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,1,1,1,-1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,-1
+	 --                         G
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         H
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 --                         I
+	 data -1,1,1,1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,1,1,1,-1
+	 --                         J
+	 data -1,1,1,1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,1,1,-1,-1
+	 --                         K
+	 data 1,-1,-1,1,1
+	 data 1,-1,1,1,-1
+	 data 1,1,-1,-1,-1
+	 data 1,-1,1,1,-1
+	 data 1,-1,-1,1,1
+	 --                         L
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,-1
+	 data 1,1,1,1,1
+	 --                         M
+	 data 1,1,-1,1,1
+	 data 1,-1,1,-1,1
+	 data 1,-1,1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 --                         N
+	 data 1,-1,-1,-1,1
+	 data 1,1,-1,-1,1
+	 data 1,-1,1,-1,1
+	 data 1,-1,-1,1,1
+	 data 1,-1,-1,-1,1
+	 --                         O
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         P
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,-1
+	 --                         Q
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 data -1,-1,1,-1,-1
+	 --                         R
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 data 1,-1,1,1,-1
+	 data 1,-1,-1,1,1
+	 --                         S
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,1,1,1,1
+	 data -1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         T
+	 data 1,1,1,1,1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,1,1,1,-1
+	 --                         U
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         V
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data -1,1,-1,1,-1
+	 data -1,-1,1,-1,-1
+	 --                         W
+	 data 1,-1,-1,-1,1
+	 data 1,-1,1,-1,1
+	 data 1,-1,1,-1,1
+	 data 1,1,-1,1,1
+	 data 1,1,-1,1,1
+	 --                         X
+	 data 1,-1,-1,-1,1
+	 data -1,1,-1,1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,1,-1,1,-1
+	 data 1,-1,-1,-1,1
+	 --                         Y
+	 data 1,-1,-1,-1,1
+	 data -1,1,-1,1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 --                         Z
+	 data 1,1,1,1,1
+	 data -1,-1,-1,1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,1,-1,-1,-1
+	 data 1,1,1,1,1
+	 --------------------------------------------
+	 read INPUT
+	 --
+	 MATRIX TARGET=1 |  --               (one-of-N classifier)
+	 ------------------------------------------------------------------
+	 --                                set experiment parameters
+	 lrate1=.04 |  lrate2=.02
+	 scale=1
+	 NN=1000
+	 --
+	 Tnoise=0.35 |  Rnoise=0.35
+	 cc=20
+	 NN=4000
+	 --------------------------------------------------------
+	 drun
+	 write 'type go for successive recall runs'
+	 STOP
+	 display F
+	 ----------
+	 NN=2 |  restore
+	    label recall
+	 for i=1 to N
+	   read input
+	   drun RECALL
+	   write P |  -- show probabilities
+	   write 'type go for successive recall runs'
+	   STOP
+	   next
+	 restore  |  go to recall
+	 ---------------------------------------------
+	 DYNAMIC
+	 ----------------------------------------
+	 -- network
+	 iRow=t |  Vector input=INPUT#
+	 Vector x=input+Tnoise*ran()
+	 --
+	 Vector v=tanh(W1*xx)
+	 Vector y=exp(W2*v) |  DOT ysum=y*1
+	 Vector P=y/ysum
+	 --
+	 --------------------------------------       BACKPROP
+	 Vector error=TARGET#-P
+	 Vector deltay=error
+	 Vector deltav=W2%*deltay*(1-v^2)
+	 --
+	 DELTA W1=lrate1*deltav*xx
+	 DELTA W2=lrate2*deltay*v
+	 --
+	 DOT enormsqr=error*error
+	 msqavg=msqavg+(enormsqr-msqavg)/300
+	 msqavgx4=4*msqavg-scale |  -- offset display
+	 dispt msqavgx4
+	 ------------------------------------------------------------------
+	    label RECALL
+	 --
+	 Vector x=input+Rnoise*ran()
+	 Vector v=tanh(W1*xx)
+	 Vector y=exp(W2*v) |  DOT ysum=y*1
+	 Vector P=y/ysum
+	 ------------------------------------------------
+	 Vector s=INPUT%*P |  -- associative memory
+	 -------------------------------------------------------
+	 Vector INput=2*cc*input |  Vector x=cc*x |  Vector s=cc*s
+	 SHOW  |  SHOW INput,5 |  SHOW x,5 |  SHOW s,5
+

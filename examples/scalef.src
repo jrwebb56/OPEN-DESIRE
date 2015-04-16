@@ -1,0 +1,33 @@
+
+
+	 --                  AUTOMATIC DISPLAY SCALIN
+	 ------------------------------------------------------------------
+	 TMAX=30 |  DT=0.001 |  NN=4500 |  --      timing
+	 display N1 |  display C8
+	 scale=2.5 |  --                 scaling run scale for 
+	 ARRAY XD[NN] |  --       array stores display values
+	 min=1.0E+30 |  MAX=-1.0E+30 |  --     initial settings
+	 --------------------------------------------------------
+	 A=0.3 |  --     parameter and initial value
+	 x=0.2
+	 drunr  |  --                  scaling run
+	 -------------------------------------------------------
+	 write "type go to continue"
+	 STOP
+	 scale=MAX
+	 drun SCALED
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 d/dt x=xdot |  d/dt xdot=-x+A*(1-x*x)*xdot
+	 -----------
+	 OUT
+	 MAX=abs(xdot)+lim(MAX-abs(xdot))
+	 min=xdot-lim(xdot-min)
+	 store XD=xdot
+	 dispt xdot,MAX,min
+	 --------------------------------------------------------
+	    label SCALED
+	 get xdot=XD
+	 dispt xdot
+

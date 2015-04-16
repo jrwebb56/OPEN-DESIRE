@@ -1,0 +1,64 @@
+
+
+	 --                                 XOR NETWORK, BACKPROP
+	 ------------------------------------------------------------------
+	 display N16 |  display C17 |  display R |  scale=2
+	 nx=2 |  --                    number of network inputs
+	 nv=7 |  --         number of hidden-layer neurons
+	 N=4 |  --     
+	 --
+	 ARRAY INPUT[N,nx],TARGET[N,1]
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=1
+	 ARRAY v[nv],deltav[nv]
+	 ARRAY y[1],deltay[1],error[1]
+	 ARRAY WW1[nv,nx+1],W2[1,nv]
+	 --
+	 for i=1 to nv |  --                                    initialize
+	   for k=1 to nx+1
+	     WW1[i,k]=0.5*ran() |  next
+	   W2[1,i]=0.5*ran()
+	   next
+	 ----------------------------                           fill arrays
+	 data 0,0;0,1;1,0;1,1 |  read INPUT
+	 data 1,0,0,1 |  read TARGET
+	 ------------------------------------------------------
+	 --                set experiment parameters
+	 lrate1=6 |  lrate2=4
+	 NN=2000
+	 drunr  |  --         make a simulation run
+	 write 'type go for a recall test' |  STOP
+	 ----
+	 NN=6 |  TMAX=NN-1
+	 drun RECALL
+	 write 'type go to see weights' |  STOP
+	 write WW1,W2
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 --                                            weight-learning run
+	 iRow=t |  Vector x=INPUT#
+	 Vector v=sigmoid(WW1*xx)
+	 Vector y=sigmoid(W2*v)
+	 --
+	 Vector error=TARGET#-y |  --          backprop
+	 Vector deltay=error*y*(1-y)
+	 Vector deltav=W2%*deltay*v*(1-v)
+	 DELTA WW1=lrate1*deltav*xx
+	 DELTA W2=lrate2*deltay*v
+	 --
+	 DOT enormsqr=error*error
+	 -----------------                        offset display
+	 ERROR=error[1]+0.5*scale
+	 msqavg=msqavg+(enormsqr-msqavg)/25
+	 MSQAVG=5*msqavg-scale
+	 dispt MSQAVG,ERROR
+	 -------------------------------------------------------------
+	 --                                     test run (no learning)
+	    label RECALL
+	 iRow=t
+	 Vector x=INPUT#
+	 Vector v=SAT(WW1*xx)
+	 Vector y=SAT(W2*v)
+	 --------------------------------------
+	 type x[1],x[2],y[1]
+

@@ -1,0 +1,17 @@
+
+
+	 TMAX=1
+	 display N1 |  display C8
+	 NN=3
+	 ARRAY x[25]
+	 data 1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9,1,2,3,14,5
+	 data 1,2,3,4,5,6,7,8
+	 read x
+	 drun
+	 DYNAMIC
+	 SHOW
+	 SHOW x,2
+	 SHOW x
+	 SHOW x,9
+	 SHOW x,5
+

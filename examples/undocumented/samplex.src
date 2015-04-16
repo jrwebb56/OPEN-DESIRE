@@ -1,0 +1,25 @@
+
+
+	 -- SAMPLING DEMONSTRATION
+	 ---------------------------------------------------
+	 display N16 |  display C17 |  display R
+	 irule 4 |  --  adjusts DT
+	 -----------------------------------
+	 NN=101 |  TMAX=10 |  DT=0.001
+	 x=0 |  xdot=0.9 |  -- initialize
+	 m=10
+	 X=x |  -- initialize sampled-data 
+	 --                    state variable
+	 y=X |  --                     D/A converter
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 d/dt x=0.4*xdot |  d/dt xdot=-0.4*x
+	 --
+	 y=X |  --                       D/A converter
+	 SAMPLE m
+	 X=x |  --                       A/D converter
+	 ------------------------
+	 dispt x,y
+

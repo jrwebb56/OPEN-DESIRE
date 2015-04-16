@@ -1,0 +1,62 @@
+
+
+	 --  BIDIRECTIONAL ASSOCIATIVE MEMORY (BAM)
+	 ---------------------------------------------------------------
+	 --                                  Network Definition
+	 --
+	 m=25 |  n=20 |  --                  neuron-layer sizes
+	 N=3 |  --                      number of pattern pairs
+	 --
+	 ARRAY x[m],y[n]
+	 ARRAY INPUT[N,m],TARGET[N,n] |  --       patterns
+	 ARRAY W[n,m] |  --                  connection weights
+	 ARRAY input[m],xx[m] |  --            input for recall
+	 ---------------------
+	 --                                         fill arrays
+	 data 1,-1,-1,-1,1;-1,1,-1,1,-1;-1,-1,1,-1,-1
+	 data -1,1,-1,1,-1;1,-1,-1,-1,1
+	 data -1,-1,1,-1,-1;-1,-1,1,-1,-1;1,1,1,1,1
+	 data -1,-1,1,-1,-1;-1,-1,1,-1,-1
+	 data -1,-1,-1,-1,-1;-1,-1,-1,-1,-1;1,1,1,1,1
+	 data -1,-1,-1,-1,-1;-1,-1,-1,-1,-1
+	 read INPUT
+	 data -1,-1,1,-1,-1;-1,1,-1,1,-1;1,-1,-1,-1,1;1,1,1,1,1
+	 data 1,1,1,1,1;1,-1,-1,-1,1;-1,1,-1,1,-1;-1,-1,1,-1,-1
+	 data -1,1,1,1,-1;1,-1,-1,-1,1;1,-1,-1,-1,1;-1,1,1,1,-1
+	 read TARGET
+	 ------------------------------------------------------
+	 NN=N |  --                     training run (N trials)
+	 drun  |  --                - use first DYNAMIC segment
+	 ------------------------------------------------------
+	 --  after training, do recall runs for each of N INPUT
+	 --      patterns; reset layers, but keep connections
+	 ------------------------------------------------------
+	 --                           set experiment parameters
+	 noise=1
+	 NN=25
+	 --------------------
+	 restore  |  --          we will re-read INPUT patterns
+	 for i=1 to N
+	   for k=1 to m |  x[k]=0 |  next  |  --  reset x and y
+	   for k=1 to n |  y[k]=0 |  next
+	   read input
+	   t=1 |  --                         reset trial number
+	   write "type go to continue"
+	   drun RECALL |  --                recall run
+	   STOP
+	   next
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 --                                 weight-learning run
+	 iRow=t
+	 Vector x=INPUT# |  Vector y=TARGET#
+	 DELTA W=y*x
+	 ------------------------------------------------------
+	 --                                          recall run
+	    label RECALL
+	 Vector xx=input+noise*ran() |  Vector x=xx
+	 Vector y=sgn(W*x)
+	 Vector x=sgn(W%*y)
+	 SHOW  |  SHOW input,5 |  SHOW xx,5 |  SHOW y,5
+

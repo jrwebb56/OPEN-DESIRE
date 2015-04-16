@@ -1,0 +1,10 @@
+
+
+	 n=20
+	 ARRAY gee[n]
+	 for i=1 to n |  gee[i]=i |  next
+	 connect './gerste/tester' as output 3
+	 write ##3,gee
+	 disconnect 3
+	 sh       cat ./gerste/tester.dat
+

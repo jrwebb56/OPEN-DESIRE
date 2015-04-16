@@ -1,0 +1,34 @@
+
+
+	 -- Model of a continuous feed bioreactor
+	 --
+	 -- dilution coefficient D by the equation D=Vdot/Vr (Vdot stream, 
+	 --     D measures what proportion of the reactor volume gets excha
+	 -- mumax=0.6 /h µ is the specific growth rate of the yeast expres
+	 -- Yxs=0.33
+	 -- Ks=3.1g/l
+	 -- Ki=230g/l
+	 -- Sf=30g/l input feed concentration to the bioreactor;
+	 -- Vector realization of the model to optimize D
+	 ------------------------------------------------------------------
+	 Yxs=0.33 |  mumax=0.6 |  Ks=3.1 |  Ki=230 |  Sf=30 |  Yxs=0.33
+	 TMAX=90 |  DT=0.001 |  t=0 |  NN=10000 |  n=20
+	 --
+	 STATE x[n],s[n] |  ARRAY D[n],mu[n],U[n]
+	 --                            initial conditions for biomass x and
+	 for i=1 to n
+	   x[i]=0.1 |  s[i]=30 |  D[i]=0.2+i/n*0.3
+	   mu[i]=0.01 |  next
+	 --
+	 drun
+	 ------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------
+	 Vectr d/dt x=mu*x-D*x |  Vectr d/dt s=D*(Sf-s)-mu*x/Yxs
+	 -- Vector mu=mumax*(s/(Ks+s))
+	 Vector mu=mumax*(s/(Ks+s+s^2/Ki))
+	 ------------------------------------------------------------------
+	 Vector U=0.5*x*D-scale |  -- scale and offset for display
+	 dispt U[1],U[0.1*n],U[0.2*n],U[0.3*n],U[0.4*n],U[0.5*n],U[0.6*n],U[_
+0.7*n],U[0.8*n],U[0.9*n],U[n]
+

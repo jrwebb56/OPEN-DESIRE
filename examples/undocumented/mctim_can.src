@@ -1,0 +1,38 @@
+
+
+	 --  MULTI-RUN MONTE CARLO:
+	 --      CANNONBALL TRAJECTORIES
+	 -------------------------------------------------------------
+	 DT=0.08 |  TMAX=50 |  NN=500 |  -- timing
+	 display N1 |  display C8 |  irule 4
+	 scale=5000 |  ERRMAX=0.04
+	 ----------------------------------
+	 R=7.5E-05 |  g=32.2
+	 v0=900 |  --                     muzzle velocity
+	 a=0.01 |  --                      noise amplitude
+	 --    
+	 n=1000 |  ARRAY ximpact[n]
+	 --  
+	 aa=tim(0)
+	 for i=1 to n |  --        elevation in radians
+	   theta=70*PI/180+a*(ran()+ran()+ran()+ran())
+	   xdot=v0*cos(theta) |  ydot=v0*sin(theta)
+	   drunr
+	   ximpact[i]=xx
+	   next
+	 DOT xsum=ximpact*1 |  xavg=xsum/n
+	 DOT xxsum=ximpact*ximpact |  xxavg=xxsum/n
+	 s=sqrt(xxavg-xavg^2)
+	 bb=tim(0) |  write bb-aa
+	 write "xavg = ";xavg,"    s = ";s
+	 ------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------
+	 v=sqrt(xdot^2+ydot^2)
+	 d/dt x=xdot |  d/dt y=ydot
+	 d/dt xdot=-R*v*xdot |  d/dt ydot=-R*v*ydot-g
+	 --
+	 step
+	 xx=xx+swtch(y)*(x-xx) |  --         hold impact value of x
+	 --------------------               runtime trajectory display
+

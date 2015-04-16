@@ -1,0 +1,29 @@
+
+
+	 -- RECT-WINDOW AMPLITUDE DISTRIBUTION
+	 ------------------------------------------------------------------
+	 n=10000 |  --                     sample size
+	 ARRAY X[n],f[n]
+	 display N1 |  display C8 |  display Q
+	 scale=4 |  Ascale=15
+	 h=0.6 |  --  2*window width (rect function)
+	 alpha=2/h |  --                     inverse window width
+	 beta=Ascale/(h*n) |  --    scale
+	 ss=Ascale/sqrt(2*PI)
+	 --
+	 for i=1 to n
+	   X[i]=sqrt(-2*ln(abs(ran())))*cos(2*PI*abs(ran()))
+	   next
+	 ---------------------------------------------
+	 t=0 |  TMAX=4 |  NN=6000
+	 drun
+	 -----------------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------------
+	 xx=2*t-TMAX |  --     scaled display sweep
+	 Vector f=beta*rect(alpha*(X-xx))
+	 DOT F=f*1
+	 --
+	 normal=ss*exp(-0.5*xx^2)-scale
+	 F=F-scale |  dispxy xx,F,normal
+

@@ -1,0 +1,13 @@
+
+
+	 scale=10
+	 NN=300
+	 TMAX=10
+	 drun
+	 write a,b
+	 DYNAMIC
+	 d/dt x=0.5
+	 a=4
+	 b=8
+	 dispt a,b,x
+

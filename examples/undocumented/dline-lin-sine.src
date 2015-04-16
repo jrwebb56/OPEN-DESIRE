@@ -1,0 +1,32 @@
+
+
+	 --            A SIMPLE LINEAR PREDICTOR
+	 ------------------------------------------------------------------
+	 display N3 |  display C8 |  display R |  scale=60
+	 m=150 |  --                         prediction delay
+	 nx=60 |  --   number of predictor neurons
+	 ARRAY signal[m],x[nx],y[1],error[1],W[1,nx]
+	 ------------------------------------------------------------------
+	 NN=6000 |  lrate=0.000035
+	 drun  |  drun  |  drun  |  -- 4 training runs
+	 write "type go for a test run" |  STOP
+	 lrate=0 |  drun  |  --                  prediction run
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------------------
+	 target=20*sin(0.002*t)+10*cos(0.004*t)
+	 ------------------------------------------------------------------
+	 --   delay "future" signal target, shift result into x
+	 --
+	 Vector signal=signal{-1} |  signal[1]=target
+	 Vector x=x{-1} |  x[1]=signal[m]
+	 --------------
+	 Vector y=W*x |  --         adaptive neural network 
+	 Vector error=target-y |  --                      predictor error
+	 DELTA W=lrate*error*x |  --         LMS algorithm
+	 ------------------------------------------------------------------
+	 TARGET=target+0.5*scale
+	 X=x[1]+0.5*scale |  Y=y[1]+0.5*scale
+	 errorx5=5*error[1]-0.5*scale
+	 dispt TARGET,Y,errorx5
+

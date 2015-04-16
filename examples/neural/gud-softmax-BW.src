@@ -1,0 +1,66 @@
+
+
+	 --  SOFTMAX PATTERN CLASSIFIER
+	 --     estimates a posteriori probabilities
+	 --     implements associative memory
+	 ----------------------//---------------------------------------
+	 cc=10 |  display N0 |  display C8 |  display R
+	 nx=25 |  N=26
+	 --
+	 ARRAY INPUT[N,nx],TARGET[N,N]
+	 MATRIX TARGET=1 |  --  binary-selector rows
+	 --
+	 ARRAY x[nx],input[nx]
+	 ARRAY p[N],error[N]
+	 ARRAY W[N,nx]
+	 ARRAY q[N],xx[nx] |  -- for associative memory
+	 --
+	 for i=1 to N |  for k=1 to nx |  -- initialize 
+	     W[i,k]=ran() |  next  |  next
+	 --
+	 ARRAY X[nx],Input[nx],XX[nx] |  -- for SHOW display
+	 -------------------------------------------------------------
+	 connect './pattern/alphabet.txt' as input 2
+	 input #2,INPUT
+	 disconnect 2
+	 ------------------------
+	 NN=800 |  lrate=2 |  Tnoise=0 |  Rnoise=0.4
+	 drunr  |  -- training run
+	 write 'type go for successive recall runs' |  STOP
+	 ----------
+	 display F
+	 NN=4
+	 for i=1 to N
+	   drun RECALL
+	   for k=1 to 22000 |  write "wait" |  next
+	   next
+	 ---------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------
+	 iRow=t |  Vector input=INPUT#
+	 Vector x=input+Tnoise*ran()
+	 Vector p=exp(W*x) |  DOT psum=p*1
+	 Vector p=p/psum |  -- probability estimates
+	 ------------------------------------------------
+	 Vector error=TARGET#-p
+	 DELTA W=lrate*error*x |  -- LMS algorithm
+	 DOT enormsqr=error*error
+	 -- 
+	 msqavg=msqavg+(enormsqr-msqavg)/100
+	 ENORMSQR=0.4*enormsqr
+	 MSQAVG=msqavg-scale
+	 dispt MSQAVG,ENORMSQR
+	 ----------------------------------------
+	    label RECALL
+	 iRow=i |  Vector input=INPUT#
+	 Vector x=input+Rnoise*ran()
+	 Vector p=exp(W*x) |  DOT psum=p*1
+	 Vector p=p/psum |  -- probability estimates
+	 --
+	 Vector q^=p |  Vector q=swtch(q) |  -- binary selector
+	 Vector xx=INPUT%*q |  -- reconstruct pattern
+	 -----------------------------------------   display patterns
+	 Vector Input=cc*input |  Vector X=cc*x
+	 Vector XX=cc*xx
+	 SHOW  |  SHOW Input,5 |  SHOW X,5 |  SHOW XX,5
+

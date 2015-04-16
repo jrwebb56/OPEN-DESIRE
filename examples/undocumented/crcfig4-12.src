@@ -1,0 +1,26 @@
+
+
+	 --                                      COUPLED OSCILLATORS
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 TMAX=6 |  DT=0.0001 |  NN=8000 |  --     timing
+	 ww=300
+	 k=50 |  --                                    coupling coefficien
+	 ------------------------------------------------------------------
+	 SUBMODEL oscillator(x$,xdot$,z$)
+	   d/dt x$=xdot$ |  d/dt xdot$=-ww*x$+k*z$
+	   end
+	 --------------------
+	 STATE x,xdot,y,ydot |  --  invocation state variables
+	 x=0.4 |  --                             initial value; other 3 ar
+	 --
+	 drun
+	 --------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------
+	 invoke oscillator(x,xdot,y) |  --              invoked twice
+	 invoke oscillator(y,ydot,x)
+	 --------------------------------------------------
+	 X=x+0.5 |  Y=y-0.5 |  --                     offset display
+	 dispt X,Y
+

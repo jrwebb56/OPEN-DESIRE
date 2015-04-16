@@ -1,0 +1,77 @@
+
+
+	 --    8-BIT ENCODER LEARNING, creeping random search
+	 ----------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 nv=8 |  --         number of hidden-layer neurons
+	 N=256 |  --      number of network inputs
+	 --
+	 ARRAY x[N]+x0[1]=xx |  x0[1]=1
+	 ARRAY v[nv]+v0[1]=vv |  v0[1]=1
+	 ARRAY y[N],error[N]
+	 ARRAY W1[nv,N+1],W2[N,nv+1]
+	 -----------------
+	 ARRAY INPUT[N,N] |  MATRIX INPUT=1
+	 ------------------------------------------------------------------
+	 fsav=1000 |  fmin=1000 |  --   initialize optimization
+	 ------------------------------------------------------------------
+	 --                                                  set parameters
+	 gain=0.00002 |  gain1=0.06 |  gain2=0.06
+	 crit=0.0002
+	 scale=0.5 |  NN=10000
+	 ------------------------------------------------------------------
+	 drun  |  --           simulation runs (NN trials) 
+	 write fmin,measure,YSUM
+	 write "type go to continue" |  STOP
+	 scale=fmin |  crit=0.00001
+	 gain=gain/20 |  gain1=gain1/20 |  gain2=gain2/20
+	 NN=30000
+	 drun
+	 write fmin,measure,YSUM
+	 STOP
+	 write 'type go to make a test run' |  STOP
+	 -----------------------------------------------------------
+	 --             test routine, used on command after learning
+	 NN=10*N |  t=1
+	 drun TEST |  --           makes a recall run
+	 write measure,YSUM
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 --                                      weight-learning run
+	 iRow=2000*abs(ran()) |  Vector x=INPUT#
+	 Vector v=tanh(W1*xx)
+	 Vector y=exp(W2*vv)
+	 DOT ysum=y*1 |  Vector y=y/ysum
+	 --
+	 Vector error=x-y
+	 DOT measure=error*error
+	 DOT YSUM=y*1
+	 -------------------------------------------------------
+	 term crit-measure |  --                terminate run on success
+	 delf=comp(fsav-measure,-1,gain) |  --  kills unsuccessful changes
+	 fsav=measure |  --                                   save measure
+	 FSAV=fsav-scale |  --                  offset the curves
+	 ------------------------------------------------------------
+	 --                       try pseudorandom perturbations
+	 --
+	 DELTA W1=delf*gain1*ran() |  DELTA W2=delf*gain1*ran()
+	 --------------------------------------------------------
+	 if fmin-fsav
+	   fmin=fsav
+	   FMIN=fmin-scale |  --                 offset the curve
+	   -------------------------------------------
+	   dispt FMIN,FSAV |  --  display error measures
+	   -----------------------------------------------------
+	   --                                         test run
+	      label TEST
+	   iRow=t |  Vector x=INPUT#
+	   Vector v=tanh(W1*xx)
+	   Vector y=exp(W2*vv)
+	   DOT ysum=y*1 |  Vector y=y/ysum
+	   -----------------------------
+	   Vector error=x-y
+	   DOT measure=error*error
+	   DOT YSUM=y*1
+	   dispt FMIN,FSAV |  --  display error measures
+

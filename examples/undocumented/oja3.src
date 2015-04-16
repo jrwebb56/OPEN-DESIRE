@@ -1,0 +1,47 @@
+
+
+	 --  COMPETITIVE LEARNING (OJA scheme)
+	 ----------------------------------------------------------
+	 m=2 |  --                             number of inputs
+	 n=7 |  --          number of competitive-layer neurons
+	 N=2 |  --                           number of clusters
+	 --
+	 ARRAY y[n],h[n],w[m],W[n,m],x[m]
+	 ARRAY INPUT[N,m]
+	 data -4,1;-2.5,2
+	 read INPUT
+	 --
+	 W[1,1]=17 |  W[1,2]=1.5
+	 W[2,1]=18 |  W[2,2]=20
+	 W[3,1]=15 |  W[3,2]=10
+	 ------------------------------------------------------
+	 display Q |  display N3 |  display C8 |  --   thin dots
+	 --                           set experiment parameters
+	 lrate=-.01 |  --                            learn rate
+	 crit=0
+	 S=0 |  --                         decay rate for lrate
+	 a=5 |  scale=10
+	 NN=190000 |  t=1 |  TMAX=NN-1
+	 ------------------------------------------------------
+	 lrate1=lrate |  SS=S/TMAX
+	 drun  |  --          make a simulation run (NN trials)
+	 STOP
+	 ------------------------------------------------------
+	    label eee
+	 display F |  --                        edit parameters
+	 edit 230-250,380-440
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 --                                 weight-learning run
+	 --
+	 lrate1=lrate*exp(-SS*t) |  --      decrease learn rate
+	 iRow=10*abs(ran())+1
+	 Vector x=a*INPUT#+ran()+ran()+ran()+ran()
+	 CLEARN y=W(x)lrate1,crit |  --           compete,learn
+	 Vectr delta h=y
+	 --                                 produce test output
+	 Vector w=W%*y
+	 w1=w[1]+16 |  w2=w[2]-8 |  x1=x[1]+16 |  x2=x[2]-8
+	 DISPXY w1,w2,x1,x2
+

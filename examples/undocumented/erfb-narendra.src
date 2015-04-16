@@ -1,0 +1,59 @@
+
+
+	 --  MATCHING AN ERROR-FEEDBACK NETWORK TO A PLANT 
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=0.5
+	 --
+	 nX=4 |  nf=3
+	 ARRAY X[nX],Y[nf] |  --  plant  input and feedback samples
+	 nv=7 |  --   number of hidden neurons
+	 ARRAY x[1]+x0[1]+error[1]=xx |  x0[1]=1 |  -- network input
+	 ARRAY y[1],WW1[nv,3],W2[1,nv]
+	 ARRAY v[nv],deltav[nv]
+	 --                                               initialze weights
+	 for i=1 to nv
+	   WW1[i,1]=ran() |  W2[1,i]=ran()
+	   next
+	 ----------------------------------------------------------------
+	 TMAX=1000
+	 w=2*PI/250 |  ww=10*w
+	 lrate1=0.03 |  lrate2=0.02
+	 ----------------------------------------------------------------
+	 NN=20000 |  drunr  |  --  training 
+	 write "type go for a test run" |  STOP
+	 NN=8000 |  Y[1]=0 |  drun RECALL |  -- recall
+	 ----------------------------------------------------------------
+	 DYNAMIC
+	 ----------------------------------------------------------------
+	 --                                            Narendra's plant
+	 Vector X=X{-1} |  X[1]=0.25*(ran()+ran()+ran()+ran())
+	 f=(Y[1]*Y[2]*Y[3]*X[2]*(Y[3]-1)+X[1])/(1+Y[2]^2+Y[3]^2)
+	 Vector Y=Y{-1} |  Y[1]=f |  --         plant feedback
+	 target=f
+	 -------------------------------------------  NEURAL NETWORK 
+	 x[1]=X[1] |  --        net input is the same as plant input
+	 Vector v=tanh(WW1*xx)
+	 Vector y=W2*v
+	 --                              
+	 error[1]=target-y[1] |  --                            backprop
+	 Vector deltav=W2%*error*(1-v^2)
+	 DELTA WW1=lrate1*deltav*xx
+	 DELTA W2=lrate2*error*v
+	 dispt error[1]
+	 --------------------------------------------------------------    
+	    label RECALL
+	 s=0.5*((1-0.2*swtch(t-500))*sin(w*t)+0.2*swtch(t-500)*sin(ww*t))
+	 Vector X=X{-1} |  X[1]=s |  --          plant input 
+	 --
+	 ----------------------------------------   Narendra's plant
+	 f=(Y[1]*Y[2]*Y[3]*X[1]*(Y[3]-1)+X[2])/(1+Y[2]^2+Y[3]^2)
+	 Vector Y=Y{-1} |  Y[1]=f
+	 target=f
+	 ----------------------------------------------  NEURAL NETWORK
+	 x[1]=X[1] |  --       net input is the same as plant input
+	 Vector v=tanh(WW1*xx)
+	 Vector y=W2*v
+	 error[1]=target-y[1]
+	 --
+	 dispt target,y[1],error[1]
+

@@ -1,0 +1,54 @@
+
+
+	 --                  FUNCTIONAL-LINK PREDICTOR
+	 --            predicts Mackey-Glass  time series
+	 -------------------------------------------------------------
+	 display N3 |  display C8 |  display R |  scale=1
+	 -------------------------------------------------------------
+	 TWOPI=2*PI
+	 TMAX=500 |  DT=0.04 |  NN=12500
+	 a=0.2 |  b=0.1 |  c=10 |  --   for Mackey-Glass
+	 tau=25 |  s=10 |  --         s=10 initializes buffer
+	 ARRAY DD[1000] |  --           time-delay buffer
+	 -------------------------------------------------------------
+	 m=50 |  --                                predictor delay 
+	 nx=10 |  --             number of delay-line taps
+	 ARRAY signal[m]
+	 ARRAY x0[1]+x[nx]+f3[nx]+f4[nx]=f |  x0[1]=1
+	 ARRAY y[1],deltay[1],error[1],W[1,3*nx+1]
+	 --
+	 for k=1 to 3*nx+1 |  --      initialize
+	   W[1,k]=0.1*ran()
+	   next
+	 -------------------------------------    parameters
+	 lrate=0.001
+	 Tnoise=0.00 |  --               try more noise!
+	 --
+	 N=8 |  --                   make N training runs
+	 for i=1 to N |  drunr  |  next
+	 ---------
+	 write 'type go for prediction tests' |  STOP
+	 lrate=0 |  drun  |  drun  |  -- test runs
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 tdelay Sd=DD,s,tau |  -- Mackey-Glass
+	 d/dt s=a*Sd/(1+Sd^c)-b*s
+	 OUT  |  --        sampled data from here on!
+	 target=0.5*s-0.4
+	 ---------------------------------------------------------------
+	 Vector signal=signal{-1}
+	 signal[1]=target+Tnoise*ran()
+	 Vector x=x{-1} |  x[1]=signal[m] |  -- delay line
+	 Vector f3=x*x |  Vector f4=x*x*x
+	 -- 
+	 Vector y=tanh(W*f)
+	 --
+	 Vector error=target-y |  --     LMS Algorithm
+	 Vector deltay=error*(1-y^2)
+	 DELTA W=lrate*deltay*f
+	 -------------------------    stripchart-type display  
+	 errorx5=5*error[1]-0.5*scale
+	 Y=y[1]+0.5*scale |  Target=target+0.5*scale
+	 dispt Y,errorx5,Target
+

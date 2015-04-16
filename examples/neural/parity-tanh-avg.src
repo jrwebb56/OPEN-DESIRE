@@ -1,0 +1,75 @@
+
+
+	 --             4-BIT PARITY LEARNING, BACKPROP
+	 ------------------------------------------------------------------
+	 display N16 |  display C17 |  display R |  scale=5
+	 nx=4 |  --                    number of network inputs
+	 nv=18 |  --       number of hidden-layer neurons
+	 N=16 |  --                             number of patterns
+	 --
+	 ARRAY INPUT[N,nx],TARGET[N,1]
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=1
+	 ARRAY v[nv],deltav[nv]
+	 ARRAY y[1],error[1]
+	 ARRAY WW1[nv,nx+1],W2[1,nv]
+	 --
+	 --  NOTE: deltay was omitted - WORKS BETTER!!
+	 --
+	 --                                         fill arrays
+	 data -1,-1,-1,-1;-1,-1,-1,1;-1,-1,1,-1;-1,-1,1,1
+	 data -1,1,-1,-1;-1,1,-1,1;-1,1,1,-1;-1,1,1,1
+	 data 1,-1,-1,-1;1,-1,-1,1;1,-1,1,-1;1,-1,1,1
+	 data 1,1,-1,-1;1,1,-1,1;1,1,1,-1;1,1,1,1
+	 read INPUT
+	 data -1,1,1,-1;1,-1,-1,1;1,-1,-1,1;-1,1,1,-1
+	 read TARGET
+	 --
+	 for i=1 to nv |  --                               initialize
+	   for k=1 to nx+1
+	     WW1[i,k]=0.2*ran() |  next
+	   W2[1,i]=0.2*ran()
+	   next
+	 ------------------------------------------------------
+	 --                set experiment parameters
+	 lrate1=0.6 |  lrate2=0.06
+	 r1=0.1 |  r2=0.06
+	 NN=200
+	 drunr  |  --         make a simulation run
+	 write 'type go for a recall test' |  STOP
+	 ----
+	 NN=16 |  TMAX=NN-1
+	 drun RECALL
+	 write 'type go to see weights' |  STOP
+	 write WW1,W2
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 --                                            weight-learning run
+	 iRow=t |  Vector x=INPUT#
+	 Vector v=tanh(WW1*xx) |  -- works even better with sat
+	 Vector y=tanh(W2*v)
+	 --
+	 Vector error=TARGET#-y |  --     back propagation
+	 Vector deltav=W2%*error*(1-v^2)
+	 --
+	 -- ->   Vector deltay=error*(1- y^2) omitted -WORKS BETTER!!
+	 --
+	 DELTA WW1=lrate1*deltav*xx+r1*WW1
+	 DELTA W2=lrate2*error*v+r2*W2
+	 --
+	 DOT enormsqr=error*error
+	 -----------------                        offset display
+	 ENORMSQR=enormsqr-scale
+	 msqavg=msqavg+(enormsqr-msqavg)/25
+	 MSQAVG=2*msqavg-scale
+	 dispt MSQAVG,enormsqr
+	 -------------------------------------------------------------
+	 --                                     test run (no learning)
+	    label RECALL
+	 iRow=t
+	 Vector x=INPUT#
+	 Vector v=tanh(WW1*xx)
+	 Vector y=tanh(W2*v)
+	 --------------------------------------
+	 type x[1],x[2],x[3],x[4],y[1]
+

@@ -1,0 +1,51 @@
+
+
+	 --       SIMPLE BUTTERWORTH LOW-PASS FILTER
+	 -- H = 1/(s^3 + a[1]s^2 + a[2]s + a[3]) 
+	 ------------------------------------------------------------------
+	 display N1 |  display C7 |  display R |  --     display
+	 NN=16384 |  DT=0.001 |  TMAX=1024
+	 --
+	 n=3 |  STATE x[n] |  ARRAY a[n],b[n]
+	 L=365 |  n1=16384 |  ARRAY dat[L],inp[n1]
+	 connect 'tmit.dat' as input 3
+	 input #3,dat
+	 disconnect 3
+	 k=1
+	 ------------------------------------------------ 	
+	 --            specify the filter parameters 	 
+	 a[1]=0.11 |  a[2]=0.2 |  a[3]=1
+	 b[1]=0.2 |  b[2]=0.3 |  b[3]=0.5
+	 bb=1 |  --        feedforward coefficient
+	 -------------------------------------------------
+	 for i=1 to n1 |  inp[i]=dat[k] |  k=k+1
+	   if k>L then k=1 |  else proceed  |  next
+	 -- array OUTPUTx gets output samples for FFT
+	 ARRAY OUTPUTx[NN],OUTPUTy[NN]
+	 -------------------------------------------------
+	 scale=50 |  --       display scale
+	 drun
+	 write 'type go for FFT' |  STOP
+	 -----------------------------------
+	 display R |  -- thick dots
+	 FFT F,NN,OUTPUTx,OUTPUTy
+	 scale=10000 |  t=1
+	 NN=201
+	 drun FFT
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 get input=inp |  -- for impulse response
+	 output=x[n]+bb*input |  --       note the feedforward term
+	 Vectr d/dt x=x{-1}+b*input-a*output
+	 dispt output
+	 ----------                                
+	 store OUTPUTx=output |  --   fill FFT array 
+	 --	    
+	 ----------------------------   AMPLITUDE/PHASE DISPLAY
+	    label FFT
+	 get xx=OUTPUTx |  get yy=OUTPUTy |  --    FFT arrays
+	 r=sqrt(xx*xx+yy*yy)
+	 phix10=1000*atan2(yy,xx)-0.5*scale
+	 dispt r,phix10
+

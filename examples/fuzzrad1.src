@@ -1,0 +1,67 @@
+
+
+	 --                          FUZZY-BASIS FUNCTION NETWORK
+	 ---------------------------------------------------------
+	 m=1 |  --                         input-pattern dimension
+	 n=15 |  --                           number of categories
+	 FUNCTION TGT(p)=0.9*cos(4*p) |  -- (or other function)
+	 ----------------------------------------------------------
+	 scale=1
+	 ARRAY x[1]
+	 ARRAY Xdummy[1]+X[n]=XX |  Xdummy[1]=-1.0E+25
+	 ARRAY W[n,m],v[n],h[n]
+	 ARRAY member[n]+Mdummy[1]=MEMBER
+	 ARRAY mb[n+1],b[n+1]
+	 ARRAY W3[1,n],y[1],error[1]
+	 ---------------------------------------------------------
+	 display N1 |  display R |  --               set display colors
+	 --                                         set parameters
+	 lratex=0.2 |  lratef=0.2 |  kappa=0.9996 |  lrate0=0
+	 crit=0 |  --                 (crit=0 for FSCL conscience)
+	 a=0.5
+	 NN=10000
+	 ---------------------------------------------------------
+	 display F
+	 drun COMPETE
+	 ------------------------------------ sort routine
+	 for i=1 to n
+	   X[i]=1.0E+25
+	   for k=1 to n
+	     if W[k,1]<X[i] then X[i]=W[k,1] |  K=k |  else proceed
+	     next
+	   W[K,1]=1.0E+25
+	   -----------------------------------------------------
+	   b[i]=1/(XX[i]-XX[i+1]) |  --           set the slopes
+	   next
+	 ---------------------------------------------------------
+	 drun  |  --                                      recall run
+	 NN=20000 |  lratex=0 |  lratef=0 |  lrate0=0
+	 drun  |  STOP
+	 ---------------------------------------------------------
+	    label eee
+	 edit 230-242,330-380 |  --      for parameter editing
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 lratef=kappa*lratef+lrate0 |  --     reduce learning rate
+	 --
+	 Vector x=ran()
+	 tgt=TGT(x[1])
+	 --
+	 Vector mb=SAT(b*(XX-x[1])) |  Vector MEMBER=mb-mb{1}
+	 Vector y=W3*member
+	 Vector error=tgt-y
+	 DELTA W3=lratef*error*member
+	 ---------------------------------------
+	 ERx10=10*abs(error[1])-scale
+	 x1=x[1] |  y1=y[1]
+	 m1=member[1] |  m2=member[2] |  m3=member[3] |  m4=member[4]
+	 m5=member[5] |  m6=member[6] |  m7=member[7] |  m8=member[8]
+	 dispxy x1,y1,ERx10,m1,m2,m3,m4,m5,m6,m7,m8,tgt
+	 -----------------------------------------------------
+	    label COMPETE
+	 lratex=kappa*lratex+lrate0 |  -- reduce learning rate
+	 Vector x=ran()+ran()+ran()+ran()+ran() |  Vector x=a*x
+	 CLEARN v=W(x)lratex,crit
+	 delta h=v
+

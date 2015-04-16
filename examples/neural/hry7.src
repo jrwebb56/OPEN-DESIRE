@@ -1,0 +1,41 @@
+
+
+	 --   PRINCIPAL-COMPONENT LEARNING
+	 -----------------------------------------------------------
+	 display Q |  display N1 |  display C8
+	 m=2 |  --                              number of inputs
+	 n=2 |  --      number of feature-layer neurons
+	 --
+	 ARRAY X[m],x[m],y[n],z[m],W[n,m],bias[m]
+	 ARRAY OFFSET[4,m],error[m]
+	 --
+	 data -2,1.8;-1.5,3.8;1,-2;-2.7,-0.7 |  read OFFSET
+	 --
+	 ------------------------------------------------------
+	 for i=1 to n |  for k=1 to m
+	     W[i,k]=0.01*ran()
+	     next  |  next
+	 --                                  set experiment parameters
+	 gain=0.002 |  --  learning rates are low just for demo
+	 bgain=0.01 |  --                    zero out sample mean
+	 scale=1 |  b=0.2 |  c=0.1
+	 NN=70000
+	 ------------------------------------------------------
+	 drun  |  --                 simulation runs (NN trials)
+	 write "type go to continue" |  STOP
+	 display F
+	 NN=100000
+	 drun
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 --                                 weight-learning run
+	 iRow=t+1
+	 Vector X=c*ran()+b*OFFSET#
+	 Vector x=X+bias
+	 Vectr delta bias=-bgain*x
+	 PLEARN y=W*x;gain
+	 Vector z=W%*y
+	 w11=W[1,1] |  w21=W[2,1] |  w12=W[1,2] |  w22=W[2,2]
+	 DISPXY y[1],y[2],X[1],X[2],x[1],x[2],w11,w21,w12,w22
+

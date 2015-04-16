@@ -1,0 +1,127 @@
+
+
+	 -- BACKPROP PATTERN CLASSIFIER
+	 --   implements associative memory
+	 --   has extra "unknown" category
+	 --  uses Softmax for optimization, probabilities
+	 --------------------------------------------------
+	 display N15 |  display C7 |  display R
+	 nx=25 |  -- pattern dimension (5x5 pixel rid)
+	 N=26 |  -- number of known categories (A to Z)
+	 nv=32 |  -- hidden-layer dimension - 1
+	 ARRAY INPUT[N,nx] |  -- prototype-pattern array
+	 ARRAY TARGET[N,N] |  -- binary-selector-pattern array
+	 --
+	 -------------------                                        network
+	 ARRAY input[nx],INput[nx],x[nx]+x0[1]+XX[1]=xx |  x0[1]=1
+	 ARRAY v[nv],deltav[nv]
+	 ARRAY y[N+1],Prob[N]+PP[1]=P,target[N]+TT[1]=TTdata,s[nx]
+	 ------------------------------------------- connection weights
+	 ARRAY W1[nv,nx+2],W2[N+1,nv]
+	 ARRAY Dw1[nv,nx+2],Dw2[N+1,nv]
+	 ---------------------------------------------------   error measur
+	 ARRAY error[N+1],ERROR[N+1]
+	 -----------------------------------------------------------------
+	 --   random initial weights "break symmetry"
+	 --
+	 for i=1 to nv |  for k=1 to nx+2
+	     W1[i,k]=ran() |  next  |  next
+	 for i=1 to N+1 |  for k=1 to nv
+	     W2[i,k]=ran() |  next  |  next
+	 -----------------------------------------  	 --
+	 MATRIX TARGET=1 |  --               (one-of-N classifier)
+	 ------------------------------------------------------------------
+	 --                                set experiment parameters
+	 lrate1=0.04 |  lrate2=0.02 |  mom1=0.2 |  mom2=0.2
+	 scale=1
+	 Tnoise=0.35 |  Rnoise=0.35
+	 cc=20
+	 -----------------------------------------------               get 
+	 connect './pattern/alphabet.txt' as input 2
+	 input #2,INPUT
+	 disconnect 2
+	 --------------------------------------------------------------
+	 for i=1 to 3
+	   ---------------
+	   XX[1]=0 |  TT[1]=0 |  -- pattern-learning run
+	   NN=2000
+	   drun
+	   --
+	   XX[1]=1 |  TT[1]=1 |  --   random-input run
+	   NN=10000
+	   drun RANDOM
+	   --------------
+	   next
+	 -------------------------------------
+	 write error[N+1] |  --   test one random-input error	 
+	 write 'type go for successive recall runs' |  STOP
+	 display F
+	 ----------
+	 XX[1]=1
+	 NN=2
+	 for i=1 to N
+	   drun RECALL
+	   write P,error |  -- show probabilities
+	   -- STOP
+	   for k=1 to 4000 |  write "wait" |  next
+	   next
+	 ---------------------------------------------
+	 DYNAMIC
+	 ----------------------------------------
+	 --                                                        network
+	 iRow=t |  Vector input=INPUT#
+	 Vector x=input+Tnoise*ran()
+	 --
+	 Vector v=tanh(W1*xx)
+	 Vector y=exp(W2*v) |  DOT ysum=y*1
+	 Vector P=y/ysum
+	 --------------------------------------       BACKPROP
+	 --    note: XX[1]=TT[1]=0
+	 Vector target=TARGET#
+	 Vector error=TTdata-P
+	 Vector deltav=W2%*error*(1-v^2)
+	 --
+	 --    "momentum" adds part of last change
+	 MATRIX Dw1=lrate1*deltav*xx+mom1*Dw1
+	 MATRIX Dw2=lrate2*error*v+mom2*Dw2
+	 DELTA W1=Dw1 |  DELTA W2=Dw2
+	 --
+	 DOT enormsqr=error*error |  MSQERR=enormsqr-scale
+	 dispt MSQERR |  --    offset and display error measure
+	 -----------------------------------------------------------------
+	    label RANDOM
+	 --                                                        network
+	 Vector x=ran() |  -- random input
+	 --
+	 Vector v=tanh(W1*xx)
+	 Vector y=exp(W2*v) |  DOT ysum=y*1
+	 Vector P=y/ysum
+	 --------------------------------------       BACKPROP
+	 --    note: now XX[1]=TT[1]=1
+	 Vector target=0
+	 Vector error=TTdata-P
+	 Vector deltav=W2%*error*(1-v^2)
+	 --
+	 --    "momentum" adds part of last change
+	 MATRIX Dw1=lrate1*deltav*xx+mom1*Dw1
+	 MATRIX Dw2=lrate2*error*v+mom2*Dw2
+	 DELTA W1=Dw1 |  DELTA W2=Dw2
+	 --
+	 DOT enormsqr=error*error |  MSQERR=enormsqr-scale
+	 dispt MSQERR |  --    offset and display error measure
+	 ------------------------------------------------------------------
+	    label RECALL
+	 --------------------------------------------------------
+	 iRow=i
+	 Vector input=INPUT#
+	 Vector x=input+Rnoise*ran()
+	 Vector v=tanh(W1*xx)
+	 Vector y=exp(W2*v) |  DOT ysum=y*1
+	 Vector P=y/ysum
+	 -----------------------------------   set largest Prob=1
+	 Vector Prob^=Prob |  Vector Prob=swtch(Prob)
+	 Vector s=INPUT%*Prob |  -- associative memory
+	 -------------------------------------------------------
+	 Vector INput=2*cc*input |  Vector x=cc*x |  Vector s=2*cc*s
+	 SHOW  |  SHOW INput,5 |  SHOW x,5 |  SHOW s,5
+

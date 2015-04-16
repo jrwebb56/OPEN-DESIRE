@@ -1,0 +1,9 @@
+
+
+	 n=21
+	 ARRAY gee[n]
+	 connect './gerste/geez.txt' as input 3
+	 input #3,gee
+	 disconnect 3
+	 write gee
+

@@ -1,0 +1,14 @@
+
+
+	 sh del  bufti.dat
+	 n=20
+	 ARRAY gee[n]
+	 for i=1 to n |  gee[i]=i |  next
+	 connect 'bufti' as output 1
+	 for i=1 to n-1
+	   write #1,gee[i];',';
+	   next
+	 write #1,gee[n]
+	 disconnect 1
+	 sh type bufti.dat
+

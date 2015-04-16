@@ -1,0 +1,38 @@
+
+
+	 --                                 BINOMIAL DISTRIBUTION
+	 ------------------------------------------------------------------
+	 FUNCTION play(p$)=swtch(ran()+2*p$-1)
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display Y
+	 write "Specify the sample size n,"
+	 write "     the number nn of  samples of size n,"
+	 write "       and the success probability p for one play."
+	 write " Choose any p from 0 to 1."
+	 input n,nn,p
+	 --
+	 ARRAY x[n],XSUM[nn],f[nn]
+	 --------------------------
+	 -- generate nn=NN samples of size n, compute
+	 --   the score xsum of the n trials in each sample,
+	 --      and generate an array XSUM of the nn scores
+	 --                  
+	 NN=nn
+	 drun
+	 ---------------------------------------------------
+	 --                            display probabilities
+	 t=0 |  NN=n+1 |  scale=5/n |  TMAX=NN-1
+	 drun PROB
+	 ---------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------
+	 -- play nn games of n trials each
+	 Vector x=play(p)
+	 DOT xsum=x*1 |  --    score of n trials 
+	 store XSUM=xsum |  -- store nn scores
+	 ---------------------------------------------------
+	    label PROB
+	 Vector f=rect(2*(t-XSUM))
+	 DOT F=f*1 |  FF=F/nn-scale
+	 dispt FF
+

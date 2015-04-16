@@ -1,0 +1,64 @@
+
+
+	 --    4-BIT ENCODER LEARNING, BP
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display Q |  scale=2
+	 nv=4 |  --      number of hidden-layer neurons
+	 n=16 |  --     number of network inputs
+	 N=n |  --       number of patterns
+	 G=0.95 |  --                       target amplitude
+	 --
+	 ARRAY INPUT[N,n]
+	 ARRAY x[n]+x0[1]+y[n]=xx |  x0[1]=1 |  -- includes bias
+	 ARRAY v[nv]+v0[1]=vv |  v0[1]=1
+	 ARRAY deltav[nv]+deltav0[1]=deltavv |  deltav0[1]=1
+	 ARRAY deltay[n],error[n]
+	 ARRAY WW1[nv,2*n+1],WW2[n,nv+1],DWW1[nv,2*n+1],DWW2[n,nv+1]
+	 ARRAY X[n],VV[nv+1],Y[n]
+	 --
+	 --                                              fill arrays
+	 for i=1 to n
+	   for k=1 to n
+	     INPUT[i,k]=-G
+	     next
+	   INPUT[i,i]=G
+	   next
+	 --         small random initial weights to "break symmetry"
+	 --
+	 for i=1 to nv |  for k=1 to 2*n+1
+	     WW1[i,k]=ran() |  next  |  next
+	 for i=1 to n |  for k=1 to nv+1
+	     WW2[i,k]=ran() |  next  |  next
+	 -----------------------------------------------------------
+	 --                                set experiment parameters
+	 lrate1=0.001 |  lrate2=0.01
+	 mom1=0.01 |  mom2=0.01
+	 cc=8 |  CC=2 |  NN=23000
+	 -----------------------------------------------------------
+	 drun  |  --      make a simulation run (NN trials)
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 --                                      weight-learning run
+	 iRow=t |  Vector x=INPUT#
+	 Vector v=tanh(WW1*xx)
+	 Vector y=tanh(WW2*vv)
+	 ------------------------------------------------------------
+	 Vector error=x-y |  --                backpropagation
+	 Vector deltay=error*(1-y^2)
+	 Vector deltavv=WW2%*deltay*(1-vv^2)
+	 --                                          "moment" method
+	 MATRIX DWW1=lrate1*deltav*xx+mom1*DWW1
+	 MATRIX DWW2=lrate2*deltay*vv+mom2*DWW2
+	 DELTA WW1=DWW1 |  DELTA WW2=DWW2
+	 ----------------------------------------------------------
+	 DOT enormsqr=error*error |  --          accumulate enormsqr
+	 MSQERR=enormsqr-scale |  --            offset display curve
+	 dispt MSQERR |  --                    display error measure
+	 --
+	 --                            SHOW display of layers
+	 if t-0.996*TMAX
+	   Vector X=cc*swtch(x)+CC
+	   Vector Y=cc*swtch(y)+CC
+	   SHOW  |  SHOW X |  SHOW Y
+

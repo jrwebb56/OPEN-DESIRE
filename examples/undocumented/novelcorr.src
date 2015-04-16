@@ -1,0 +1,60 @@
+
+
+	 --          COMPETITIVE LEARNING
+	 -------------------------------------------------------
+	 display R |  display N1 |  display C8
+	 m=2 |  --                           number of inputs
+	 n=4 |  --   number of competitive-layer neurons
+	 --
+	 ARRAY x[m],v[n],v1[n],h[n],w[m],W[n,m],e[m]
+	 --                               random initial weights
+	 for i=1 to n
+	   h[i]=0 |  --          initialize conscience counters
+	   for k=1 to m |  -- and connection weights
+	     W[i,k]=0.1*ran()
+	     next
+	   next
+	 ------------------------------------------------------
+	 --                           set experiment parameters
+	 lrate=.004 |  --                             learn rate
+	 kappa=0.997 |  lrate0=0.00002 |  --         decay lrate
+	 crit=0 |  --                           set CLEARN mode
+	 c=7 |  -- softmax gain
+	 NN=10000
+	 ------------------------------------------------------
+	 drun  |  --                 simulation run (NN trials)
+	 STOP
+	 NNold=NN |  NN=1000
+	 drun  |  --                    short run shows results
+	 write 'type go for a check run' |  STOP
+	 NN=1000 |  a=1/NN
+	 lrate=0 |  lrate0=0
+	 for i=1 to n |  h[i]=1.0E-25 |  next
+	 drun
+	 ONE=0 |  H=0 |  --     initialize checksum and entropy
+	 for i=1 to n
+	   h[i]=a*h[i] |  --         statistical relative frequencies
+	   ONE=ONE+h[i] |  --               accumulate checksum
+	   H=H-h[i]*ln(h[i]) |  --           accumulate entropy
+	   next
+	 -----------------------------          display results
+	 write h |  write
+	 write 'H =  ';H/ln(2);' bits','        checksum =  ';ONE
+	 write  |  write 'log2(n) = ';ln(n)/ln(2)
+	 write  |  write W |  STOP
+	 ------------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------------
+	 Vector x=ran()
+	 DOT xx=x*x |  xx=sqrt(xx) |  Vector x=x/xx
+	 lrate=lrate0+lrate*kappa |  --     decrease learn rate
+	 Vector v=(W*x) |  DOT vsum=v*1
+	 Vector v1=2.0*v-vsum
+	 Vector w=W%*v1 |  --    reconstruct templates
+	 Vector e=x-w |  -- template-matching error
+	 DELTA W=lrate*v1*e
+	 -- CLEARN v=W(x)lrate,crit |  --    compete,learn
+	 -- Vectr delta h=v |  --                            conscience
+	 ------------------------------------------------------
+	 DISPXY x[1],x[2],w[1],w[2],e[1],e[2]
+

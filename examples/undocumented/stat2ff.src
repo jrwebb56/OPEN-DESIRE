@@ -1,0 +1,49 @@
+
+
+	 ----------------------------------------------
+	 -- AVERAGE USING A DIFFERENCE EQUATION
+	 -- time starts at t=1 with xavg=x, goes to t=NN=n
+	 ------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 scale=0.01
+	 NN=5000 |  --  maximum sample size
+	 m=1000 |  -- number of replicated experiments
+	 x0=0.005 |  -- true measured value
+	 ARRAY x[m],xavg[m],xxavg[m],xvar[m],f[m],g[m]
+	 --
+	 --  xavg and xxavg are initialized to 0 by default
+	 drun
+	 write 'type go to continue'
+	 STOP
+	 -----------------------------------------------------
+	    label PARZEN
+	 h=0.025
+	 alpha=1/(2*h*h) |  --   inverse window width
+	 Ascale=0.1
+	 aa=Ascale/sqrt(2*PI) |  beta=aa/(h) |  --   scale 
+	 scale=1
+	 t=0 |  TMAX=1 |  NN=5000
+	 drun READOUT
+	 -----------------------------
+	 DYNAMIC
+	 -----------------------------
+	 Vector x=0.5*ran()+x0
+	 Vector xavg=xavg+(x-xavg)/t
+	 Vector xxavg=xxavg+(x^2-xxavg)/t
+	 Vector xvar=xxavg-xavg^2
+	 -----------------------------
+	 AVG Xavg=xavg*1 |  AVG XXavg=xavg*xavg
+	 Xvar=XXavg-Xavg^2
+	 --
+	 xvaro10=0.1*xvar[1] |  Xvarx100=100*Xvar
+	 dispt Xavg,Xvarx100,xavg[1],xvaro10
+	 ----------------------------------------------------------
+	    label READOUT
+	 --
+	 xx=2*t-TMAX |  --                      display sweep
+	 Vector f=beta*exp(alpha*(xx-x)*(x-xx))
+	 Vector g=beta*exp(alpha*(xx-xavg)*(xavg-xx))
+	 AVG F=f*1 |  F=F-scale
+	 AVG G=g*1 |  G=G-scale
+	 dispxy xx,F,G
+

@@ -1,0 +1,91 @@
+
+
+	 --   PARITY NETWORK, CREEPING RANDOM SEARCH
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display Q |  scale=20
+	 ----------------------------------
+	 nx=4 |  --      number of inputs
+	 nv=10 |  --    number of hidden-layer neurons
+	 N=16 |  --      number of patterns before each update
+	 --
+	 ARRAY INPUT[N,nx],TARGET[N,1]
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=1
+	 ARRAY v[nv],y[1],error[1]
+	 ARRAY WW1[nv,nx+1],W2[1,nv]
+	 ARRAY DELWW1[nv,nx+1],DELW2[1,nv]
+	 ----------------------------
+	 --                        fill arrays (parity function)
+	 data -1,-1,-1,-1;-1,-1,-1,1;-1,-1,1,-1;-1,-1,1,1
+	 data -1,1,-1,-1;-1,1,-1,1;-1,1,1,-1;-1,1,1,1
+	 data 1,-1,-1,-1;1,-1,-1,1;1,-1,1,-1;1,-1,1,1
+	 data 1,1,-1,-1;1,1,-1,1;1,1,1,-1;1,1,1,1
+	 read INPUT
+	 -----
+	 data -1,1,1,-1;1,-1,-1,1;1,-1,-1,1;-1,1,1,-1
+	 read TARGET
+	 -------------------------------------------------------
+	 f1=0 |  --     initialize error-measure accumulation
+	 fsav=1000 |  fmin=1000 |  --   initialize optimization
+	 ----------------------------------------------------------
+	 --                set parameters
+	 gain=0.01 |  gainx=0.04 |  crit=0.000001
+	 NN=40000
+	 -------------------------------------------------------
+	 drun  |  scale=0.0001*scale
+	 write " type go to continue" |  STOP
+	 drun
+	 write error
+	 write 'type go to make a test run' |  STOP
+	 -------------------------------------------------------
+	 --                                       test routine
+	 display F
+	 NN=N
+	 for i=1 to NN
+	   drun TEST
+	   write x,y
+	   write '  - type go to continue' |  STOP
+	   next
+	 write '  - type go to see arrays' |  STOP
+	 write WW1,W2 |  --    show current weights
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 iRow=t |  Vector x=INPUT#
+	 Vector v=tanh(WW1*xx)
+	 Vector y=tanh(W2*v)
+	 --------------------------------------
+	 Vector error=TARGET#-y
+	 ----------------
+	 DOT enormsqr=error*error |  --  accumulate ...
+	 f1=f1+enormsqr |  --             ... over N patterns
+	 -------------------------------------------------------
+	 SAMPLE N |  --  update only after N trials
+	 term crit-f1 |  --       terminate run on success
+	 delf=comp(fsav-f1,-1,gain) |  --  kills unsuccessful changes
+	 fsav=f1 |  --                                                    
+	 FSAV=fsav-scale |  --                      offset display
+	 f1=0 |  --                       reset cumulative measure
+	 ------------------------------------------------------------
+	 DELTA WW1=delf*DELWW1 |  -- update
+	 DELTA W2=delf*DELW2
+	 --------------------------------------------------------
+	 --                       try pseudorandom perturbations
+	 --
+	 MATRIX DELWW1=gainx*ran() |  -- +gainx*ran()+gainx*ran()+ ...
+	 MATRIX DELW2=gainx*ran() |  --    for pseudo-Gaussian samples
+	 DELTA WW1=DELWW1 |  DELTA W2=DELW2
+	 --------------------------------------------------------
+	 if fmin-fsav
+	   fmin=fsav
+	   FMIN=fmin-scale |  --                 offset the curve
+	   -------------------------------------------
+	   dispt f1,FMIN,FSAV |  --     error measures     
+	   ------------------------------------------------------
+	   --                              test run (no learning)
+	      label TEST
+	   iRow=i |  Vector x=INPUT#
+	   Vector v=tanh(WW1*xx)
+	   Vector y=tanh(W2*v)
+	   Vector error=TARGET#-y
+	   DOT enormsqr=error*error
+

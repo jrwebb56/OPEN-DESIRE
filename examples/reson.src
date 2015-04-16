@@ -1,0 +1,19 @@
+
+
+	 --                    RESONATING OSCILLATORS
+	 -----------------------------------------------------------------
+	 display N1 |  display C8
+	 TMAX=15 |  DT=0.00001 |  NN=30000
+	 ww=600 |  --       circular frequency
+	 k=40 |  --           coupling coefficient
+	 r=0.7 |  --           damping coefficient
+	 x1=0.5 |  --                        initial value
+	 drun
+	 ---------------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------------
+	 d/dt x1=x1dot |  d/dt x1dot=-ww*x1-k*(x1-x2)
+	 d/dt x2=x2dot |  d/dt x2dot=-ww*x2-r*x2dot-k*(x2-x1)
+	 X1=x1+0.5 |  X2=x2-0.5 |  --   offset display
+	 dispt X1,X2
+

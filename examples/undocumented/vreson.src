@@ -1,0 +1,22 @@
+
+
+	 --                    RESONATING OSCILLATORS
+	 -----------------------------------------------------------------
+	 display N1 |  display C8
+	 TMAX=15 |  DT=0.00001 |  NN=100000
+	 --
+	 ww=600 |  --       circular frequency
+	 k=40 |  --           coupling coefficient
+	 r=0.7 |  --           damping coefficient 
+	 -- 	 
+	 STATE x[4] |  ARRAY A[4,4]
+	 data 0,0,1,0;0,0,0,1;-(ww+k),-k,0,0;-k,-(ww+k),0,-r |  read A
+	 x[1]=0.5 |  --                        initial value    	 
+	 drun
+	 ---------------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------------
+	 Vectr d/dt x=A*x
+	 X1=x[1]+0.5 |  X2=x[2]-0.5 |  --   offset display
+	 dispt X1,X2
+

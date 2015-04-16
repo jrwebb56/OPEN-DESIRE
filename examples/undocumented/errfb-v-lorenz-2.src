@@ -1,0 +1,60 @@
+
+
+	 --     RECURRENT-NETWORK PREDICTOR
+	 --     predicts Lorenz-attractor time series
+	 --     trains  with error and v feedback,
+	 --          then runs with v feedback alone
+	 ---------------------------------------------------------------
+	 display N3 |  display C8 |  display R |  scale=2
+	 TMAX=25 |  DT=0.0001 |  NN=TMAX/DT+1
+	 -----
+	 m=50 |  -- predictor delay (try larger m, too!)
+	 nv=27 |  --      number of hidden-layer neurons
+	 --
+	 ARRAY signal[m] |  --       predictor-delay buffer
+	 --
+	 --  input, bias, hidden layer (context layer),error
+	 ARRAY x[1]+x0[1]+v[nv]+error[1]=xx |  x0[1]=1
+	 ARRAY deltav[nv],y[1]
+	 ARRAY WW1[nv,nv+3],W2[1,nv]
+	 --
+	 for i=1 to nv |  for k=1 to nv+3 |  -- initialize
+	     WW1[i,k]=0.1*ran()
+	     next  |  next
+	 -----------------------------------------------------------
+	 STATE q[3] |  --   for Lorenz state equations
+	 --
+	 --                        Lorenz-system parameters
+	 b=28 |  c=2.6667 |  A=10
+	 -----------------------------------------------------------  
+	 lrate1=0.001 |  lrate2=0.0007
+	 Switch=1
+	 N=4 |  --                   number of training runs
+	 for i=1 to N |  drun  |  next
+	 ---------
+	 write 'type go for a prediction test' |  STOP
+	 Switch=0
+	 lrate1=0 |  lrate2=0 |  drun  |  -- test run
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 d/dt q[1]=A*(q[2]-q[1])+0.001 |  -- Lorenz
+	 d/dt q[2]=q[1]*(b-q[3])-q[2]
+	 d/dt q[3]=q[1]*q[2]-c*q[3]
+	 ---------------------------------------------------------------
+	 OUT  |  --   we use sampled data from now on!
+	 target=0.05*q[1]
+	 Vector signal=signal{-1} |  signal[1]=target
+	 x[1]=signal[m]
+	 Vector v=tanh(WW1*xx) |  --    includes bias
+	 Vector y=W2*v |  --  no output limiter needed
+	 --
+	 Vector error=Switch*(target-y)
+	 Vector deltav=W2%*error*(1-v^2) |  -- backprop
+	 DELTA WW1=lrate1*deltav*xx
+	 DELTA W2=lrate2*error*v
+	 -----------------------------     stripchart-type display
+	 yy=y[1]+0.5*scale |  TARGET=target+0.5*scale
+	 errorx10=10*(target-y[1])-0.5*scale
+	 dispt yy,TARGET,errorx10
+

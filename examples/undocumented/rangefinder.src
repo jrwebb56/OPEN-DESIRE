@@ -1,0 +1,18 @@
+
+
+	 ARRAY x[6],y[6],z[6]
+	 for i=1 to 6 |  x[i]=-3*i |  next
+	 x[2]=9 |  x[5]=-1
+	 NN=5
+	 drun
+	 write x
+	 write xmax,xmin
+	 i=0 |  repeat  |  i=i+1 |  until y[i]<>0 |  I=i
+	 i=0 |  repeat  |  i=i+1 |  until z[i]<>0 |  K=i
+	 write I,K
+	 -------------------------------------
+	 DYNAMIC
+	 -------------------------------------
+	 Vector y^=x |  DOT xmax=y*1
+	 Vector z^=-x |  DOT xxx=z*1 |  xmin=-xxx
+

@@ -1,0 +1,39 @@
+
+
+	 -- TRIANGLE-WINDOW AMPLITUDE DISTRIBUTION
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 n=2000
+	 ARRAY X[n],f[n]
+	 one=1
+	 alpha=10 |  --                          inverse window width
+	 beta=alpha/n
+	 BETA=1/PI |  --            for comparison
+	 ------------------------------------------------
+	 s=0 |  b=0.8 |  --           note scaling!
+	 m=1
+	 for i=1 to m
+	   NN=n |  TMAX=30
+	   drun  |  --                                    measurememt run
+	   ---------------------------------------------
+	   t=0 |  TMAX=1 |  --                     note scaling!
+	   NN=1000
+	   drunr READOUT
+	   display 2
+	   next
+	 -----------------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------------
+	 --                                            measurement run
+	 --
+	 x=s*(ran()+ran()+ran()+ran()+ran())+b*sin(20*t)
+	 store X=x
+	 ----------------------------------------------------------
+	    label READOUT
+	 --
+	 xx=2*t-TMAX |  --     scaled display sweep
+	 Vector f=beta*lim(1-alpha*abs(X-xx))
+	 DOT F=f*1 |  F=F-scale
+	 ff=BETA/sqrt(abs(b*b-xx*xx))-scale
+	 dispxy xx,F,ff
+

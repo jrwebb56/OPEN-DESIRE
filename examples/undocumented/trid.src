@@ -1,0 +1,47 @@
+
+
+	 -- PARZEN-WINDOW AMPLITUDE DISTRIBUTION
+	 ------------------------------------------------------------------
+	 display N14 |  display C16 |  display R
+	 n=100
+	 ARRAY X[n],Y[n],fx[n],fy[n],fxy[n]
+	 alpha=3.5 |  --                          inverse window width
+	 beta=0.75*alpha |  --                  scale factor
+	 scale=1.5
+	 -- BETA=640*alpha*beta | --     match  for comparison
+	 ------------------------------------------------
+	 sx=0.2 |  bx=0 |  --                      distribution parameter
+	 sy=0.2 |  by=0
+	 ------------------------------------------------
+	 NN=n |  TMAX=40
+	 drun MEASURE
+	 ---------------------------------------------
+	 TMAX=1 |  NN=150
+	 irule 2
+	 delx=-0.3 |  dely=-1.4
+	 for y=-1 to 0 step 1/(n-1)
+	   t=0
+	   delx=delx+0.005 |  dely=dely+0.01
+	   drun
+	   display 2
+	   next
+	 -----------------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------------
+	 --                                               compute results
+	 --
+	 x=2*t-1 |  --                               display sweep
+	 Vector fx=beta*lim(tri(alpha*(X-x)))
+	 Vector fy=beta*lim(tri(alpha*(Y-y)))
+	 Vector fxy=fx*fy
+	 AVG Fxy=fxy*1
+	 -----------------------------------------------------------
+	 xx=x+delx |  FFF=Fxy+dely |  -- 3-D display
+	 dispxy xx,FFF
+	 ------------------------------------------------------------------
+	 --                                           measurement run
+	    label MEASURE
+	 xx=sx*(ran()+ran()+ran())+bx*sin(10*t)
+	 yy=sy*(ran()+ran()+ran())+by*sin(10*t)
+	 store X=xx |  store Y=yy
+

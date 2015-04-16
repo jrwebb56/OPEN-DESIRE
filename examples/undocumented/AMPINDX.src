@@ -1,0 +1,31 @@
+
+
+	 --       AMPLITUDE-DISTRIBUTION MEASUREMENT
+	 --         this interpreter program illustrates indexing 
+	 ------------------------------------------------------
+	 Xmin=-1 |  Xmax=1 |  --                interval for analysis
+	 n=100 |  --                             number of class intervals
+	 delx=(Xmax-Xmin)/n |  --             class-interval width
+	 ARRAY X[n],ff[n] |  --  class-center and counter arrays
+	 for k=1 to n |  X[k]=Xmin+(k-0.5)*delx |  next
+	 ------------------------------------------------------
+	 NN=20000 |  --                                number of samples
+	 a=0.5*n/NN |  --                             for  display scaling
+	 ------------------------------------------------------
+	 s=0.5 |  --                    a random-process parameter
+	 -----------------------------------------------------
+	 -----------------------------------------------------
+	 display A |  display Y |  color=14
+	 for i=1 to NN
+	   --             generate a pseudo-Gaussian sample value
+	   --
+	   x=s*ran()
+	   --
+	   k=(x-Xmin)/delx+1 |  --            index into its class interva
+	   ff[k]=ff[k]+1 |  --                   increment the class count
+	   next
+	 -----------------------------------------              plot the hi
+	 for k=1 to n
+	   plot X[k],a*ff[k]-scale,color |  --   scale, offset ff
+	   next
+

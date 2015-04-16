@@ -1,0 +1,25 @@
+
+
+	 -- 2-INPUT FUNCTION TEST
+	 ---------------------------------------------
+	 NN=5000
+	 scale=20
+	 display N1 |  display C8
+	 N1=20 |  N2=15
+	 ARRAY X[N1],Y[N2],F[N1,N2]
+	 for i=1 to N1 |  X[i]=i-N1/2 |  next
+	 for k=1 to N2 |  Y[k]=k-N2/2 |  next
+	 for i=1 to N1 |  for k=1 to N2
+	     F[i,k]=X[i]+Y[k]*(cos(X[i])*Y[k]-sin(Y[k])) |  next  |  next
+	 TMAX=N2+1 |  t=0
+	 drun
+	 ---------------------------------------
+	 DYNAMIC
+	 ---------------------------------------            
+	 x=t-0.5*N1 |  y=t-0.5*N2
+	 f=func2(x,y;F,X,Y)
+	 q=x+y*(cos(x)*y-sin(y))
+	 errorx4=4*(f-q)
+	 qq=q*0.3 |  ff=f*0.3
+	 dispt qq,ff,errorx4
+

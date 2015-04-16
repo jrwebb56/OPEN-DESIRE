@@ -1,0 +1,44 @@
+
+
+	 -- PARZEN-WINDOW AMPLITUDE DISTRIBUTION
+	 --   AND ENTROPT ESTIMATION (in nats, not bits)
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display Q |  scale=4
+	 --
+	 --                generate a sample of n measurements
+	 pp=tim(0)
+	 n=1000 |  --                     sample size
+	 ARRAY X[n],f[n]
+	 NN=n |  Ascale=15
+	 irule 0 |  drun  |  --      measurement run
+	 ---------------------------------------------
+	 -- Parzen-window probability density and entropy
+	 --
+	 NN=1000 |  display R
+	 h=0.51 |  alpha=-1/(2*h*h) |  -- window width
+	 aa=Ascale/sqrt(2*PI) |  beta=aa/n |  -- scale
+	 t=0 |  TMAX=scale |  -- display sweep
+	 irule 1 |  drun READOUT
+	 write H1
+	 qq=tim(0) |  write qq-pp
+	 -----------------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------------
+	 --  measurement run (Box/Muller Gaussian data)
+	 --
+	 x=gauss(0)
+	 store X=x |  -- store a sample of n measurements
+	 dispt x
+	 ----------------------------------------------------------
+	    label READOUT
+	 --
+	 xx=2*t-TMAX |  --                              display sweep
+	 Vector f=beta*exp(alpha*(xx-X)^2)
+	 DOT F=f*1
+	 normal=aa*exp(-0.5*xx*xx)-scale |  -- exact normal
+	 -------------------------------
+	 fff=F/Ascale |  --	     probability-density estimate
+	 d/dt H1=-2*fff*ln(fff) |  --                   entropy estimate
+	 ----
+	 F=F-scale |  dispxy xx,F,normal,H1
+

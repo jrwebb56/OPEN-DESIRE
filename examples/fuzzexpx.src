@@ -1,0 +1,38 @@
+
+
+	 --  FUZZY FUNCTION MATCHING WITHOUT OPTIMIZATION
+	 ------------------------------------------------------------------
+	 n=21
+	 A=4
+	 ARRAY X[n],member[n],Y[n]
+	 D=0.4
+	 display N1 |  display C8 |  display R
+	 scale=4
+	 for i=1 to n |  X[i]=D*(i-(n+1)/2) |  next
+	 NN=1000 |  TMAX=1 |  DT=0.001 |  -- for display
+	 x=-scale
+	 for b=2 to 12 step 2
+	   drunr  |  display 2
+	   write "type go to continue" |  STOP
+	   next
+	 display 1
+	 drun
+	 STOP
+	    label eee
+	 edit 100-180
+	 ----------------------
+	 DYNAMIC
+	 ----------------------
+	 Vector member=exp(b*(x-X)*(X-x))
+	 ------------------------------------
+	 DOT norm=member*1 |  NORM=1/norm
+	 Vector member=NORM*member
+	 mbr1=3*member[1]-scale |  mbr2=3*member[2]-scale
+	 Vector Y=A*cos(X)
+	 mbr3=3*member[3]-scale
+	 DOT F=Y*member
+	 f=A*cos(x)
+	 d/dt x=2*scale
+	 errorx10=10*(F-f)
+	 dispxy x,f,F,mbr1,mbr2,mbr3,errorx10
+

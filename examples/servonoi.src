@@ -1,0 +1,50 @@
+
+
+	 --  VECTORIZED MONTE SIMULATION OF A NOISY SERVO
+	 --                                                note noise sampl
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=2
+	 A=0.1 |  omega=1.2 |  --                           input-signal 
+	 a=10000 |  w=100 |  --                                          
+	 k=60 |  r=5 |  g1=10000 |  --                    controller par
+	 B=100 |  maxtrq=1 |  g2=2 |  R=0.6 |  --             servo par
+	 ------------------------------------------------------------------
+	 TMAX=7.5 |  DT=0.001 |  NN=3750
+	 --------
+	 n=1000
+	 STATE p[n],unoise[n],x[n],xdot[n],v[n]
+	 ARRAY noise[n],voltage[n],torque[n],e[n]
+	 --                                                                
+	 for i=1 to n |  noise[i]=a*(ran()+ran()+ran()+ran()) |  next
+	 --
+	 drun
+	 write "eAvg = ";eAvg;"     eeAvg = ";eeAvg
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 Vectr d/dt p=-w*p+noise |  --                          two-sectio
+	 Vectr d/dt unoise=-w*unoise+p |  --                     low-pass 
+	 --
+	 u=A*cos(omega*t) |  --                    servo input for all n m
+	 Vector e=x-u |  --                                               
+	 Vector voltage=-k*e-r*xdot+unoise |  --  noisy motor voltage
+	 Vectr d/dt v=-B*v+g1*voltage |  --             motor-field buildu
+	 --
+	 Vector torque=maxtrq*tanh(g2*v/maxtrq) |  --            dynamics
+	 Vectr d/dt x=xdot |  Vectr d/dt xdot=torque-R*xdot
+	 ------------------------------------------------------------------
+	 --                                                                
+	 OUT
+	 Vector noise=a*(ran()+ran()+ran()+ran()) |  --        sampled noi
+	 --
+	 AVG eAvg=e*1 |  AVG eeAvg=e*e |  --     compute averages
+	 ------------------------------------------------------------------
+	 --                                   offset curves for rescaled st
+	 --
+	 X=5*x[17]+0.5*scale
+	 U=5*u+0.5*scale |  Unoise=0.5*unoise[17]+0.5*scale
+	 error10=10*e[17]
+	 eAvg10=10*eAvg-0.5*scale
+	 eeAvg100=100*eeAvg-scale
+	 dispt X,U,Unoise,error10,eAvg10,eeAvg100
+

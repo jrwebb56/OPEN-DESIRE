@@ -1,0 +1,36 @@
+
+
+	 -- SELF-OPTIMIZING LINEAR FILTER
+	 -------------------------------------------------------------
+	 display N1 |  display C8 |  display Q
+	 NN=50000
+	 n=4 |  -- order of filter
+	 ARRAY x[n]+yy[n]=xx,y[n]
+	 ARRAY W[n,2*n]
+	 ARRAY error[n]
+	 lrate=0.0002 |  a=1
+	 --
+	 drun
+	 STOP
+	 NN=1000 |  scale=2
+	 drun IMPULSE
+	 --------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------
+	 x[1]=a*sin(2*t)+sin(8*t)
+	 Vector y=W*xx
+	 Vector yy=y |  -- for impulse response
+	 --
+	 Vector error=x-y
+	 DELTA W=lrate*error*xx
+	 --
+	 DOT enormsqr=error*error
+	 ENORMSQR=enormsqr-scale |  -- offset display
+	 dispt ENORMSQR
+	 -------------------------------------
+	    label IMPULSE
+	 yy[1]=1
+	 Vector y=W*xx
+	 Vector yy=y
+	 dispt y[1]
+

@@ -1,0 +1,28 @@
+
+
+	 -- SELF-OPTIMIZING LINEAR FILTER
+	 -------------------------------------------------------------
+	 display N1 |  display C8 |  display Q
+	 DT=0.0001 |  TMAX=1000
+	 NN=100000
+	 n=4
+	 ARRAY x[n]
+	 STATE y[n]
+	 ARRAY W[n,n]
+	 ARRAY error[n]
+	 lrate=0.0000001 |  a=1
+	 --
+	 drun
+	 --------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------
+	 x[1]=a*sin(4*t)
+	 Vectr d/dt y=W*y+x
+	 --
+	 Vector error=x-y
+	 DELTA W=lrate*error*y
+	 --
+	 DOT enormsqr=error*error
+	 ENORMSQR=enormsqr-scale |  -- offset display
+	 dispt ENORMSQR
+

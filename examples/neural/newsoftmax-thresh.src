@@ -1,0 +1,62 @@
+
+
+	 --  Linear/SOFTMAX PATTERN CLASSIFIER
+	 --     estimates a posteriori probabilities
+	 --     implements associative memory
+	 --------------------------------------------------------------
+	 cc=14 |  display N1 |  display C8 |  display R
+	 nx=25 |  N=26
+	 ARRAY input[nx],x[nx]
+	 ARRAY INPUT[N,nx]=AINPUT,TARGET[N,N]
+	 ARRAY v[N],q[N],y[nx],yy[nx],W[N,nx]
+	 ARRAY error[N],Yerror[nx]
+	 --
+	 --  for i=1 to N |  for k=1 to nx |  -- initialize W
+	 --   W[i,k]=ran() |  next  |  next
+	 --
+	 MATRIX TARGET=1 |  --  (binary-classifier rows)
+	 -------------------------------------------------------------
+	 lrate=1.75 |  Tnoise=0.5 |  Rnoise=0.9
+	 NN=2000
+	 --------------------------------------------------------
+	 connect '.\pattern\alphabet.txt' as input 2
+	 input #2,INPUT
+	 disconnect 2
+	 ------------------------
+	 drun
+	 write 'type go for successive recall runs' |  STOP
+	 display F
+	 ----------
+	 NN=2
+	 for i=1 to N
+	   drun RECALL
+	   write v |  -- show probabilities
+	   for k=1 to 4000 |  write "wait" |  next
+	   next
+	 ---------------------------------------------
+	 DYNAMIC
+	 ----------------------------------------
+	 iRow=t |  Vector x=INPUT#+Tnoise*ran()
+	 Vector v=exp(W*x) |  DOT vsum=v*1
+	 Vector v=v/vsum |  -- probability estimate
+	 ------------------------------------------------
+	 Vector error=TARGET#-v
+	 DELTA W=lrate*error*x |  -- LMS algorithm
+	 DOT enormsq=error*error
+	 -- 
+	 ENORMSQ=enormsq-scale |  -- offset display
+	 dispt ENORMSQ
+	 ----------------------------------------
+	    label RECALL
+	 iRow=i
+	 Vector input=INPUT#
+	 Vector x=input+Rnoise*ran()
+	 Vector v=exp(W*x) |  DOT vsum=v*1
+	 Vector v=v/vsum |  -- probability estimate
+	 Vector v=lim(1.4*v-0.01) |  -- thresholding
+	 Vector yy=INPUT%*v
+	 -------------------------------------------------------
+	 Vector input=cc*input |  Vector x=cc*x
+	 Vector yy=cc*yy
+	 SHOW  |  SHOW input,5 |  SHOW x,5 |  SHOW yy,5
+

@@ -1,0 +1,9 @@
+
+
+	 n=5
+	 ARRAY W[n,n]
+	 for i=1 to n |  W[i,i]=1 |  next
+	 for i=2 to n |  W[i-1,i]=-1 |  W[i,i-1]=-1 |  next
+	 for i=3 to n |  W[i-2,i]=-0.5 |  W[i,i-2]=-0.5 |  next
+	 write W
+

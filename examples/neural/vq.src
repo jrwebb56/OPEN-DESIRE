@@ -1,0 +1,103 @@
+
+
+	 --         ENTROPY MEASUREMENT BY COMPETITIVE LEARNING
+	 ------------------------------------------------------
+	 m=2 |  --                             number of inputs
+	 --                 number of competitive-layer neurons
+	 n1=8 |  n2=8 |  n=n1*n2
+	 ------------
+	 ARRAY x[m],y[n],h[n],z[m],W[n,m],INPUT[4,m]
+	 --
+	 for i=1 to n1 |  --        make quantization templates
+	   for k=1 to n2
+	     W[i+n1*(k-1),1]=(2*i-(n1+1))/n1
+	     W[i+n1*(k-1),2]=(2*k-(n2+1))/n2
+	     next  |  next
+	 NN=4
+	 --------------------------
+	 -- for i=1 to n |  for k=1 to m |  --   random quantization
+	 --    W[i,k]=ran()
+	 --    next  |  next
+	 -- NN=10000 |  --            used for random quantization
+	 ------------------------------------------------------
+	 --                                       test patterns
+	 -- data 0.6,0.6;0.6,-0.6;-0.6,0.6;-0.6,-0.6
+	 --
+	 -- read INPUT
+	 noise=0.2 |  --                       noise amplitude
+	 ------------------------------------------------------
+	 display Q |  display N1 |  --          display colors
+	 scale=1
+	 ------------------------------------------------------
+	 lrate=0.1 |  --    learn rate for initial quantization
+	 crit=0 |  --                          Ahalt conscience
+	 S=0.1 |  --                       decay rate for lrate
+	 scale=1
+	 NN=10000 |  --                         for measurement
+	 TMAX=NN-1
+	 SS=S/TMAX |  lrate1=lrate
+	 drun  |  --                           quantization run
+	 ------------------------------------------------------
+	 --                        display quantization entropy
+	    label check
+	 NN=10000 |  --                               for check
+	 crit=-1 |  -- no conscience
+	 lrate=0 |  a=1/NN
+	 for i=1 to n |  h[i]=0 |  next  |  --  initialize to 0
+	 drun recall
+	 ---------------------
+	    label onwards
+	 ONE=0 |  H=0 |  --     initialize checksum and entropy
+	 for i=1 to n
+	   h[i]=a*h[i] |  --   statistical relative frequencies
+	   ONE=ONE+h[i] |  --               accumulate checksum
+	   H=H-h[i]*ln(h[i]+1.0E-25) |  --   accumulate entropy
+	   next
+	 -----------------------------          display results
+	 write 'H=  ';H/ln(2);' bits','          checksum=  ';ONE
+	 write 'log2(n) = ';ln(n)/ln(2);'   for comparison'
+	 write 'type go for an entropy measurement' |  STOP
+	 -------------------------------------------------------
+	    label measure
+	 display R
+	 NN=10000 |  --                          for measurement
+	 crit=-1 |  --                              no conscience
+	 lrate=0 |  a=1/NN
+	 for i=1 to n |  h[i]=0 |  next
+	 drun newrun
+	 go to onwards
+	 ------------------------------------------------------
+	    label eee
+	 display F |  --                        edit parameters
+	 edit 230,250,410,440,470,520-560,620
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 --                                    quantization run
+	 lrate1=lrate*exp(-SS*t) |  --      decrease learn rate
+	 Vector x=ran()
+	 CLEARN y=W*x;lrate1,crit |  --           compete,learn
+	 delta h=y |  --                            conscience
+	 Vector z=W%*y |  -- reconstruct templates
+	 dispxy z[1],z[2]
+	 ------------------------------------------------------
+	 --                          shows quantization entropy
+	    label recall
+	 Vector x=ran()
+	 CLEARN y=W*x;lrate,crit
+	 delta h=y |  --                  accumulate histogram
+	 ------------------------------------------------------
+	 --                                     measurement run
+	    label newrun
+	 iRow=t
+	 Vector x=ran()+ran()+ran()+ran()+ran()
+	 Vector x=noise*x
+	 -- x[2]=0
+	 -- x[2]=x[1]
+	 --  x[2]=x[1]*x[1]
+	 -----------------------------------------------------
+	 CLEARN y=W*x;lrate,crit |  --                 compete
+	 Vectr delta h=y
+	 Vector z=W%*y
+	 DISPXY x[1],x[2],z[1],z[2]
+

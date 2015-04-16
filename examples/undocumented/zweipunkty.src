@@ -1,0 +1,29 @@
+
+
+	 -- Zweipunktregler mit Hysterese
+	 -- an einer Temperaturregelstrecke mit T=100s und
+	 -- einer Laufzeit von 20s
+	 -- Simulationszeit: 0..2000s; Auflösung 0.5s
+	 -- -------------------------------------------------------------
+	 display N1 |  display C8 |  scale=40
+	 TMAX=500 |  NN=4000 |  DT=0.005
+	 ARRAY XX[4000] |  -- array fuer delay
+	 T1=100 |  -- Zeitkonstante
+	 tau=100 |  -- Laufzeit
+	 x01=100 |  -- dTend=50K
+	 x0=x01 |  x=0.1 |  y=1 |  Ein=1
+	 drun
+	 ----------------------------------
+	 DYNAMIC
+	 ----------------------------------
+	 d/dt x=(x0-x)/T1
+	 delay xx=XX(x,tau
+	 d/dt y=(x0-xx)/T1
+	 step
+	 Ein=swtch(90-y+2*Ein)
+	 x0=x01*Ein
+	 --
+	 xxx=0.25*x0+1-scale |  -- nur zum besseren erkennen
+	 Xx=xx-scale |  Y=0.5*y-scale
+	 dispt Xx,xxx,Y
+

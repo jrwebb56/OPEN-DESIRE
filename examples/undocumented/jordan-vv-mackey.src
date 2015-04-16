@@ -1,0 +1,58 @@
+
+
+	 --     JORDAN PREDICTOR
+	 --     predicts Mackey-Glass chaos generator
+	 ---------------------------------------------------------------
+	 display N3 |  display C8 |  display R |  scale=0.75
+	 TMAX=500 |  DT=0.04 |  NN=TMAX/DT+1
+	 a=0.2 |  b=0.1 |  c=10 |  --        for Mackey-Glass
+	 tau=25
+	 --
+	 ARRAY DD[5000] |  --       time-delay buffer
+	 s=10 |  --             initialize delay buffer 
+	 --------------------------------------------------------------
+	 m=50 |  --                                 predictor delay
+	 nx=1 |  --                                        single input
+	 nv=17 |  --      number of hidden-layer neurons
+	 --
+	 ARRAY signal[m],error[1]
+	 --
+	 --  input, bias, hidden layer (context layer)
+	 ARRAY x[1]+x0[1]+y[1]=xx |  x0[1]=1
+	 ARRAY v[nv]+v0[1]=vv |  v0[1]=1
+	 ARRAY deltav[nv]+deltav0[1]=deltavv |  deltav0[1]=1
+	 ARRAY WW1[nv,nx+2],WW2[1,nv+1]
+	 --
+	 for i=1 to nv |  for k=1 to nx+2 |  -- initialize
+	     WW1[i,k]=0.1*ran()
+	     next  |  next
+	 -----------------------------------------------------------
+	 lrate1=0.001 |  lrate2=0.001
+	 Tnoise=0.01
+	 --
+	 N=8 |  --                   number of training runs
+	 for i=1 to N |  drun  |  next
+	 ---------
+	 write 'type go for prediction tests' |  STOP
+	 lrate1=0 |  lrate2=0 |  drun  |  drun  |  -- test runs
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 tdelay Sd=DD,s,tau |  -- Mackey-Glass time series
+	 d/dt s=a*Sd/(1+Sd^c)-b*s
+	 --------------------------------- 
+	 OUT  |  --                    sampled data from here on!
+	 target=0.5*s
+	 Vector signal=signal{-1} |  signal[1]=s+Tnoise*ran()
+	 x[1]=signal[m]
+	 Vector v=tanh(WW1*xx) |  --              includes bias
+	 Vector y=WW2*vv |  --    no limiter needed on output!
+	 --
+	 Vector error=target-y
+	 Vector deltavv=WW2%*error*(1-vv^2) |  -- backprop
+	 DELTA WW1=lrate1*deltav*xx
+	 DELTA WW2=lrate2*error*vv
+	 -----------------------------
+	 errorx5=5*error[1]-0.5*scale
+	 dispt y[1],errorx5,target
+

@@ -1,0 +1,47 @@
+
+
+	 ---------------------------------------------------------
+	 --                 FUNCTION-LEARNING RADIAL-BASIS NETWORK
+	 ---------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 --                              set experiment parameters
+	 n=15
+	 Wgain=0.12
+	 scale=0.5 |  D=2.2/(n) |  d=1/(D) |  b=PI/(2*D)
+	 NN=100000
+	 --
+	 ---------------------------------------------------------
+	 ARRAY v[n],X[n],Y[n],vv[n]
+	 ARRAY w[n]
+	 --
+	 for i=1 to n |  X[i]=D*(i-(n+1)/2)
+	   Y[i]=0.4*sin(3*X[i]) |  -- these could be simplified W[i]
+	   next
+	 --
+	 NN=20000 |  MM=5
+	 --
+	 for i=1 to 5 |  drun  |  next  |  STOP
+	 ---------------------------------------------------------
+	    label eee
+	 edit 32-80 |  --                         editing screen
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 x=ran()
+	 -- Vector v=SAT(1-b*abs(X-x))
+	 -- Vector v=b*(X-x) |  Vector vv=d*(X-x)
+	 -- Vector v=rect(vv)*cos(v)*cos(v)
+	 --
+	 Vector v=exp(b*(x-X)*(X-x))
+	 DOT y=w*v
+	 --
+	 target=0.4*cos(4*x) |  --     substitute other functions
+	 error=target-y
+	 Vectr delta w=Wgain*error*v
+	 --
+	 ERRx100=100*error
+	 XIN=scale*x
+	 m1=0.25*v[1]-scale |  m2=0.25*v[2]-scale
+	 m3=0.25*v[3]-scale |  m4=0.25*v[4]-scale |  m5=0.25*v[5]-scale
+	 dispxy XIN,target,ERRx100,y,m1,m2,m3,m4,m5
+

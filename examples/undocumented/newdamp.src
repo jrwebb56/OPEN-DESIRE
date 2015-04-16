@@ -1,0 +1,21 @@
+
+
+	 --    Response of Linear System
+	 --           a simple repeated-run study
+	 -----------------------------------------------------------
+	 display N1 |  display C8 |  display Q
+	 TMAX=0.5 |  DT=0.00001 |  NN=10001
+	 ww=400 |  --    fixed system parameter
+	 x=1 |  --     given initial displacement
+	 -----------------------------------------------------------
+	 for i=1 to 5 |  -- set parameter values
+	   r=5*i
+	   drunr  |  display 2
+	   next
+	 --------------------------------
+	 DYNAMIC
+	 --------------------------------
+	 d/dt x=xdot
+	 d/dt xdot=-ww*x-r*xdot
+	 dispt x
+

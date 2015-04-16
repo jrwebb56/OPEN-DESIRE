@@ -1,0 +1,115 @@
+
+
+	 -- CREEPING PATTERN CLASSIFIER
+	 --     implements associative memory
+	 --   uses softmax for optimization, probabilities
+	 ---------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 nx=25 |  -- pattern dimension (5x5 pixel grid)
+	 N=26 |  -- number of categories (A to Z)
+	 nv=32 |  -- hidden-layer dimension - 1
+	 ARRAY INPUT[N,nx] |  -- prototype-pattern array
+	 ARRAY TARGET[N,N] |  -- binary-selector-pattern array
+	 --
+	 -------------------                                        network
+	 ARRAY input[nx],INput[nx],x[nx]+x0[1]+error[N]=xx |  x0[1]=1
+	 ARRAY v[nv]+v0[1]=vv |  v0[1]=1
+	 ARRAY y[N],P[N],s[nx]
+	 ------------------------------------------- connection weights
+	 ARRAY W1[nv+1,nx+N+1],W2[N,nv+1]
+	 ARRAY DW1[nv+1,nx+N+1],DW2[N,nv+1]
+	 ARRAY DELW1[nv+1,nx+N+1],DELW2[N,nv+1]
+	 --
+	 ------------------------------------------------  error measures
+	 --   random initial weights 
+	 --
+	 for i=1 to nv+1 |  for k=1 to nx+N+1
+	     W1[i,k]=ran() |  next  |  next
+	 for i=1 to N |  for k=1 to nv+1
+	     W2[i,k]=ran() |  next  |  next
+	 -----------------------------------------  	 
+	 MATRIX TARGET=1 |  --               (one-of-N classifier)
+	 --
+	 connect '.\pattern\alphabet.txt' as input 2
+	 input #2,INPUT
+	 disconnect 2
+	 ----------------------------------------------------------------
+	 fsav=1000 |  fmin=1000 |  --   initialize optimization
+	 --
+	 --                                                  set parameters
+	 Tnoise=0.0 |  Rnoise=0.0 |  cc=20
+	 gain=0.00002 |  gain1=0.06 |  gain2=0.06
+	 mom1=0.7 |  mom2=0.7 |  crit=0.0002
+	 scale=1 |  NN=10000
+	 ------------------------------------------------------------------
+	 drun  |  --           simulation runs (NN trials) 
+	 write fmin,measure,checksum
+	 write "PLEASE WAIT!"
+	 scale=fmin |  gain=gain/20 |  crit=0.000001
+	 drun
+	 write fmin,measure,checksum
+	 ------------------------------------------------------------------
+	 drun
+	 write 'type go for successive recall runs' |  STOP
+	 display F
+	 ----------
+	 NN=20
+	 for i=1 to N
+	   drun TEST
+	   write P |  -- show probabilities
+	   STOP
+	   for k=1 to 4000 |  write "wait" |  next
+	   next
+	 ---------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------
+	 --                                                        network
+	 iRow=t |  Vector input=INPUT#
+	 Vector x=input+Tnoise*ran()
+	 --
+	 Vector vv=tanh(W1*xx)
+	 Vector y=exp(W2*vv) |  DOT ysum=y*1
+	 Vector P=y/ysum
+	 --------------------------------------       BACKPROP
+	 Vector error=TARGET#-P
+	 DOT measure=error*error
+	 DOT checksum=P*1
+	 -------------------------------------------------------
+	 term crit-measure |  --                terminate run on success
+	 delf=comp(fsav-measure,-1,gain) |  --  kills unsuccessful changes
+	 fsav=measure |  --                                   save measure
+	 FSAV=fsav-scale |  --                  offset the curves
+	 ------------------------------------------------------------
+	 --                                            	      update
+	 MATRIX DW1=DELW1
+	 MATRIX DW2=DELW2
+	 MATRIX DELW1=delf*DELW1 |  -- note order!
+	 DELTA W1=DELW1+mom1*DW1 |  --    note use of previous value
+	 DELTA W2=delf*DELW2+mom2*DW2
+	 --------------------------------------------------------
+	 --                       try pseudorandom perturbations
+	 --
+	 MATRIX DELW1=gain1*ran()
+	 MATRIX DELW2=gain2*ran()
+	 DELTA W1=DELW1 |  DELTA W2=DELW2
+	 --------------------------------------------------------
+	 if fmin-fsav
+	   fmin=fsav
+	   FMIN=fmin-scale |  --                 offset the curve
+	   -------------------------------------------
+	   dispt FMIN,FSAV |  --  display error measures
+	   -------------------------------------------------------------
+	      label TEST
+	   -------------------------------------------------------------
+	   iRow=i
+	   Vector input=INPUT#
+	   Vector x=input+Rnoise*ran()
+	   Vector vv=tanh(W1*xx)
+	   Vector y=exp(W2*vv) |  DOT ysum=y*1
+	   Vector P=y/ysum
+	   ------------------------------------------------
+	   Vector s=INPUT%*P |  -- associative memory
+	   -------------------------------------------------------
+	   Vector INput=2*cc*input |  Vector x=cc*x |  Vector s=cc*s
+	   SHOW  |  SHOW INput,5 |  SHOW x,5 |  SHOW s,5
+

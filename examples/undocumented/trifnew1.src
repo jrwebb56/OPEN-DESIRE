@@ -1,0 +1,24 @@
+
+
+	 --                        simplified TRIFFET NEURON
+	 -- y is driven into lower limit 0 when y>bound
+	 ------------------------------------------------------------------
+	 display N1 |  display C8
+	 NN=6500 |  t=0 |  TMAX=2
+	 -----------------------------------------------
+	 ARRAY y[3],z[3]
+	 a=0.007 |  --                       input amplitude
+	 bound=0.7
+	 drun
+	 --------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------
+	 x=a*cos(3*t) |  --              external input
+	 Vector z=x-swtch(y-bound)
+	 Vectr delta y=z
+	 Vector y=lim(y) |  -- needed to repeat cycle
+	 --------------------------------------------------
+	 X=40*x+0.5*scale |  --        offset display curves
+	 Y=y[1]-scale |  Z=0.1*z[1]
+	 dispt X,Y,Z
+

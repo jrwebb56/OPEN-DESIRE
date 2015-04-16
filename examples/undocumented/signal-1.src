@@ -1,0 +1,25 @@
+
+
+	 --                           SIGNAL GENERATORS
+	 ------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=2
+	 TMAX=10 |  DT=0.0001 |  NN=40000 |  -- timing
+	 --------------------------------
+	 w=25 |  mod=0.6 |  -- signal parameters
+	 x=1 |  p=1 |  --                         initialize
+	 drun
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 d/dt x=w*p |  --  switched  triangle waves
+	 step
+	 switch=swtch(sin(3*t))
+	 p=0.8*switch*sgn(p-x) |  --  switched square waves
+	 q=(1-switch)*sin(70*t) |  -- switched sine waves
+	 z=p+q
+	 --
+	 ---                scaled stripchart-type display 
+	 --
+	 P=0.25*p-0.75*scale |  SWITCH=0.25*switch+0.75*scale
+	 dispt z
+

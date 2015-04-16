@@ -1,0 +1,35 @@
+
+
+	 --                                         SATELLITE ORBIT
+	 -- illustrates variable-step/variable-order (Gear) integration
+	 ----------------------------------------------------------
+	 ARRAY J[4,4] |  --                            Jacobian
+	 NN=3000 |  DT=0.03 |  TMAX=220000 |  --             timing
+	 scale=3E+08 |  display N1 |  --    display scale and color
+	 ----------------------------------------------------------
+	 irule 14 |  --            Gear rule, user-supplied Jacobian
+	 ERMAX=0.000001 |  --                  NOTE! relative error
+	 ----------------------------------------------------------
+	 GK=1.42E+16
+	 r=21.0E+06 |  v=36000 |  thdot=v/r |  --    initial values
+	 ----------------------------------------------------------
+	 drun
+	 DYNAMIC
+	 -----------------------------------       SYSTEM EQUATIONS
+	 d/dt r=rdot |  d/dt theta=thdot
+	 d/dt rdot=-GK/(r*r)+r*thdot*thdot
+	 d/dt thdot=-2*rdot*thdot/r
+	 ----------------------------------------------------------
+	 OUT  |  --                          scaled runtime display
+	 XX=r*cos(theta)+0.8*scale |  YY=r*sin(theta)
+	 dispxy XX,YY
+	 -----------------------------------
+	 JACOBIAN
+	 J[1,3]=1
+	 J[2,4]=1
+	 J[3,1]=2*GK/(r*r*r)+thdot*thdot
+	 J[3,4]=2*r*thdot
+	 J[4,1]=2*rdot*thdot/(r*r)
+	 J[4,3]=2*thdot/r
+	 J[4,4]=2*rdot/r |  --    (other elements of J default to 0)
+

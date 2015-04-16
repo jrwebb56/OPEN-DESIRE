@@ -1,0 +1,65 @@
+
+
+	 --  MATCH NARMAX  NETWORK TO  PLANT MODEL 
+	 --  Narendra's example with 3-layer bp network
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=0.5
+	 ARRAY Y[3] |  -- plant feedback
+	 ARRAY X[2]+feedback[3]=xx |  -- input (both) and net feedback
+	 ARRAY v1[10],v2[6],y[1],error[1],WW1[10,5],W2[6,10],W3[1,6]
+	 ARRAY deltav1[10],deltav2[6]
+	 --                                                     initialize 
+	 for i=1 to 10 |  for k=1 to 5
+	     WW1[i,k]=ran() |  next  |  next
+	 for i=1 to 6 |  for k=1 to 10
+	     W2[i,k]=ran() |  next  |  next
+	 for k=1 to 6 |  W3[1,k]=ran() |  next
+	 ------------------------------------------------------------------
+	 TMAX=800
+	 w=2*PI/250 |  ww=10*w |  lrate=0.08 |  lrate1=0.01
+	 ------------------------------------------------------------------
+	 NN=30000 |  drunr  |  --    training run/reset t=1
+	 write "type go for a test run" |  STOP
+	 NN=8000 |  Y[1]=0 |  drun RECALL |  -- recall 
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 Vector X=X{-1} |  X[1]=ran() |  --  same input X  for both
+	 --                             initially Y=feedback=0             
+	 ------------                                                plant
+	 f=(Y[1]*Y[2]*Y[3]*X[1]*(Y[3]-1)+X[2])/(1+Y[2]^2+Y[3]^2)
+	 Vector Y=Y{-1} |  Y[1]=f |  --         plant  feedback 
+	 target=f
+	 -----------
+	 -- network has same input X as plant
+	 Vector v1=tanh(WW1*xx)
+	 Vector v2=tanh(W2*v1)
+	 Vector y=W3*v2
+	 Vector feedback=feedback{-1} |  feedback[1]=f |  -- network feed
+	 --                            feedback[1]=f for teacher forcing
+	 ------------                                             
+	 Vector error=target-y |  -- update network for next sample (backp
+	 Vector deltav2=W3%*error*(1-v2^2)
+	 Vector deltav1=W2%*deltav2*(1-v1^2)
+	 DELTA WW1=lrate1*deltav1*xx
+	 DELTA W2=lrate*deltav2*v1
+	 DELTA W3=lrate*error*v2
+	 feedback[1]=target
+	 dispt error[1]
+	 ----------------------------------------------------------------- 
+	    label RECALL
+	 s=0.5*((1-0.2*swtch(t-500))*sin(w*t)+0.2*swtch(t-500)*sin(ww*t))
+	 Vector X=X{-1} |  X[1]=s |  --           same input for both
+	 ------------------------------------------------------------------
+	 f=(Y[1]*Y[2]*Y[3]*X[1]*(Y[3]-1)+X[2])/(1+Y[2]^2+Y[3]^2)
+	 Vector Y=Y{-1} |  Y[1]=f |  --           note delay 
+	 target=f
+	 --
+	 --                         input X is the same for plant and netwo
+	 Vector v1=tanh(WW1*xx) |  Vector v2=tanh(W2*v1)
+	 Vector y=W3*v2
+	 feedback[1]=y[1]
+	 Vector error=target-y
+	 -------
+	 dispt target,y[1],error[1]
+

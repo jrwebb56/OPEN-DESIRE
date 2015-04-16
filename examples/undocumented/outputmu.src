@@ -1,0 +1,11 @@
+
+
+	 sh         del mufti.dat
+	 n=20
+	 ARRAY gee[n]
+	 for i=1 to n |  gee[i]=i |  next
+	 connect 'mufti' as output 1
+	 for i=1 to n |  write #1,gee[i] |  next
+	 disconnect 1
+	 sh         type mufti.dat
+

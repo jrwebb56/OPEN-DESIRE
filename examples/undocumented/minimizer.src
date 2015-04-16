@@ -1,0 +1,16 @@
+ARRAY x[6],xx[6],mxx[6]
+for i=1 to 6
+x[i]=-i
+next
+x[3]=-7
+x[2]=4
+NN=2
+drun
+range=xmax+mxmin
+write x
+write xmax,mxmin,range
+-------------------------
+DYNAMIC
+-----------------
+Vector xx^=x | DOT xmax=xx*1
+Vector mxx^=-x | DOT mxmin=mxx*1

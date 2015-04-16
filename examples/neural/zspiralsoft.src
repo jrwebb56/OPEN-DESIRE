@@ -1,0 +1,96 @@
+
+
+	 --   SPIRAL-LEARNING CLASSIFIER NETWORK
+	 --          rbf feeds bp output network
+	 ------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 scale=2
+	 -- 
+	 N=194 |  -- number of patterns
+	 n=2 |  -- number of categories
+	 nx=2 |  -- pattern dimension
+	 nv=7 |  -- number of hidden-layer neurons
+	 --
+	 ARRAY DATA[N,nx+n] |  -- input and target patterns
+	 ARRAY x[nx],input[nx]+target[n]=data
+	 --
+	 ARRAY f[N]+f0[1]=ff |  f0[1]=1 |  --  N RBFs and bias 
+	 ARRAY P[N,nx],pp[N]
+	 --
+	 ARRAY v[nv],deltav[nv]
+	 ARRAY y[n],prob[n],error[n]
+	 --
+	 ARRAY W1[nv,N+1],Dw1[nv,N+1]
+	 ARRAY W2[n,nv],Dw2[n,nv]
+	 ------------------	 
+	 --  make N/2 patterns and targets for each of two spirals
+	 --	 
+	 ARRAY r[N/2],phi[N/2]
+	 for k=1 to N/2
+	   r[k]=0.8*(7+k)/104 |  phi[k]=PI*(97-k)/16
+	   DATA[2*k,1]=r[k]*cos(phi[k]) |  DATA[2*k,2]=r[k]*sin(phi[k])
+	   DATA[2*k-1,1]=-DATA[2*k,1] |  DATA[2*k-1,2]=-DATA[2*k,2]
+	   --
+	   DATA[2*k,3]=1 |  DATA[2*k,4]=0
+	   DATA[2*k-1,3]=0 |  DATA[2*k-1,4]=1
+	   next
+	 -----------------------------------------   set   parameters 
+	 a=0.06 |  -- rbf spread        
+	 lrate1=0.05 |  lrate2=0.02
+	 mom1=0.2 |  mom2=0.2
+	 Tnoise1=0.04 |  Tnoise=0.04 |  Rnoise=0
+	 ------------------------------------------------------------
+	 NN=30000
+	 drun showspirals
+	 write "type go to continue" |  STOP
+	 NN=300000
+	 drun
+	 write "type go to continue" |  STOP
+	 -------------------------------------------------------------
+	 --                              run with test input (recall)
+	 NN=10000
+	 drun RECALL
+	 ------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------	
+	 --                                                                
+	 iRow=abs(ran())*2000 |  Vector data=DATA#
+	 Vector x=input+Tnoise*ran()
+	 --
+	 --   rr=xx -2* P*x + pp is the vector of squared radii
+	 DOT xx=x*x |  Vector f=exp(a*(2*P*x-xx-pp))
+	 -- 
+	 Vector v=tanh(W1*ff)
+	 Vector y=exp(W2*v) |  DOT ysum=y*1
+	 Vector prob=y/ysum |  -- probability estimates
+	 ------------------------------------------------
+	 Vector error=target-prob
+	 Vector deltav=W2%*error
+	 --
+	 --    "momentum" adds part of last change
+	 MATRIX Dw1=lrate1*deltav*ff+mom1*Dw1
+	 MATRIX Dw2=lrate2*error*v+mom2*Dw2
+	 DELTA W1=Dw1 |  DELTA W2=Dw2
+	 --	 
+	 DOT enormsqr=error*error
+	 ENORMSQR=enormsqr-scale |  -- offset display
+	 dispt ENORMSQR
+	 --------------------------------------------------------------- 
+	    label showspirals
+	 iRow=abs(ran())*2000 |  Vector data=DATA#
+	 Vector x=input+Tnoise1*ran()
+	 dispxy x[1],x[2]
+	 --------------------------------------------------------------
+	    label RECALL
+	 Vector xx=ran()
+	 --
+	 --   rr=xx -2* P*x + pp is the vector of squared radii
+	 DOT xx=x*x |  Vector f=exp(a*(2*P*x-xx-pp))
+	 -- 
+	 Vector v=tanh(W1*f)
+	 Vector y=exp(W2*v) |  DOT ysum=y*1
+	 Vector prob=y/ysum |  -- probability estimates
+	 --	 
+	 Vector x=prob[1]*x
+	 dispxy x[1],x[2]
+

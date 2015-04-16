@@ -1,0 +1,55 @@
+
+
+	 --               4-BIT ENCODER , BACKPROP/BATCH
+	 ------------------------------------------------------------------
+	 display N0 |  display C8 |  display R |  scale=0.1
+	 ------------------------------------------------
+	 n=16 |  --                       number of network inputs
+	 nv=11 |  --          number of hidden-layer neurons
+	 G=1 |  --                                target amplitude
+	 --
+	 ARRAY x[n]+x0[1]=xx |  x0[1]=1 |  -- input and bias
+	 ARRAY v[nv],deltav[nv] |  --               hidden layer
+	 ARRAY y[n],error[n],deltay[n] |  --     output layer	
+	 ARRAY WW1[nv,n+1],W2[n,nv]
+	 --	
+	 for i=1 to nv |  for k=1 to n+1 |  -- initialize
+	     WW1[i,k]=0.1*ran() |  next  |  next
+	 for i=1 to n |  for k=1 to nv
+	     W2[i,k]=0.1*ran() |  next  |  next
+	 --
+	 ARRAY INPUT[n,n]
+	 --
+	 --      set input and target amplitudes                        
+	 for i=1 to n |  for k=1 to n
+	     INPUT[i,k]=-G
+	     next
+	   INPUT[i,i]=G
+	   next
+	 -----------------------------------------------------------
+	 --                       set experiment parameters
+	 lrate1=0.01 |  lrate2=0.004
+	 NN=3000
+	 drun  |  --   make a simulation run (NN steps)
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 --                                      weight-learning run
+	 iRow=t |  Vector x=INPUT#
+	 Vector v=tanh(WW1*xx)
+	 Vector y=tanh(W2*v)
+	 ----------
+	 Vectr delta error=x-y |  -- accumulate errors
+	 --------------------------------------
+	 SAMPLE n
+	 Vector deltay=error*(1-y^2) |  --    backprop
+	 Vector deltav=W2%*deltay*(1-v^2)
+	 --                                         
+	 DELTA WW1=lrate1*deltav*xx
+	 DELTA W2=lrate2*deltay*v
+	 ----------------------------------------------------------
+	 DOT enormsqr=error*error
+	 Vector error=0
+	 ENORMSQR=enormsqr-scale |  --            offset display curve
+	 dispt ENORMSQR |  --                    display error measure
+

@@ -1,0 +1,9 @@
+
+
+	 n=10 |  ARRAY x[n]
+	 for i=1 to n |  x[i]=i |  next
+	 DOT sum=x*1 |  DOT sumsq=x*x
+	 AVG avg=x*1 |  AVG avgsq=x*x
+	 write "sum =";sum |  write "sumsq=";sumsq
+	 write "avg=";avg |  write "avgsq=";avgsq
+

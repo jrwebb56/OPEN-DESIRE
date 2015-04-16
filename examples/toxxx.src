@@ -1,0 +1,52 @@
+
+
+	 -- 2-DIMENSIONAL TORPEDO SIMULATION
+	 -- average over N effective simulation runs
+	 --------------------------------------
+	 display N1 |  display C8 |  scale=2.5
+	 DT=0.01 |  TMAX=48 |  NN=1500
+	 irule 1 |  ERRMAX=0.1
+	 -------------------------------------------------------
+	 ARRAY RT[48] |  -- RUDDER-COMMAND BREAKPOINT TABLES
+	 data 19,20,25,26 |  -- circle
+	 data 32,33,34,40,41,42,47,48,49 |  -- snake
+	 data 55,56,57,63,64,65,71,72,73
+	 data 74,75 |  -- attack
+	 ------------------------
+	 data 0,0.25,0.25,0 |  -- circle
+	 data 0,-0.25,0,0,0.25,0,0,-0.25,0,0,-0.25 |  -- snake
+	 data 0,0,-0.25,0,0,0.25,0
+	 data 0,-0.125 |  -- attack
+	 read RT
+	 -------------------------------------------------------
+	 n=500
+	 STATE u[n],v[n],psi[n],psidot[n],x[n],y[n]
+	 ARRAY rr[n],cosp[n],sinp[n],RR[n]
+	 ------------------------------------------------------
+	 --              TORPEDO PARAMETERS
+	 UC=0.25
+	 X1=0.8155 |  X2=0.8155 |  -- u-equation parameters
+	 UT=X1*UC*UC
+	 Y1=-15.701 |  Y2=-0.23229 |  Y3=2.0002 |  -- v-equation paramet
+	 N1=-303.801 |  N2=-44.866 |  N3=-243.866 |  -- r-equation param
+	 for k=1 to n |  x[k]=-2.4 |  y[k]=2.2 |  next
+	 ------------------------------------------------------------------
+	 drunr  |  display 2
+	 aa=tim(0)
+	 drun
+	 bb=tim(0)
+	 write (bb-aa)/n;" sec"
+	 --------------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------------
+	 func rudder=RT(t |  --           rudder command function
+	 Vector rr=rudder*u
+	 Vectr d/dt u=UT-X2*u*u
+	 Vectr d/dt v=u*(Y1*v+Y2*psidot+Y3*rr)
+	 Vectr d/dt psidot=u*(N1*v+N2*psidot+N3*rr)
+	 Vectr d/dt psi=psidot
+	 Vector cosp=cos(psi) |  Vector sinp=sin(psi)
+	 Vectr d/dt x=u*cosp-v*sinp |  Vectr d/dt y=u*sinp+v*cosp
+	 --------------------------------------------------------
+	 dispxy x[1],y[1]
+

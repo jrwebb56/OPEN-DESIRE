@@ -1,0 +1,15 @@
+
+
+	 --       Duffing's Differential Equation
+	 ---------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 TMAX=80 |  DT=0.001 |  NN=10000
+	 a=0.1 |  --                 parameter value
+	 x=0.9 |  --                         initial value        
+	 drun
+	 ---------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------
+	 d/dt x=xdot |  d/dt xdot=-a*xdot-x*x*x
+	 dispxy x,xdot
+

@@ -1,0 +1,27 @@
+
+
+	 -- Mackey-Glass Time Series (Farmer, D.: Physica '82)
+	 --   try tau=3, 5, 14, 23, and 30
+	 ------------------------------------------------------
+	 display N1 |  display C8
+	 irule 1
+	 ARRAY DD[1000] |  --                time-delay buffer
+	 x=10 |  --                          initialize
+	 for i=1 to 1000 |  DD[i]=x |  next
+	 -----------------------------------------------------
+	 a=0.2 |  b=0.1 |  c=10
+	 tau=23
+	 TMAX=350 |  DT=0.04 |  NN=TMAX/DT+1
+	 scale=0.75 |  dotscale=6 |  offset=-0.75
+	 drun
+	 write 'tau = ';tau
+	 -----------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------
+	 tdelay Xd=DD(x,tau
+	 xdot=a*Xd/(1+Xd^c)-b*x
+	 d/dt x=xdot
+	 -----------------------------------------------------
+	 X=x+offset |  XDOT=dotscale*xdot
+	 dispxy X,XDOT
+

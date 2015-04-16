@@ -1,0 +1,19 @@
+
+
+	 --                                     
+	 --------------------------------------------------------
+	 TMAX=3 |  DT=0.00001 |  NN=10001 |  --    timing               
+	 scale=2
+	 display N1 |  display R
+	 ---------------------------------------------                     
+	 x=1 |  -- p=1 | --            initial value for input
+	 A=0.2 |  --           deadspace for backlash              
+	 drun
+	 --------------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------------
+	 p=2*sgn(p-x) |  d/dt x=15*p |  --   square/triangle waves
+	 --
+	 y=deadc(A*y-x)
+	 dispxy x,y
+

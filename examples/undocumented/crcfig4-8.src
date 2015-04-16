@@ -1,0 +1,21 @@
+
+
+	 --                            SCHMITT TRIGGER                     
+	 --------------------------------------------------------
+	 TMAX=3 |  DT=0.00001 |  NN=10001 |  --    timing               
+	 scale=2
+	 display N1 |  display C8 |  display R
+	 ---------------------------------------------                     
+	 x=1 |  --            initial value for input
+	 A=0.4 |  --        hysteresis amplitude    
+	 b=0.3 |  --         center location
+	 y=0 |  --           initialize state variable  
+	 drun
+	 --------------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------------
+	 p=2*sgn(p-x) |  d/dt x=15*p |  --   square/triangle waves
+	 --
+	 y=swtch(A*y-x+b) |  -- difference equation
+	 dispxy x,y
+

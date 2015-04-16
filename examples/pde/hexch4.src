@@ -1,0 +1,53 @@
+
+
+	 -- SIMPLE HEAT EXCHANGER (Schiesser and Silebi, 1997)
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 ------------------------------------------------------------------
+	 --        Schiesser numerical-differentiation operator
+	 --
+	 ARRAY vx[1],v[1] |  --   dummy arrays for submodel
+	 SUBMODEL DDx(n$,bb$,v,vx)
+	   Vector vx=(v{1}-v{-1})*bb$
+	   vx[1]=(-3*v[1]+4*v[2]-v[3])*bb$
+	   vx[n$]=(3*v[n$]-4*v[n$-1]+v[n$-2])*bb$
+	   end
+	 ------------------------------------------------------------------
+	 L=100 |  --                heat-exchanger tube length
+	 V=10 |  --                  flow velocity
+	 rho=1 |  --                density of fluid in tube
+	 CP=1 |  --                 specific heat of fluid
+	 D=2 |  --                    tube diameter
+	 H=0.1 |  --                 heat-transfer coefficient
+	 a=4*H/(rho*CP*D)
+	 --
+	 Tac=100 |  --            constant annulus temperature
+	 T0c=0 |  --                 initial temperature in tube
+	 Tec=50 |  --              tube-entry temperature
+	 ------------------------------------------------------------------
+	 n=201 |  STATE u[n] |  ARRAY ux[n]
+	 --
+	 DX=L/(n-1) |  bb=0.5/DX
+	 DT=0.0005 |  TMAX=10 |  NN=20000 |  scale=100
+	 irule 4 |  --  RK4 rule   
+	 ---------------
+	 X=0.5*(n-1)*DX/V |  --  time delay, used in analytical solution
+	 -------------------------------------
+	 --                       program initial conditions u[k] 
+	 for k=1 to n |  u[k]=T0c |  next
+	 U=Tac |  --    constant annulus temperature
+	 drun  |  write "n = ";n
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 u[1]=Tec |  --   set tube-entry boundary value for u
+	 invoke DDx(n,bb,u,ux) |  --  differentiate u to get ux
+	 Vectr d/dt u=-V*ux+a*(U-u)
+	 --
+	 -------------------  compare u with analytical solution f
+	 --
+	 f=2*(Tac+(T0c-Tac)*exp(-a*t)*(1-swtch(t-X))+swtch(t-X)*((Tec-Tac)*e_
+xp(-a*X)))-scale
+	 uu=2*u[0.5*(n-1)]-scale |  errx5=(uu-f)*2.5-0.5*scale
+	 dispt uu,errx5,f
+

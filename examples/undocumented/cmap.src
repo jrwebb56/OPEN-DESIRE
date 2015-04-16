@@ -1,0 +1,40 @@
+
+
+	 --  FUNCTION-LEARNING COUNTERPROP NETWORK
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 n=50 |  --                                       number of catego
+	 --
+	 ARRAY xIN[1]+xOUT[1]=x,v[n],h[n],WW[n,2]
+	 ARRAY W[n,1],U[1,n],y[1] |  --         counterpropagation
+	 ARRAY zIN[1]+zOUT[1]=z |  --            learned templates
+	 --
+	 for i=1 to n |  WW[i,1]=ran() |  next  |  --            initial
+	 ---------------------------------------------------------
+	 --                                                             set
+	 noise=0 |  NN=30000
+	 lrate=0.2 |  crit=0 |  --         (crit=0 for FSCL conscience)
+	 drun  |  --       competitive learning of input/output pairs
+	 write " type go to continue" |  STOP
+	 --
+	 --           create W from learned WW templates for recall
+	 for i=1 to n |  W[i,1]=WW[i,1] |  U[1,i]=WW[i,2] |  next
+	 lrate=0 |  crit=-1 |  NN=5000
+	 drun RECALL |  --                                              re
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 xIN[1]=ran() |  --                                          train
+	 xOUT[1]=0.8*cos(5*x[1])+noise*ran()
+	 CLEARN v=WW(x)lrate,crit |  --                  compete/learn
+	 Vectr delta h=v |  --              optional conscience counter
+	 Vector z=WW%*v |  --                                        templ
+	 dispxy zIN[1],zOUT[1]
+	 ---------------------------------------------------------
+	 --                                             recall run
+	    label RECALL
+	 xIN[1]=ran() |  xOUT[1]=0.8*cos(5*xIN[1])+noise*ran()
+	 CLEARN v=W(xIN)lrate,crit
+	 Vector y=U*v |  --                                      function 
+	 dispxy xIN[1],xOUT[1],y[1]
+

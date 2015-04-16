@@ -1,0 +1,62 @@
+
+
+	 --    GENERIC 2-LAYER BACKPROPAGATION NETWORK
+	 --                with momentum training, no output limiting
+	 ------------------------------------------------------------------
+	 --       NOTE: definition does not depend on nx, n2, n3
+	 --       scalar paframeters lrate1, lrate2, mom1, mom2
+	 --               are supplied by the calling program
+	 --
+	 ARRAY x$[1],y$[1],v$[1],deltav$[1],error$[1],target$[1]
+	 ARRAY W1$[1,1],W2$[1,1],Dw1$[1,1],Dw2$[1,1]
+	 SUBMODEL BP2(x$,v$,deltav$,y$,error$,target$,W1$,W2$,Dw1$,Dw2$)
+	   Vector v$=tanh(W1$*x$) |  --  bias can be included in x and W1 
+	   Vector y$=W2$*v$
+	   Vector error$=target$-y$
+	   Vector deltav$=W2$%*error$*(1-v$^2)
+	   MATRIX Dw1$=lrate1*deltav$*x$+mom1*Dw1$
+	   MATRIX Dw2$=lrate2*error$*v$+mom2*Dw2$
+	   DELTA W1$=Dw1$ |  DELTA W2$=Dw2$
+	   end
+	 ------------------------------------------------------------------
+	 --
+	 -- FUNCTION-LEARNING BACKPROPAGATION NETWORK
+	 ------------------------------------------------------------------
+	 display Q |  display N1 |  display C8 |  scale=0.5
+	 --
+	 N=1000
+	 nx=1 |  ny=1
+	 nv=7 |  --                       number of hidden neurons
+	 --                         
+	 ARRAY DATA[N,nx+ny],input[nx]+target[ny]=data
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=1 |  --  input and bias
+	 ARRAY v[nv],y[ny],error[ny],deltav[nv]
+	 ARRAY WW1[nv,nx+1],W2[ny,nv],Dww1[nv,nx+1],Dw2[ny,nv]
+	 --
+	 ------------------------------------------------------------------
+	 --                    random initial weights "break symmetry"
+	 for i=1 to nv |  for k=1 to nx+1
+	     WW1[i,k]=0.1*ran() |  next  |  next
+	 for i=1 to ny |  for k=1 to nx+1
+	     W2[i,k]=0.1*ran() |  next  |  next
+	 ------------------------------------------------------------------
+	 --                                   set experiment parameters
+	 lrate1=0.5 |  lrate2=0.1
+	 mom1=0.2 |  mom2=0.2
+	 Tnoise=0 |  NN=40000
+	 ----
+	 for i=1 to 10 |  drun  |  next  |  --  training runs           
+	 write " type go for a test run" |  STOP
+	 display R
+	 lrate1=0 |  lrate2=0 |  drun  |  -- test run
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 iRow=t |  Vector data=DATA# |  -- get input, target
+	 x[1]=1.1*ran() |  target[1]=0.4*sin(3*x[1]) |  -- input, target
+	 --
+	 invoke BP2(xx,v,deltav,y,error,target,WW1,W2,Dww1,Dw2)
+	 --                                                                
+	 ABSERRx100=100*abs(error[1])-scale |  Xin=scale*x[1]
+	 dispxy Xin,target[1],y[1],ABSERRx100
+

@@ -1,0 +1,14 @@
+
+
+	 display N1 |  scale=1 |  display R
+	 scale=1.0000001
+	 NN=4000
+	 drun
+	 -------------------
+	 DYNAMIC
+	 -------------------
+	 x=0.001*t-2
+	 r=tri(sat(x)) |  s=rect(x)
+	 R=0.5*(r+scale) |  S=0.5*(s-scale)
+	 dispt R,S
+

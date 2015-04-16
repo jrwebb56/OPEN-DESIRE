@@ -1,0 +1,28 @@
+
+
+	 --     NOISY CANNONBALL TRAJECTORIES
+	 -------------------------------------------------------------
+	 DT=0.008 |  TMAX=100 |  NN=5000
+	 display N1 |  display C8 |  display R
+	 ----------------------------------
+	 R=7.5E-05 |  g=32.2
+	 v0=900 |  --                   muzzle velocity
+	 w1=60 |  w2=40 |  w3=100 |  w4=50
+	 ------------------                              
+	 theta=50*PI/180 |  --            in radians
+	 x3=v0*cos(theta) |  x4=v0*sin(theta)
+	 drunr
+	 display N4 |  display 2 |  -- don't erase
+	 for i=1 to 5 |  drunr  |  next
+	 display 1 |  --                  restore display
+	 ------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------
+	 v=sqrt(x3^2+x4^2)
+	 d/dt x1=x3+w1*gauss(0) |  d/dt x2=x4+w2*gauss(0)
+	 d/dt x3=-R*v*x3+w3*gauss(0)
+	 d/dt x4=-R*v*x4-g+w4*gauss(0)
+	 --------------------  runtime trajectory display
+	 X1=0.00015*x1-0.99 |  X2=0.00025*x2-0.99
+	 dispxy X1,X2
+

@@ -1,0 +1,95 @@
+
+
+	 --             m-BIT ENCODER LEARNING, BACKPROPAGATION
+	 --                   try this with or without maximum-error criter
+	 --                               use extra drun if needed
+	 ------------------------------------------------------
+	 m=4 |  --               number of hidden-layer neurons
+	 n=2^m |  --             number of network inputs
+	 N=n |  --                number of patterns
+	 G=0.99 |  --            target amplitude
+	 --
+	 ARRAY layer1[n],layer2[m],layer3[n],bias2[m],bias3[n]
+	 ARRAY w2[m,n],w3[n,m]
+	 ARRAY INPUT[N,n]
+	 ARRAY error[n],ERROR[n],delta2[m],delta3[n]
+	 --
+	 for i=1 to n |  --                          fill arrays
+	   for k=1 to n |  INPUT[i,k]=-G |  next
+	   INPUT[i,i]=G
+	   next
+	 --
+	 --    small random initial weights to "break symmetry"
+	 --
+	 for i=1 to m
+	   for k=1 to n |  w2[i,k]=0.1*ran() |  next
+	   w3[1,i]=0.1*ran()
+	   next
+	 ------------------------------------------------------
+	 lrate2=0.05 |  lrate3=0.05 |  r2=0 |  r3=0
+	 scale=1
+	 NN=100000 |  MM=10 |  -- MM needed for Ubuntu!
+	 --
+	 display N1 |  display C8 |  display Q |  --  display colors
+	 ------------------------------------------------------
+	 drun  |  --          make a simulation run (NN trials)
+	 STOP
+	 -------------
+	    label eee
+	 edit 230-254,540-600,920-930,953-980 |  --   edit screen
+	 STOP
+	 ------------------------------------------------------
+	    label NOTE
+	 note #230-254,540-600,900-1030
+	 STOP
+	 ------------------------------------------------------
+	 --        test routine, used on command after learning
+	 --
+	    label jjj |  --                    try all patterns
+	 NNold=NN |  NN=N |  TMAX=NN-1 |  t=1
+	 drun RECALL
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 --                                 weight-learning run
+	 iRow=t
+	 Vector layer1=INPUT#
+	 Vector layer2=sat(w2*layer1+bias2)
+	 Vector layer3=sat(w3*layer2+bias3)
+	 --------------------------------------
+	 Vector error=INPUT#-layer3 |  --       backpropagation
+	 --
+	 Vector ERROR^=abs(error) |  Vector ERROR=sgn(error)*ERROR
+	 -- (substitute    953 Vector ERROR=error  for simple optimization)
+	 --
+	 Vector delta3=ERROR*tri(layer3)
+	 Vector delta2=w3%*delta3*tri(layer2)
+	 --
+	 --          accumulate temporary weights for MM trials (batch)
+	 --
+	 Vectr delta bias2=lrate2*delta2+r2*bias2
+	 Vectr delta bias3=lrate3*delta3+r3*bias3
+	 DELTA w2=lrate2*delta2*layer1+r2*w2
+	 DELTA w3=lrate3*delta3*layer2+r3*w3
+	 --
+	 DOT enormsqr=error*error |  --       accumulate enormsqr
+	 W12=w2[1,2] |  W22=w2[2,2] |  U12=w3[1,2] |  U22=w3[2,2]
+	 W23=w2[2,3] |  U23=w3[2,3]
+	 ------------------------------------------------------
+	 MSQ=4*enormsqr-scale |  --        offset display curve
+	 dispt MSQ,W12,W22,W23,U12,U22,U23
+	 ------------------------------------------------------
+	 --                              test run (no learning)
+	    label RECALL
+	 iRow=t
+	 Vector layer1=INPUT#
+	 Vector layer2=sat(w2*layer1+bias2)
+	 Vector layer3=sat(w3*layer2+bias3)
+	 Vector error=INPUT#-layer3
+	 DOT enormsqr=error*error
+	 --------------------------------------
+	 --            scalars for screen listing (truth table)
+	 --
+	 z1=layer2[1] |  z2=layer2[2] |  z3=layer2[3]
+	 type z1,z2,z3,enormsqr
+

@@ -1,0 +1,65 @@
+
+
+	 --      RADIAL-BASIS FUNCTION NETWORK
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 nx=3 |  --                         input-pattern dimension
+	 n=300 |  --                           number of categories
+	 ARRAY x[nx]
+	 ARRAY P[n,nx],v[n],h[n],z[nx] |  --  for competition
+	 --
+	 ARRAY f[n]+f0[1]=ff |  f0[1]=1 |  --   has bias component
+	 ARRAY pp[n]
+	 --
+	 ARRAY WW[1,n+1] |  --              weights include biases
+	 ARRAY y[1],error[1]
+	 ---------------------------------------------------------
+	 --	 --                                         set parameters
+	 lratex=0.2 |  lratef=0.3
+	 kappaf=0.9999 |  kappax=0.9999 |  lrate0=0
+	 a=4
+	 crit=0 |  --                 (crit=0 for FSCL conscience)
+	 NN=100000
+	 ------------------------------------------------------------------
+	 --                             learn radial-basis centers
+	 drun COMPETE
+	 write "type go to continue" |  STOP
+	 ------------------------------------------------------------------
+	 ---     template matrix P generates squared radii
+	 for k=1 to n
+	   pp[k]=0
+	   for j=1 to nx |  pp[k]=pp[k]+P[k,j]^2 |  next
+	   next
+	 ---------------------------------------------------------
+	 --                now train radial-basis-function network
+	 NN=100000
+	 drun
+	 write "type go for a recall run" |  STOP
+	 NN=2000 |  lratef=0 |  lrate0=0 |  --             recall run
+	 drun
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 lratef=kappaf*lratef+lrate0 |  --     reduce learning rate
+	 --
+	 Vector x=ran() |  --                       training pairs
+	 target=sin(x[1])*cos(x[2])*(x[3]-0.5) |  -- or use other function
+	 --
+	 --       rr=xx -2* P*x + pp is the vector of squared radii
+	 DOT xx=x*x |  Vector f=exp(a*(2*P*x-xx-pp))
+	 Vector y=WW*ff |  -- radial-basis-function expansion
+	 --
+	 Vector error=target-y |  --                            LMS algori
+	 DELTA WW=lratef*error*ff
+	 ---------------------------------------
+	 ERRORx10=10*abs(error[1])-scale
+	 dispxy target,y[1],ERRORx10
+	 ---------------------------------------------------------
+	    label COMPETE
+	 lratex=kappax*lratex+lrate0 |  --     reduce learning rate
+	 Vector x=1.5*ran()
+	 CLEARN v=P(x)lratex,crit |  -- compete to get template
+	 Vectr delta h=v |  --                       conscience counter
+	 Vector z=P%*v
+	 dispxy z[1],z[2] |  --           shows 2 dimensions only
+

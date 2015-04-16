@@ -1,0 +1,71 @@
+
+
+	 --  Analysis of a Lorenz Time Series
+	 ---------------------------------------------------------------- 
+	 -- time starts at t=.00001 with xavg=x
+	 --
+	 display N1 |  display C8 |  display Q
+	 scale=15
+	 DT=0.01
+	 TMAX=500
+	 NN=TMAX/DT+1 |  --  maximum sample size
+	 t=0.00001
+	 ---------------------------
+	 x=0.001 |  y=0.001 |  z=0.001
+	 A=10 |  b=28 |  c=2.6667
+	 --------------------------------    
+	 --           arrays used for FFT
+	 nf=4096*4
+	 ARRAY XX[nf],YY[nf]
+	 ------
+	 irule 1
+	 x=1 |  -- try different initial values!
+	 xavg=x
+	 flag=-1 |  -- switches data collection OFF
+	 drun
+	 flag=1 |  -- switches data collection ON
+	 drun
+	 ----------------------------------------
+	 write 'type go to continue' |  STOP
+	 ---------------------------------------------
+	 display R
+	 NN=2000 |  DT=0.2
+	 t=1 |  TMAX=nf
+	 FFT F,nf,XX,YY
+	 scale=2000
+	 -- drunr FFT
+	 -- write 'type go for amplitude/phase display'
+	 -- STOP
+	 drunr SECOND |  -- amplitude/phase display
+	 -----------------------------
+	 DYNAMIC
+	 -----------------------------
+	 d/dt x=A*(y-x)
+	 d/dt y=x*(b-z)-y
+	 d/dt z=x*y-c*z
+	 --------
+	 OUT
+	 xavg=xavg+(x-xavg)/t
+	 xxavg=xxavg+(x^2-xxavg)/t
+	 xvar=xxavg-xavg^2
+	 --	 --
+	 xvar1=0.05*xvar-scale
+	 X=0.25*x+0.5*scale
+	 Xavg=0.25*xavg
+	 ---------------------------------------
+	 if flag
+	   store XX=x
+	   dispt X,Xavg,xvar1
+	   -------------------------------------
+	      label FFT
+	   get p=XX |  get q=YY |  --    FFT arrays
+	   outx=p
+	   outy=q-0.5*scale |  --           offset
+	   dispt outx,outy
+	   -------------   AMPLITUDE/PHASE DISPLAY
+	      label SECOND
+	   get p=XX |  get q=YY |  --    FFT arrays
+	   r=0.08*sqrt(p*p+q*q)
+	   phi=atan2(q,p)-0.5*scale |  --     offset
+	   dispt r,phi
+

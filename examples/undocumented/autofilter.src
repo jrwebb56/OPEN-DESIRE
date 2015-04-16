@@ -1,0 +1,103 @@
+
+
+	 x[1]=1 |  -- to get impulse response
+	 input=0 |  -- for impulse response
+
+	 --                      SELF-ADJUSTING ANALOG FILTER
+	 -- 
+	 -- successive samples of the filter output are stored
+	 --     in an array that will be used to compute the FFT
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  --     display
+	 NN=16384 |  DT=0.00001 |  TMAX=2
+	 nx=4 |  STATE x[nx]
+	 ARRAY OUTPUT[NN],OUTPUTy[NN] |  -- FFT array
+	 ARRAY x1[NN]+OUT1[NN]=OUT |  -- extended arrays
+	 ARRAY x2[NN]+OUT1y[NN]=OUTy |  --    for FFT
+	 ------------------------------------------------------------------
+	 scale=1 |  --       display scale
+	 lrate=-.01
+	 -- 
+             label gorun
+         write " go to wideband, bandpass1, or bandpass2" | STOP
+         -------------------------------
+             label wideband
+
+	 drun
+	 write 'type go for FFT' |  STOP
+         call FFT
+         go to gorun
+	 ----------------------------------------
+            label bandpass1
+
+	 drun
+	 write 'type go for FFT' |  STOP
+         call FFT
+         go to gorun
+	 ----------------------------------------
+            label bandpass2
+
+	 drun
+	 write 'type go for FFT' |  STOP
+         call FFT
+         go to gorun
+	 ----------------------------------------
+	 PROCEDURE FFT
+	    FFT F,NN,OUTPUTx,OUTPUTy
+	    scale=2
+	    ---------------------------------------------------
+	    --  create abscissa and ordinate arrays 
+	    --     for interpolated frequency-response plot
+	    NN=5001
+	    ARRAY x1[NN]+OUT1x[NN]=OUTx |  -- extended arrays
+	    ARRAY x2[NN]+OUT1y[NN]=OUTy
+	    --
+	    for i=1 to NN
+	        x1[i]=i |  x2[i]=i
+	        OUT1x[i]=OUTPUTx[i] |  OUT1y[i]=OUTPUTy[i]
+	        next
+	    ---------------------------------------------------
+	    t=1 |  TMAX=100 |  -- note t0=1
+	    drunr FFT |  -- drunr resets t=1
+	    write 'type go for amplitude/phase display' |  STOP
+	    scale=2
+	    drun SECOND |  -- amplitude/phase display
+            end
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 --                                    wideband training
+
+
+	 dispt output
+	 ----------                                fill FFT array
+	 store OUTPUTx=output
+         -----------------------------------
+             label BANDPASS1     
+
+                          
+	 dispt output
+	 ----------                                fill FFT array
+	 store OUTPUTx=output
+         -----------------------------------
+             label BANDPASS2  
+
+                             
+	 dispt output
+	 ----------                                fill FFT array
+	 store OUTPUTx=output
+         -------------------------------------------------	   
+	    label FFT
+	 xx=func1(t;OUTx) |  --       extended arrays
+	 yy=func1(t;OUTy)
+	 outx=xx-0.5*scale |  --      stripchart display
+	 outy=0.5*yy+0.5*scale
+	 dispt outx,outy
+	 --------------------     AMPLITUDE/PHASE DISPLAY
+	    label SECOND
+	 xx=func1(t;OUTx) |  yy=func1(t;OUTy) |  -- interpolate
+	 r=sqrt(xx^2+yy^2)
+	 phix=0.5*atan2(yy,xx)
+	 dispt r,phix
+
+/

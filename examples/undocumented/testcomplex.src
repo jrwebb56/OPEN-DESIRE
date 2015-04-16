@@ -1,0 +1,18 @@
+
+
+	 --     	                             CONFORMAL MAPPING 
+	 ------------------------------------------------------------------
+	 display C7 |  display R |  --                       use thick do
+	 display A |  --                                              star
+	 --
+	 COMPLEX z,ppp,qqq
+	 x=0.4
+	 qqq=2+j*7
+	 ppp=200+j*8
+	 for y=-1 to 1 step 0.0005 |  --   one  loop plots 5 curves
+	   z=x+j*y
+	   plot z,14 |  plot z*z,13 |  plot z*z*z,12 |  plot z*z*z*z,11
+	   plot z*z*z*z*z,15
+	   next
+	 write z,ppp,qqq
+

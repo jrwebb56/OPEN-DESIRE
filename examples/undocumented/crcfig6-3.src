@@ -1,0 +1,41 @@
+
+
+	 --           DELAY-LINE SIMULATION
+	 --              (using DESIRE vector notation)
+	 -------------------------------------------------------
+	 display N1 |  display C8
+	 n=700
+	 STATE i[n],V[n]
+	 ARRAY II[n],VV[n]
+	 scale=1 |  irule 3
+	 ----------------------------------------------
+	 DT=0.001 |  TMAX=1.5 |  NN=1+TMAX/DT
+	 ----------------------------------------------
+	 a=1/(2.0E-04) |  ----------------- this is 1/C
+	 b=-2 |  ---------------------------     this is -1/L
+	 rS=50 |  ------------------- source resistance
+	 rL=50 |  -------------- termination resistance
+	 vS=1 |  --------------------------- step input
+	 ----------------------------------------------
+	 drunr
+	 write '- you compiled and solved ';2*n+1;' ordinary'
+	 write '            differential equations!'
+	 write 'type go to continue with a new load resistance'
+	 STOP
+	 rL=200 |  -------------  unmatched termination
+	 TMAX=20 |  NN=NN*5
+	 drun
+	 ----------------------------------------------
+	 DYNAMIC
+	 ----------------------------------------------
+	 ------>                                  note i0(0) = 0
+	 VV[1]=a*i0 |  --                other VV[i] are 0                
+	 II[n]=b*(2*i[n]*rL-V[n]) |  -- line termination
+	 --                                         other II[i] are 0
+	 --
+	 ---------------------         2n+1 differential equations
+	 d/dt i0=2*b*(V[1]+i0*rS-vS) |  --  input current       
+	 Vectr d/dt V=a*(i{-1}-i)+VV
+	 Vectr d/dt i=b*(V{1}-V)+II
+	 dispt V[40]
+

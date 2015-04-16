@@ -1,0 +1,14 @@
+
+
+	 --  FUNCTION PLOTTING
+	 ----------------------------------------
+	 TMAX=2*PI |  NN=2501
+	 t=-PI
+	 display N1 |  display C8 |  display R
+	 drun
+	 ---------------------------------------
+	 DYNAMIC
+	 ---------------------------------------
+	 x=cos(t) |  y=sin(t)
+	 dispt x,y
+

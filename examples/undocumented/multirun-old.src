@@ -1,0 +1,49 @@
+
+
+	 --  VECTORIZED MONTE CARLO:
+	 --      CANNONBALL TRAJECTORIES
+	 -------------------------------------------------------------
+	 DT=0.008 |  TMAX=50 |  NN=5000 |  -- timing
+	 display N1 |  display C8
+	 scale=5000
+	 ----------------------------------
+	 R=7.5E-05 |  g=32.2
+	 v0=900 |  --                     muzzle velocity
+	 a=0.05 |  --                      noise amplitude
+	 --    
+	 n=10
+	 STATE x[n],y[n],xdot[n],ydot[n]
+	 ARRAY theta[n],v[n],xImpact[n],XImpact[n],Y[n]
+	 --
+	 ARRAY xI1[n]+xI2[n]+xI3[n]=xI |  -- concatenate
+	 --
+	 for k=1 to 3
+	   --                    
+	   for i=1 to n |  --       noisy elevation angle, radians
+	     theta[i]=70*PI/180+a*(ran()+ran()+ran()+ran())
+	     xdot[i]=v0*cos(theta[i]) |  ydot[i]=v0*sin(theta[i])
+	     next
+	   drunr  |  display 2
+	   --	 
+	   if k=1 then VECTOR xI1=xImpact |  reset  |  else proceed
+	   if k=2 then VECTOR xI2=xImpact |  reset  |  else proceed
+	   if k=3 then VECTOR xI3=xImpact |  else proceed
+	   next
+	 --
+	 DOT xSum=xI*1 |  xAvg=xSum/n
+	 DOT xxSum=xI*xI |  xxAvg=xxSum/n
+	 s=sqrt(abs(xxAvg-xAvg^2))
+	 write "xAvg = ";xAvg,"    s = ";s
+	 ------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------
+	 Vector v=sqrt(xdot^2+ydot^2)
+	 Vectr d/dt x=xdot |  Vectr d/dt y=ydot
+	 Vectr d/dt xdot=-R*v*xdot |  Vectr d/dt ydot=-R*v*ydot-g
+	 --
+	 OUT
+	 Vector xImpact=xImpact+swtch(y)*(x-xImpact)
+	 -------------------         runtime trajectory display
+	 Vector Y=y-scale |  Vector XImpact=xImpact-scale
+	 dispt Y[3],XImpact[3],Y[4],XImpact[4]
+

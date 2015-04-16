@@ -1,0 +1,18 @@
+
+
+	 --                    COUPLED OSCILLATORS
+	 ----------------------------------------
+	 display N1 |  display C8
+	 TMAX=10 |  DT=TMAX/(NN-1) |  NN=6401 |  -- timing
+	 ww=300
+	 k=50 |  --           coupling coefficient
+	 x=0.4 |  --                 initial value
+	 drun
+	 -----------------------------------------
+	 DYNAMIC
+	 -----------------------------------------
+	 d/dt x=xdot |  d/dt xdot=-ww*x-k*(x-y)
+	 d/dt y=ydot |  d/dt ydot=-ww*y-k*(y-x)
+	 X=x+0.5 |  Y=y-0.5 |  --   offset display
+	 dispt X,Y
+

@@ -1,0 +1,66 @@
+
+
+	 -- RANDOM WALK WITH PROBABILITY DENSITY
+	 --                        repeated-run Monte Carlo study
+	 ------------------------------------------------------------------
+	 irule 1
+	 display N1 |  display C8 |  display R |  scale=3
+	 display 2
+	 NN=10001 |  TMAX=1 |  --  determines initial DT
+	 DT=TMAX/NN |  --  < COMINT=TMAX/(NN-1)
+	 MM=4 |  --       slow the output sampling rate
+	 --                                         scale a, TRUVAR to fit
+	 a=sqrt(3*NN) |  --  scaled random-walk amplitude
+	 TRUVAR=a^2*DT/3 |  --     mean square at TMAX
+	 --
+	 n=500
+	 noise=a*ran() |  -- initialize
+	 ARRAY x[n]
+	 aa=tim(0)
+	 for i=1 to n |  --  X(0) defaults to 0
+	   drun
+	   x[i]=X
+	   reset
+	   next
+	 ----------------------------------------- 
+	 write "type go to see distribution" |  STOP
+	 ------------------------------------------------------------------
+	 --
+	 --  Parzen-window probability density estimate
+	 --
+	 display 1
+	 irule 0
+	 ARRAY f[n]
+	 scale=4 |  TMAX=scale |  NN=NN/4
+	 flag=0 |  h=0.15
+	 MM=1 |  --        un-slow output sampling rate
+	 --
+	    label PARZRUN
+	 alpha=1/(2*h*h) |  beta=1/(h*n*sqrt(2*PI))
+	 t=0 |  aa=tim(0)
+	 drun PARZEN
+	 bb=tim(0)
+	 write "probability-density estimation took ";bb-aa;" seconds"
+	 if flag=0 then flag=1 |  h=0.25
+	   write "type go to increase window width" |  STOP
+	   go to PARZRUN
+	   else proceed
+	 -- 
+	 write "we used ";4*n*NN;" noise samples"
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 d/dt X=noise
+	 --
+	 OUT
+	 noise=a*ran()
+	 ------------------------------------------------------------------
+	    label PARZEN
+	 --
+	 xx=2*t-TMAX |  --                      display sweep
+	 Vector f=beta*exp(-alpha*(xx-x)^2)
+	 DOT F=f*1 |  F=10*F-scale
+	 yy=10*exp(-xx^2/(2*TRUVAR))/sqrt(2*PI*TRUVAR)-scale
+	 error=2*(F-yy)+0.5*scale
+	 dispxy xx,yy,F,error |  -- yy and F are scaled and offset	
+

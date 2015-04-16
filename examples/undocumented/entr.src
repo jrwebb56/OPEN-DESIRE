@@ -1,0 +1,49 @@
+
+
+	 --                                COMPETITIVE LEARNING
+	 ------------------------------------------------------
+	 m=2 |  --                             number of inputs
+	 n=128 |  --        number of competitive-layer neurons
+	 --
+	 ARRAY x[m],v[n],h[n],hh[n],W[n,m],error[m],h1[n]
+	 --
+	 for i=1 to n
+	   h[i]=1.0E-25
+	   for k=1 to m
+	     W[i,k]=ran()
+	     next
+	   next
+	 display Q |  display N14 |  --        thin yellow dots
+	 ------------------------------------------------------
+	 --                           set experiment parameters
+	 lrate=0.6 |  lrate0=0.0005 |  kappa=0.996 |  --  learn rate    
+	 crit=-0 |  --                          no ART emulation
+	 scale=2
+	 NN=20000
+	 ------------------------------------------------------
+	 drun  |  --                 simulation run (NN trials)
+	 STOP
+	 ------------------------------------------------------
+	    label eee
+	 display F |  --                        edit parameters
+	 edit 250,260,1960,2050-2090
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 --                                 weight-learning run
+	 lrate=lrate0+lrate*kappa |  --     decrease learn rate
+	 Vector x=ran()
+	 CLEARN v=W(x)lrate,crit |  --            compete,learn
+	 --                               reconstruct templates
+	 Vector error=W%*v-x |  Vector error=abs(error)
+	 DOT distort=error*1 |  -- taxicab norm
+	 --
+	 delta h=v |  --                  accumulate histogram
+	 nn=1/t
+	 Vector h1=h*nn
+	 Vector hh=-h1*ln(h1)
+	 DOT H0=hh*1 |  dENTx100=-100*(H0-ln(n))/ln(2)-scale
+	 --
+	 ERRx10=10*distort-scale
+	 dispt dENTx100,ERRx10,lrate
+

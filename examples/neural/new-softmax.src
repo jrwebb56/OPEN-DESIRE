@@ -1,0 +1,220 @@
+
+
+	 --  Linear/SOFTMAX PATTERN CLASSIFIER
+	 --     estimates a posteriori probabilities
+	 --     implements associative memory
+	 --------------------------------------------------------------
+	 cc=14 |  dd=14 |  display N1 |  display C8 |  display R
+	 nx=25 |  N=26
+	 ARRAY input[nx],x[nx]
+	 ARRAY INPUT[N,nx],TARGET[N,N]
+	 ARRAY p[N],q[N],y[nx],yy[nx],W[N,nx]
+	 ARRAY error[N],Yerror[nx]
+	 --
+	 --  for i=1 to N |  for k=1 to nx |  -- initialize W
+	 --   W[i,k]=ran() |  next  |  next
+	 --    
+	 ----------------------------   input-pattern rows
+	 --                         A
+	 data 1,1,1,1,1
+	 data 1,0,0,0,1
+	 data 1,1,1,1,1
+	 data 1,0,0,0,1
+	 data 1,0,0,0,1
+	 --                         B
+	 data 1,1,1,1,1
+	 data 1,0,0,0,1
+	 data 1,1,1,1,0
+	 data 1,0,0,0,1
+	 data 1,1,1,1,1
+	 --                         C
+	 data 1,1,1,1,1
+	 data 1,0,0,0,1
+	 data 1,0,0,0,0
+	 data 1,0,0,0,1
+	 data 1,1,1,1,1
+	 --                         D
+	 data 1,1,1,1,0
+	 data 1,0,0,0,1
+	 data 1,0,0,0,1
+	 data 1,0,0,0,1
+	 data 1,1,1,1,0
+	 --                         E
+	 data 1,1,1,1,1
+	 data 1,0,0,0,0
+	 data 1,1,1,1,1
+	 data 1,0,0,0,0
+	 data 1,1,1,1,1
+	 --                         F
+	 data 1,1,1,1,1
+	 data 1,0,0,0,0
+	 data 1,1,1,1,0
+	 data 1,0,0,0,0
+	 data 1,0,0,0,0
+	 --                         G
+	 data 1,1,1,1,1
+	 data 1,0,0,0,0
+	 data 1,0,1,1,1
+	 data 1,0,0,0,1
+	 data 1,1,1,1,1
+	 --                         H
+	 data 1,0,0,0,1
+	 data 1,0,0,0,1
+	 data 1,1,1,1,1
+	 data 1,0,0,0,1
+	 data 1,0,0,0,1
+	 --                         I
+	 data 0,1,1,1,0
+	 data 0,0,1,0,0
+	 data 0,0,1,0,0
+	 data 0,0,1,0,0
+	 data 0,1,1,1,0
+	 --                         J
+	 data 0,1,1,1,0
+	 data 0,0,1,0,0
+	 data 0,0,1,0,0
+	 data 0,0,1,0,0
+	 data 0,1,1,0,0
+	 --                         K
+	 data 1,0,0,1,1
+	 data 1,0,1,1,0
+	 data 1,1,0,0,0
+	 data 1,0,1,1,0
+	 data 1,0,0,1,1
+	 --                         L
+	 data 1,0,0,0,0
+	 data 1,0,0,0,0
+	 data 1,0,0,0,0
+	 data 1,0,0,0,0
+	 data 1,1,1,1,1
+	 --                         M
+	 data 1,1,0,1,1
+	 data 1,0,1,0,1
+	 data 1,0,1,0,1
+	 data 1,0,0,0,1
+	 data 1,0,0,0,1
+	 --                         N
+	 data 1,0,0,0,1
+	 data 1,1,0,0,1
+	 data 1,0,1,0,1
+	 data 1,0,0,1,1
+	 data 1,0,0,0,1
+	 --                         O
+	 data 1,1,1,1,1
+	 data 1,0,0,0,1
+	 data 1,0,0,0,1
+	 data 1,0,0,0,1
+	 data 1,1,1,1,1
+	 --                         P
+	 data 1,1,1,1,1
+	 data 1,0,0,0,1
+	 data 1,1,1,1,1
+	 data 1,0,0,0,0
+	 data 1,0,0,0,0
+	 --                         Q
+	 data 1,1,1,1,1
+	 data 1,0,0,0,1
+	 data 1,0,0,0,1
+	 data 1,1,1,1,1
+	 data 0,0,1,0,0
+	 --                         R
+	 data 1,1,1,1,1
+	 data 1,0,0,0,1
+	 data 1,1,1,1,1
+	 data 1,0,1,1,0
+	 data 1,0,0,1,1
+	 --                         S
+	 data 1,1,1,1,1
+	 data 1,0,0,0,0
+	 data 1,1,1,1,1
+	 data 0,0,0,0,1
+	 data 1,1,1,1,1
+	 --                         T
+	 data 1,1,1,1,1
+	 data 0,0,1,0,0
+	 data 0,0,1,0,0
+	 data 0,0,1,0,0
+	 data 0,1,1,1,0
+	 --                         U
+	 data 1,0,0,0,1
+	 data 1,0,0,0,1
+	 data 1,0,0,0,1
+	 data 1,0,0,0,1
+	 data 1,1,1,1,1
+	 --                         V
+	 data 1,0,0,0,1
+	 data 1,0,0,0,1
+	 data 1,0,0,0,1
+	 data 0,1,0,1,0
+	 data 0,0,1,0,0
+	 --                         W
+	 data 1,0,0,0,1
+	 data 1,0,1,0,1
+	 data 1,0,1,0,1
+	 data 1,1,0,1,1
+	 data 1,1,0,1,1
+	 --                         X
+	 data 1,0,0,0,1
+	 data 0,1,0,1,0
+	 data 0,0,1,0,0
+	 data 0,1,0,1,0
+	 data 1,0,0,0,1
+	 --                         Y
+	 data 1,0,0,0,1
+	 data 0,1,0,1,0
+	 data 0,0,1,0,0
+	 data 0,0,1,0,0
+	 data 0,0,1,0,0
+	 --                         Z
+	 data 1,1,1,1,1
+	 data 0,0,0,1,0
+	 data 0,0,1,0,0
+	 data 0,1,0,0,0
+	 data 1,1,1,1,1
+	 ----------------------
+	 read INPUT
+	 --
+	 MATRIX TARGET=1 |  --  (binary-classifier rows)
+	 -------------------------------------------------------------
+	 lrate=0.9 |  Tnoise=0.0 |  Rnoise=0.25
+	 NN=2000
+	 --------------------------------------------------------
+	 drun
+	 write 'type go for successive recall runs' |  STOP
+	 display F
+	 ----------
+	 NN=2
+	 for i=1 to N
+	   drun RECALL
+	   write p |  -- show probabilities
+	   for k=1 to 25000 |  write "wait" |  next
+	   next
+	 ---------------------------------------------
+	 DYNAMIC
+	 ----------------------------------------
+	 iRow=t |  Vector x=INPUT#+Tnoise*ran()
+	 Vector p=exp(W*x) |  DOT psum=p*1
+	 Vector p=p/psum |  -- probability estimate
+	 ------------------------------------------------
+	 Vector error=TARGET#-p
+	 DELTA W=lrate*error*x |  -- LMS algorithm
+	 DOT enormsq=error*error
+	 -- 
+	 msqavg=msqavg+(enormsq-msqavg)/300
+	 msqavgx4=4*msqavg-scale |  -- offset display
+	 dispt msqavgx4
+	 ----------------------------------------
+	    label RECALL
+	 iRow=i
+	 Vector input=INPUT#
+	 Vector x=input+Rnoise*ran()
+	 Vector p=exp(W*x) |  DOT psum=p*1
+	 Vector p=p/psum |  -- probability estimate
+	 Vector q^=p |  Vector q=swtch(q) |  -- binary selector
+	 Vector yy=INPUT%*p
+	 Vector y=INPUT%*q |  -- associative memory
+	 -------------------------------------------------------
+	 Vector input=dd*input |  Vector x=cc*x
+	 Vector yy=cc*yy |  Vector y=dd*y
+	 SHOW  |  SHOW input,5 |  SHOW x,5 |  SHOW yy,5 |  SHOW y,5
+

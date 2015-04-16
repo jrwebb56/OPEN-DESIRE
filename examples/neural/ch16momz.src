@@ -1,0 +1,85 @@
+
+
+	 --                  4-BIT ENCODER LEARNING, BACKPROPAGATION
+	 -----------------------------------------------------------
+	 INTEGER n
+	 m=4 |  --                     number of hidden-layer neurons
+	 n=2^m |  --                          number of network inputs
+	 N=16 |  --                                number of patterns
+	 G=0.95 |  --                                target amplitude
+	 --
+	 ARRAY x1[n]+x0[1]=layer1,v1[m]+v0[1]=layer2,layer3[n]
+	 ARRAY LAYER1[n+1],LAYER2[m+1],LAYER3[n]
+	 ARRAY w2[m,n+1],w3[n,m+1]
+	 ARRAY Dw2[m,n+1],Dw3[n,m+1]
+	 ARRAY INPUT[N,n]
+	 ARRAY error[n],d2[m]+d20[1]=delta2,delta3[n]
+	 --
+	 x0[1]=1 |  v0[1]=1 |  d20[1]=1 |  --              bias inputs
+	 --                                              fill arrays
+	 for i=1 to n
+	   for k=1 to n
+	     INPUT[i,k]=-G
+	     next
+	   INPUT[i,i]=G
+	   next
+	 --         small random initial weights to "break symmetry"
+	 --
+	 for i=1 to m |  for k=1 to n+1
+	     w2[i,k]=ran() |  next  |  next
+	 for i=1 to n |  for k=1 to m+1
+	     w3[i,k]=ran() |  next  |  next
+	 -----------------------------------------------------------
+	 --                                set experiment parameters
+	 gain2=.01 |  gain3=.06
+	 mom2=0.05 |  mom3=0.05
+	 scale=2 |  cc=14 |  CC=7 |  NN=23000
+	 --
+	 display N1 |  display C8 |  display Q |  --        display
+	 -----------------------------------------------------------
+	 drun  |  --              make a simulation run (NN trials)
+	 write 'type go for a test run' |  STOP
+	 -----------------------------------------------------------
+	 --             test routine, used on command after learning
+	    label jjj
+	 NNold=NN |  NN=N |  TMAX=NN-1 |  t=1
+	 drun RECALL |  --           makes a recall run on shift-F10
+	 NN=NNold |  TMAX=NN-1 |  --        restore NN for more runs
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 --                                      weight-learning run
+	 iRow=t |  Vector x1=INPUT#
+	 Vector v1=tanh(w2*layer1)
+	 Vector layer3=tanh(w3*layer2)
+	 ------------------------------------------------------------
+	 Vector error=x1-layer3 |  --                backpropagation
+	 Vector delta3=error*(1-layer3*layer3)
+	 Vector delta2=w3%*delta3*(1-layer2*layer2)
+	 --                                          "moment" method
+	 MATRIX Dw2=gain2*d2*layer1+mom2*Dw2 |  DELTA w2=Dw2
+	 MATRIX Dw3=gain3*delta3*layer2+mom3*Dw3 |  DELTA w3=Dw3
+	 -----------------------------------------------------------
+	 DOT enormsqr=error*error |  --          accumulate enormsqr
+	 MSQERR=enormsqr-scale |  --            offset display curve
+	 dispt MSQERR |  --                    display error measure
+	 --
+	 --                            SHOW display of layers
+	 if t-0.95*TMAX
+	   Vector LAYER1=cc*swtch(layer1)+CC
+	   Vector LAYER3=cc*swtch(layer3)+CC
+	   SHOW  |  SHOW LAYER1 |  SHOW LAYER2 |  SHOW LAYER3
+	   -----------------------------------------------------------
+	   --                                   test run (no learning)
+	      label RECALL
+	   iRow=t
+	   Vector x1=INPUT#
+	   Vector v1=tanh(w2*layer1)
+	   Vector layer3=tanh(w3*layer2)
+	   -----------------------------
+	   Vector error=x1-layer3
+	   DOT enormsqr=error*error
+	   --
+	   z1=layer2[1] |  z2=layer2[2] |  z3=layer2[3]
+	   type z1,z2,z3,enormsqr
+

@@ -1,0 +1,21 @@
+
+
+	 --           FFTs of Two REAL Arrays
+	 ------------------------------------
+	 NN=512 |  display C8 |  display R
+	 dimension x[NN],y[NN],u[NN],v[NN]
+	 for i=1 to 4
+	   x[i]=1
+	   y[i+5]=1
+	   next
+	 FFT R,NN,x,y,u,v
+	 -------------------------------------
+	 TMAX=NN-1 |  scale=4
+	 t=1
+	 drun
+	 DYNAMIC
+	 -------------------------------------
+	 get xx=x |  get yy=y
+	 XX=0.5*(xx+scale) |  YY=0.5*(yy-scale)
+	 dispt XX,YY
+

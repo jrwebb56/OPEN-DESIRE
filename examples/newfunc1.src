@@ -1,0 +1,23 @@
+
+
+	 --                       FUNCTION GENERATION
+	 --------------------------------------------
+	 NN=250 |  TMAX=2.5 |  DT=0.01 |  --   timing
+	 display N1 |  display R
+	 -----------------------------
+	 n=25
+	 ARRAY x$[n]+F$[n]=F |  --  create function table
+	 for i=1 to n
+	   temp=2*(i-1)/n
+	   x$[i]=temp |  F$[i]=0.9*sin(4*temp-0.1)
+	   next
+	 -----------------------------
+	 x=-0.2 |  --                   initial value
+	 --------------------------------------------
+	 drun
+	 DYNAMIC
+	 --------------------------------------------
+	 d/dt x=1
+	 Y=0.9999*func1(x;F) |  -- scaled display
+	 dispt Y
+

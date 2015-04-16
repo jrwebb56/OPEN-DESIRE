@@ -1,0 +1,83 @@
+
+
+	 --           IRIS - BP/SOFTMAX PATTERN CLASSIFIER
+	 --                  estimates a posteriori probabilities
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=0.1
+	 --
+	 --  submodel could be loaded from a library  file instead!
+	 --
+	 ARRAY x$[1],v$[1],deltav$[1],y$[1],p$[1],error$[1],targe$t[1]
+	 ARRAY W1$[1,1],W$[1,1]
+	 SUBMODEL bpsoftmax(x$,v$,deltav$,y$,p$,error$,target$,enormsq$,msqa_
+vg$,MSQAVG$)
+	   Vector v$=tanh(W1$*x$)
+	   Vector y$=exp(W2$*v$) |  DOT ysum=y$*1
+	   Vector p$=y$/ysum |  -- probability estimates
+	   Vector error$=target$-p$
+	   ------------------------------------------------
+	   Vector deltav$=W2$%*error$*(1-v$^2)
+	   DELTA W$=lrate1*deltav$*x$
+	   DELTA W2=lrate2*error*v
+	   --
+	   DOT enormsq$
+	   msqavg$=msqavg$+(enormsq$-msqavg$)/t
+	   MSQAVG$=2*msqavg$-scale |  -- offset display
+	   dispt MSQAVG$
+	   end
+	 ------------------------------------------------------------------
+	 nx=4 |  -- number of features
+	 ny=3 |  -- number of categories
+	 nv=11 |  -- number of hidden neurons
+	 --
+	 Ntrain=114 |  Ntest=36
+	 ARRAY trainDATA[Ntrain,nx+ny],testDATA[Ntest,nx+ny]
+	 ARRAY input[nx]+target[ny]=data
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=1 |  -- note bias
+	 ARRAY y[ny],v[nv],p[ny],error[ny],deltav[nv]
+	 ARRAY WW1[nv,nx+1],W2[ny,nv]
+	 --
+	 --  small random initial weights "break symmetry"
+	 --
+	 for i=1 to nv |  for k=1 to nx+1
+	     WW1[i,k]=0.1*ran() |  next  |  next
+	 for i=1 to ny |  for k=1 to nv
+	     W2[i,k]=0.1*ran() |  next  |  next
+	 ---------------------------------------------------    get data
+	 connect './iris/iristrain.txt' as input 3
+	 input #3,trainDATA
+	 disconnect 3
+	 ----	 
+	 connect './iris/iristest.txt' as input 3
+	 input #3,testDATA
+	 disconnect
+	 -------------------------------------------------
+	 NN=2500000
+	 Rnoise=0 |  Tnoise=0
+	 drun
+	 -------------------------------------------------
+	 write 'type go for successive recall tests' |  STOP
+	 -----
+	 NN=2
+	 for i=1 to Ntest
+	   drun RECALL
+	   write target,p,error |  -- show probabilities
+	   write 'type go to continue' |  STOP
+	   next
+	 ---------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------
+	 iRow=t
+	 Vector traindata=trainDATA#
+	 Vector testdata=testDATA#
+	 -----------------------
+	 Vector x=input+Tnoise*ran()
+	 ----------------------------------------
+	    label RECALL
+	 iRow=1000*abs(ran()) |  Vector data=testDATA#
+	 Vector x=input+Rnoise*ran()
+	 Vector v=tanh(WW1*xx)
+	 Vector y=exp(W2*v) |  DOT ysum=y*1
+	 Vector p=y/ysum |  -- probability estimate
+	 Vector error=target-p
+

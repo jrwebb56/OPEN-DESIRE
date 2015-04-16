@@ -1,0 +1,15 @@
+
+
+	 --     MATRIX INVERSION AND LINEAR EQUATIONS
+	 ------------------------------------------------------------------
+	 ARRAY A[4,4],Ainverse[4,4],C[4,4]
+	 ARRAY x[4],b[4],error[4]
+	 data 1,3,50,3;2,3,0,-1;0,-1,2,0;-90,0,1,3 |  read A
+	 data 2,3,5,-7 |  read b
+	 --
+	 MATRIX Ainverse=$In(A) |  write Ainverse
+	 write "type go to continue" |  STOP
+	 VECTOR x=Ainverse*b
+	 VECTOR error=A*x-b
+	 write x,error
+

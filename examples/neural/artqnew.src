@@ -1,0 +1,54 @@
+
+
+	 --                      PSEUDO-ART LEARNING                    
+	 ---------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 scale=1
+	 -------------------------------- ------------------------  
+	 nx=2 |  --                        number of inputs
+	 nn=8 |  N=nn*nn |  --   number of patterns
+	 n=64 |  --                   number of templates
+	 m=200 |  --                    for in-turn learning
+	 --
+	 ARRAY x[nx],y[N],h[N],w[nx],W[N,nx],INPUT[N,2]
+	 ------------------------------------------------------------------
+	 --              set up uniformly spaced cluster centers
+	 s=0.85
+	 for i=1 to nn |  for k=1 to nn
+	     INPUT[i+(k-1)*nn,1]=s*(1+nn-2*i)/(1-nn)
+	     INPUT[i+(k-1)*nn,2]=s*(1+nn-2*k)/(1-nn)
+	     next  |  next
+	 ------------------------------------------------------------
+	 for i=1 to N
+	   for k=1 to nx |  --  set random initial weights
+	     W[i,k]=0.1*ran()
+	     next  |  next
+	 ------------------------------------------------------------
+	 --                              set  learning parameters
+	 lrate=0.09
+	 crit=0.015
+	 noise=0.009
+	 ------------------------------------------------------------
+	 NN=(m+5)*N |  --               learn input, output
+	 drun
+	 write ' type go to continue' |  STOP
+	 lrate=0 |  NN=200
+	 drun RECALL
+	 ------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------
+	 iRow=t/m
+	 Vector x=INPUT#+noise*(ran()+ran()+ran())
+	 CLEARN y=W(x)lrate,crit |  --   learn/select input values
+	 -- Vectr delta h=y
+	 Vector w=W%*y |  --     reconstruct learned x values
+	 DISPXY w[1],w[2],x[1],x[2]
+	 ------------------------------------------------------------
+	    label RECALL
+	 iRow=t
+	 Vector x=INPUT#+noise*(ran()+ran()+ran())
+	 CLEARN y=W(x)lrate,crit |  --   learn/select input values
+	 -- Vectr delta h=y
+	 Vector w=W%*y |  --     reconstruct learned x values
+	 dispxy w[1],w[2]
+

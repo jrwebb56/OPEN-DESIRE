@@ -1,0 +1,33 @@
+
+
+	 --       AMPLITUDE-DISTRIBUTION MEASUREMENT
+	 ------------------------------------------------------
+	 display N1 |  display C8 |  display Y
+	 Xmin=-1 |  Xmax=1 |  -- interval for analysis
+	 n=100 |  --   class intervals ( competitive-layer neurons)
+	 ARRAY x[1],v[n],h[n],W[n,1],w[1]
+	 for k=1 to n |  W[k,1]=(k-0.5)*(Xmax-Xmin)/n+Xmin |  next
+	 ------------------------------------------------------
+	 NN=20000 |  --                           number of samples     
+	 lrate=0 |  crit=-1 |  --                               (no learn
+	 a=0.5*n/NN |  --                           for display scaling
+	 scale=1
+	 ------------------------------------------------------
+	 s=0.2 |  --                    a random-process parameter
+	 drun  |  --                     measurement run, NN samples
+	 --
+	 -----------------------------------------      show the histogram
+	 display R |  display A
+	 for k=1 to n
+	   plot W[k,1],a*h[k]-scale,14 |  --   scale, offset h
+	   next
+	 -------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 --  generate a pseudo-Gaussian random process
+	 --
+	 x[1]=s*(ran()+ran()+ran()+ran()+ran())
+	 ----------------------------------------------
+	 CLEARN v=W(x)lrate,crit |  --                 compete
+	 Vectr delta h=v |  --                                            
+

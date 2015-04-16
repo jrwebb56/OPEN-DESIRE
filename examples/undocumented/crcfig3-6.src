@@ -1,0 +1,18 @@
+
+
+	 --        SIMPLE DIFFERENCE EQUATIONS                     
+	 ------------------------------------------------------------------
+	 NN=10
+	 x=5 |  y=10 |  -- initial values at t=0
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 p=x |  -- defined variable
+	 xx=x |  yy=y |  -- defined variables for output
+	 X=x+3 |  -- 2 difference equations
+	 Y=y+1
+	 x=X |  y=Y |  --            update state variables
+	 ------------------------------------------------------------------
+	 type xx,yy,p
+

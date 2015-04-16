@@ -1,0 +1,77 @@
+
+
+	 -- STUDY SAMPLE AVERAGES, SAMPLE VARIANCES,
+	 --    AND THEIR SAMPLING DISTRIBUTIONS
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 ARRAY x$[1]
+	 SUBMODEL STAT(x$)
+	   Vector xavg=xavg+(x$-xavg)/t
+	   Vector xxavg=xxavg+(x$^2-xxavg)/t
+	   Vector xvar=xxavg-xavg^2
+	   ----------------------------------------------------------------
+	   --  compute the sampling distributions by
+	   --    averaging statistics over m different samples
+	   --
+	   DOT Xsum=xavg*1 |  DOT XXsum=xavg*xavg
+	   Xavg=Xsum/m |  XXavg=XXsum/m
+	   Xvar=XXavg-Xavg^2
+	   --
+	   --------->   offset and rescale the display
+	   --
+	   XAVG=10*Xavg-0.5*scale
+	   xvaro10=0.1*xvar[1] |  Xvarx100=100*Xvar
+	   dispt XAVG,Xvarx100,xavg[1],xvaro10
+	   end
+	 ------------------------------------------------------------------
+	 -- Parzen-window probability-density estimation
+	 --
+	 SUBMODEL PARZEN()
+	   xx=2*t-TMAX |  --                   display sweep
+	   Vector f=beta*exp(-alpha*(xx-x)^2)
+	   Vector g=beta*exp(-alpha*(xx-xavg)^2)
+	   DOT F=f*1 |  DOT G=g*1
+	   --                                 offset display
+	   F=0.2*F-scale |  G=0.2*G-scale
+	   dispxy xx,F,G
+	   end
+	 ------------------------------------------------------------------
+	 -- first run computes sample averages and variances
+	 --    as functions of the sample size t. Arrays are
+	 --    initialized to 0 by default, then t starts at t=1
+	 --    with xavg=x, goes to t=NN=nmax                 
+	 ------------------------------------------------------------------
+	 nmax=5000 |  --  maximum sample size
+	 m=1000 |  --    number of replicated experiments
+	 --
+	 ARRAY x[m],xavg[m],xxavg[m],xvar[m],f[m],g[m]
+	 ------------------------------------------------------------------
+	 NN=nmax
+	 x0=0 |  --   "true" value of x
+	 scale=0.2
+	 gamma=0.3
+	 drun
+	 write 'type go to continue' |  STOP
+	 ------------------------------------------------------------------
+	 --  second run estimates probability densities
+	 --                        for the sample size nmax	
+	 write "please wait!"
+	 scale=15
+	 h=0.07 |  --                  Parzen-window width
+	 alpha=1/(2*h^2)
+	 scale=2 |  Ascale=3 |  -- scaling
+	 beta=Ascale/(h*m*sqrt(2*PI))
+	 --                                                         
+	 t=0 |  TMAX=20 |  NN=20000 |  -- (note that xx=2*t-TMAX)
+	 drun READOUT
+	 -----------------------------
+	 DYNAMIC
+	 -----------------------------
+	 --  t is the sample size; note recursive averaging
+	 --
+	 Vector x=0.3*sqrt(-2*ln(abs(ran())))*cos(2*PI*abs(ran()))
+	 invoke STAT(x)
+	 --	
+	    label READOUT
+	 invoke PARZEN()
+

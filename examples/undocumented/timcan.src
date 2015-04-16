@@ -1,0 +1,43 @@
+
+
+	 --                        CANNONBALL TRAJECTORIES
+	 --                  repeated scalar model (no replication)
+	 -------------------------------------------------
+	 DT=0.05 |  TMAX=100 |  NN=100 |  --        timing
+	 display N13 |  display C7
+	 scale=1.2
+	 ----------------------------------
+	 N=1000
+	 noise=0 |  A=1
+	 R=7.5E-05 |  g=32.2
+	 v0=900 |  --                     muzzle velocity  
+	 -- display 0
+	 xdot=800
+	 ydot=900
+	 --
+	 drunr  |  display 2
+	 a=tim(0)
+	 for i=1 to N
+	   drunr
+	   next
+	 b=tim(0) |  write (b-a)/N,"sec/run      ",N/(b-a),"runs/sec"
+	 --
+	 --  display 1 |  --                  restore display
+	 ------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------
+	 v=sqrt(xdot*xdot+ydot*ydot)
+	 d/dt x=xdot |  d/dt y=ydot
+	 d/dt xdot=-R*v*xdot+noise
+	 d/dt ydot=-R*v*ydot-g
+	 --
+	 --                      terminate each run on impact
+	 term -y-0.001
+	 OUT
+	 --------------------    runtime trajectory display
+	 X=0.00015*x-scale |  Y=0.00025*y-scale
+	 dispxy X,Y
+	 --
+	 SAMPLE 20
+	 noise=A*(ran()+ran()+ran()+ran())
+

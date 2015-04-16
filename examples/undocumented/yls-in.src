@@ -1,0 +1,9 @@
+
+
+	 m=5 |  n=8
+	 ARRAY W[m,n]
+	 connect 'ylsfile.txt' as input 3
+	 input #3,W
+	 disconnect 3
+	 write W
+

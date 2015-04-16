@@ -1,0 +1,18 @@
+
+
+	 --  A SIMPLE "STIFF" SYSTEM: SENSITIVITY TO DT
+	 ------------------------------------------------------------------
+	 display C8 |  display R
+	 irule 3 |  --                           4th-order Runge-Kutta
+	 NN=100 |  TMAX=10
+	 k=100 |  r=101 |  --      time constants are 1 and 0.01
+	 x=1 |  --                                                        
+	 DT=0.0025 |  display N1 |  drunr  |  --     yellow curve
+	 display 2 |  --                        don't erase display after 
+	 DT=0.0279 |  display N3 |  drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 d/dt x=xdot |  d/dt xdot=-k*x-r*xdot
+	 dispt x
+

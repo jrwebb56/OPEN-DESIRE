@@ -1,0 +1,50 @@
+
+
+	 --                                       DIGITAL FILTER
+	 --  H = (z^n - 1)/[z^n - z^(n-1)]) 
+	 -- successive samples of the filter output are stored
+	 --      in an array that will be used to compute the FFT
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 NN=16384
+	 -- 
+	 n=20 |  ARRAY x[n],a[n],b[n]
+	 ARRAY OUTPUTx[NN],OUTPUTy[NN] |  -- array for FFT
+	 ------------------------------------------------ 	
+	 --          specify filter parameters 	 
+	 a[n]=-1
+	 b[1]=-1 |  -- other a[i], b[i] default to 0
+	 bb=1 |  --           feedforward coefficient
+	 --------------------------------------------
+	 t=0 |  --   (default initial t would be t=1)
+	 scale=1 |  --       display scale
+	 drun
+	 write 'type go for FFT' |  STOP
+	 -----------------------------------
+	 FFT F,NN,OUTPUTx,OUTPUTy
+	 scale=20 |  t=0
+	 drunr FFT |  -- drunr resets t=0
+	 write 'type go for amplitude/phase display' |  STOP
+	 drun SECOND |  -- amplitude/phase display
+	 ----------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 input=swtch(1-t) |  -- this produces the impulse response
+	 output=x[n]+bb*input |  --       note the feedforward term
+	 Vector x=x{-1}+b*input-a*output
+	 dispt output
+	 ----------                                fill FFT arrays
+	 store OUTPUTx=output
+	 ---------------------------------------------------------
+	    label FFT
+	 get xx=OUTPUTx |  get yy=OUTPUTy |  --    FFT arrays
+	 outx=0.5*xx
+	 outy=0.5*(yy-scale) |  --             offset
+	 dispt outx,outy
+	 ----------------------------   AMPLITUDDE/PHASE DISPLAY
+	    label SECOND
+	 get xx=OUTPUTx |  get yy=OUTPUTy |  --    FFT arrays
+	 r=sqrt(xx^2+yy^2)
+	 phi=atan2(yy,xx)-0.5*scale |  --     offset
+	 dispt r,phi
+

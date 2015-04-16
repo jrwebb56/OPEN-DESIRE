@@ -1,0 +1,27 @@
+
+
+	 n=8
+	 scale=1 |  half=0.5 |  two=2 |  x0=-0.6*scale |  a=1
+	 ARRAY Xdummy[1]+X[n]=XX,b[n+1]
+	 ARRAY member[n]+Mdummy[1]=QQ,mb[n+1]
+	 -------------------------------------------------------
+	 for i=1 to n |  X[i]=(i*i*i-n)/(12*n)+x0 |  next
+	 -- substitute any other set of X[i], e.g. via data/read
+	 -------------------------------------------------------
+	 for i=1 to n |  b[i]=a/(XX[i]-XX[i+1]) |  next
+	 --
+	 NN=15000 |  TMAX=1 |  DT=0.00003
+	 display N16 |  display R |  display C17
+	 x=-scale |  --                 initialize display sweep
+	 drun
+	 -------------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------------
+	 Vector mb=b*(XX-x) |  Vector mb=SAT(mb)
+	 Vector QQ=mb-mb{1}
+	 Vector member=half*member-scale |  --    offset display
+	 ------------------------------------------------------
+	 d/dt x=2*scale |  --                      display sweep
+	 mb4=0.5*(mb[4]+scale) |  minusmb5=-0.5*mb[5]
+	 dispxy x,mb4,minusmb5,member[4]
+

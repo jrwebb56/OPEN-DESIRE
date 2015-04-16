@@ -1,0 +1,39 @@
+
+
+	 --   SERVO WITH DIGITAL PID CONTROLLER
+	 ------------------------------------------------------------------
+	 TMAX=2.5 |  DT=0.001 |  NN=700
+	 display N1 |  display C8 |  display R
+	 --
+	 TS=0.05 |  --  simulated sampling rate is 1/TS               
+	 m=TS*(NN-1)/TMAX
+	 ------------------------------------------------------------------
+	 u=0.7 |  --    step input                                       
+	 maxtrq=0.8 |  R=3 |  -- motor parameters                        
+	 ------------------------------------------------------------------
+	 -- initial t , x, xdot,  default to 0
+	 x1=0 |  x2=0 |  --  initialize digital controller   ...
+	 y=0 |  --                    ...  and y, too!              
+	 --
+	 KP=3 |  KI=1.2 |  KD=.2 |  --  PID parameters             
+	 --
+	 B0=KD/TS |  B1=-KP+0.5*KI*TS-2*KD/TS
+	 B2=KP+0.5*KI*TS+KD/TS
+	 --
+	 drun  |  --                                                      
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 torque=maxtrq*tanh(y/maxtrq) |  -- analog plant
+	 d/dt x=xdot |  d/dt xdot=10*torque-R*xdot
+	 --
+	 SAMPLE m |  --                         digital controller        
+	 error=x-u
+	 y=B0*x1+B1*x2+B2*(x2-error) |  -- controller output
+	 X1=x2 |  X2=x2-error |  --   difference equations
+	 --
+	 x1=X1 |  x2=X2 |  --          update state variables
+	 ------------------------------------------------------------------
+	 TORQUE=0.5*(torque-scale) |  --  offset display
+	 dispt x,TORQUE,error
+

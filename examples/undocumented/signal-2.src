@@ -1,0 +1,17 @@
+
+
+	 --                 SWITCHED SIGNAL GENERATOR
+	 -----------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=2
+	 NN=40000
+	 drun
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 switch=swtch(sin(10*t/NN))
+	 p=0.8*switch*sgn(cos(100*t/NN)) |  --  square waves
+	 q=(1-switch)*sin(200*t/NN) |  --  sine waves
+	 z=p+q
+	 SWITCH=0.2*switch-0.75*scale
+	 dispt z,SWITCH
+

@@ -1,0 +1,78 @@
+
+
+	 --                           FUZZY-BASIS-FUNCTION NETWORK
+	 ---------------------------------------------------------
+	 n1=10 |  n2=12 |  --           numbers of x1, x2 categories
+	 FUNCTION TGT(p,q)=2*sin(00.5*p)*cos(q) |  --    define target
+	 scale=1
+	 ----------------------------------------------------------
+	 ARRAY x1[1]+x2[1]=x
+	 ARRAY X1dummy[1]+X1[n1]=XX1 |  X1dummy[1]=-1.0E+25
+	 ARRAY X2dummy[1]+X2[n2]=XX2 |  X2dummy[1]=-1.0E+25
+	 ARRAY W1[n1,1],v1[n1],h1[n1],W2[n2,1],v2[n2],h2[n2]
+	 ARRAY member1[n1]+M1dummy[1]=MEMBER1
+	 ARRAY member2[n2]+M2dummy[1]=MEMBER2
+	 ARRAY mb1[n1+1],mb2[n2+1],b1[n1+1],b2[n2+1]
+	 ARRAY U[n1,n2]=u
+	 ARRAY W3[1,n1*n2],y[1],error[1]
+	 ---------------------------------------------------------
+	 for i=1 to n1 |  W1[i,1]=ran() |  next
+	 for i=1 to n2 |  W2[i,1]=ran() |  next
+	 display N1 |  --           set display colors, parameters
+	 --
+	 lratex=0.2 |  lratef=0.2 |  kappa=0.9996 |  lrate0=0
+	 crit=0 |  --                 (crit=0 for FSCL conscience)
+	 NN=12000
+	 ------------
+	 display F
+	 drun COMPETE
+	 ------------------------------------
+	 for i=1 to n1 |  -- sort routine for x1
+	   X1[i]=1.0E+25
+	   for k=1 to n1
+	     if W1[k,1]<X1[i] then X1[i]=W1[k,1] |  K=k |  else proceed
+	     next
+	   W1[K,1]=1.0E+25
+	   ----
+	   b1[i]=1/(XX1[i]-XX1[i+1]) |  --       set the x1 slopes
+	   next
+	 ---------------------------------------------------------
+	 for i=1 to n2 |  -- sort routine for x2
+	   X2[i]=1.0E+25
+	   for k=1 to n2
+	     if W2[k,1]<X2[i] then X2[i]=W2[k,1] |  K=k |  else proceed
+	     next
+	   W2[K,1]=1.0E+25
+	   ---
+	   b2[i]=1/(XX2[i]-XX2[i+1]) |  --       set the x2 slopes
+	   next
+	 ------------------------------------------------------
+	 drun  |  -- function-learning run
+	 lratex=0 |  lratef=0 |  lrate0=0 |  -- recall run
+	 drun  |  STOP
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 lratef=kappa*lratef+lrate0 |  --     reduce learning rate
+	 --
+	 Vector x=ran() |  tgt=TGT(x1[1],x2[1]) |  -- training pairs
+	 --
+	 Vector mb1=SAT(b1*(XX1-x1[1])) |  Vector MEMBER1=mb1-mb1{1}
+	 Vector mb2=SAT(b2*(XX2-x2[1])) |  Vector MEMBER2=mb2-mb2{1}
+	 MATRIX U=member1*member2 |  -- make joint membership functions
+	 Vector y=W3*u |  Vector error=tgt-y
+	 DELTA W3=lratef*error*u
+	 ---------------------------------------  display variables
+	 ERROR=abs(error[1])-scale
+	 p1=x1[1] |  p2=x2[1] |  y1=y[1]
+	 m3=member1[3] |  m4=member1[4] |  m5=member1[5]
+	 M3=member2[3]-scale |  M4=member2[4]-scale
+	 M5=member2[5]-scale
+	 DISPXY tgt,y1,tgt,ERROR,p1,m3,p1,m4,p2,M3,p2,M4
+	 -----------------------------------------------------
+	    label COMPETE
+	 lratex=kappa*lratex+lrate0 |  -- reduce learning rate
+	 Vector x=ran()
+	 CLEARN v1=W1(x1)lratex,crit |  CLEARN v2=W2(x2)lratex,crit
+	 Vectr delta h1=v1 |  Vectr delta h2=v2 |  -- counters for FSCL
+

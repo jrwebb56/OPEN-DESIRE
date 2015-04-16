@@ -1,0 +1,19 @@
+
+
+	 PROCEDURE fctrl(m$;xx$)
+	   xx$=1
+	   for i=1 to m$
+	     xx$=xx$*i
+	     next
+	   end
+	 PROCEDURE cmb(x$,n$;y$)
+	   call fctrl(x$;a)
+	   call fctrl(n$-x$;b)
+	   call fctrl(n$;c)
+	   y$=a*b/c
+	   end
+	 -------------------------------------------------
+	 input x,n
+	 call cmb(x,n;y)
+	 write "y= ";y
+

@@ -1,0 +1,41 @@
+
+
+	 --           DELAY-LINE SIMULATION
+	 --              (using DESIRE matrix notation)
+	 ------------------------------------------------------------------
+	 n=1000
+	 STATE i[n],V[n]
+	 ARRAY II[n],VV[n]
+	 display N1 |  display C8 |  scale=1 |  irule 4
+	 ----------------------------------------------
+	 DT=0.0001 |  TMAX=n/4000 |  NN=TMAX/DT
+	 ----------------------------------------------
+	 a=n/(2.0E-02) |  ---------------------- this is 1/C
+	 b=-n/50 |  ---------------------------     this is -1/L
+	 rS=50 |  --------------------- source resistance
+	 rL=50 |  -------------- termination resistance
+	 vS=1 |  ----------------------------------- step input
+	 ----------------------------------------------------------------
+	 drunr
+	 write ' - you have compiled and solved ';2*n-1;'  ordinary'
+	 write '           differential equations!'
+	 write 'type go to continue with a new load resistance'
+	 STOP
+	 rL=200 |  -------------  unmatched termination
+	 TMAX=n/400 |  NN=NN*5
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 --                        correct first delay
+	 V0=vS-i1*rS
+	 VV[1]=a*i1
+	 d/dt i1=2*b*(V[1]-V0)
+	 --                         correct termination 
+	 --     				    VL=i[n]*rL 
+	 II[n]=b*(2*i[n]*rL-V[n])
+	 ---------------    -------  2n differential equations
+	 Vectr d/dt V=a*(i{-1}-i)+VV
+	 Vectr d/dt i=b*(V{1}-V)+II
+	 dispt V[40]
+

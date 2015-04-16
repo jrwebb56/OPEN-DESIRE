@@ -1,0 +1,18 @@
+
+
+	 --                          SIGNAL QUANTIZATION
+	 -----------------------------------------------
+	 display N1 |  display C8 |  display R
+	 TMAX=1.1 |  DT=0.001 |  NN=1001
+	 w=5
+	 a=0.2
+	 x=0.9
+	 drun
+	 -----------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------
+	 d/dt x=w*xdot |  d/dt xdot=-w*x |  --    signal
+	 y=a*round(x/a) |  --           quantized signal
+	 z=y-x |  --                  quantization error
+	 dispt x,y,z
+

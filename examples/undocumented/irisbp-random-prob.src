@@ -1,0 +1,77 @@
+
+
+	 --    IRIS - BP/SOFTMAX PATTERN CLASSIFIER
+	 --                  estimates a posteriori probabilities
+	 ------------------------------------------------------------------
+	 display N2 |  display C8 |  display Q |  scale=2
+	 --
+	 nx=4 |  -- number of features
+	 N=3 |  -- number of categories
+	 nv=11 |  -- number of hidden neurons
+	 --
+	 Ntrain=114 |  Ntest=36
+	 ARRAY trainDATA[Ntrain,nx+N],testDATA[Ntest,nx+N]
+	 ARRAY input[nx]+target[N]=data
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=1 |  -- note bias
+	 ARRAY y[N],v[nv],p[N],error[N],deltav[nv]
+	 ARRAY WW1[nv,nx+1],W2[N,nv]
+	 ARRAY Dww1[nv,nx+1],Dw2[N,nv]
+	 ARRAY P[N]
+	 --
+	 --  small random initial weights "break symmetry"
+	 --
+	 for i=1 to nv |  for k=1 to nx+1
+	     WW1[i,k]=0.1*ran() |  next  |  next
+	 for i=1 to N |  for k=1 to nv
+	     W2[i,k]=0.1*ran() |  next  |  next
+	 ------------------------------------------------      parameters
+	 lrate1=0.005 |  lrate2=0.003
+	 mom1=0.35 |  mom2=0.3
+	 Tnoise=0.0 |  Rnoise=0
+	 NN=5000000
+	 --------------------------------------------------
+	 connect './iris/iristrain.txt' as input 3
+	 input #3,trainDATA
+	 disconnect 3
+	 ----	 
+	 drun  |  -- training run
+	 --
+	 write 'type go for successive recall tests' |  STOP
+	 connect './iris/iristest.txt' as input 3
+	 input #3,testDATA
+	 disconnect 3
+	 -----
+	 NN=2
+	 for i=1 to Ntest
+	   drun RECALL
+	   write target,p,error |  -- show probabilities
+	   write 'type go to continue' |  STOP
+	   next
+	 ---------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------
+	 iRow=1000*abs(ran()) |  Vector data=trainDATA#
+	 Vector x=input+Tnoise*ran()
+	 Vector v=tanh(WW1*xx)
+	 Vector y=exp(W2*v) |  DOT ysum=y*1
+	 Vector p=y/ysum |  -- probability estimates
+	 Vector error=target-p
+	 ------------------------------------------------
+	 Vector deltav=W2%*error*(1-v^2)
+	 --
+	 --    "momentum" adds part of last change
+	 MATRIX Dww1=lrate1*deltav*xx+mom1*Dww1
+	 MATRIX Dw2=lrate2*error*v+mom2*Dw2
+	 DELTA WW1=Dww1 |  DELTA W2=Dw2
+	 --
+	 Vector P=4*p-scale
+	 dispt P[1],P[2],P[3]
+	 ----------------------------------------
+	    label RECALL
+	 iRow=1000*abs(ran()) |  Vector data=testDATA#
+	 Vector x=input+Rnoise*ran()
+	 Vector v=tanh(Www1*xx)
+	 Vector y=exp(W2*v) |  DOT ysum=y*1
+	 Vector p=y/ysum |  -- probability estimate
+	 Vector error=target-p
+

@@ -1,0 +1,64 @@
+
+
+	 --                      SIMPLE 2nd-ORDER ANALOG FILTER
+	 -- H = 1/(s^2 + a[1]s + a[2]) 
+	 -- successive samples of the filter output are stored
+	 --     in an array that will be used to compute the FFT
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  --     display
+	 NN=16384 |  DT=0.00001 |  TMAX=2
+	 n=2 |  STATE x[n] |  ARRAY a[n],b[n]
+	 ARRAY OUTPUTx[NN],OUTPUTy[NN] |  -- arrays for FFT
+	 ------------------------------------------------------------------
+	 --          specify filter parameters 	 
+	 a[1]=20000 |  -- squared circular frequency
+	 a[2]=40 |  -- damping coefficient
+	 bb=1 |  -- feedforward; other a[i], b[i] default to 0
+	 ------------------------------------------------------------------
+	 x[1]=1 |  -- to get impulse response; note t0=0
+	 scale=0.005 |  --       display scale
+	 drun
+	 write 'type go for FFT' |  STOP
+	 ----------------------------------------
+	 FFT F,NN,OUTPUTx,OUTPUTy
+	 scale=2
+	 ---------------------------------------------------
+	 --  create abscissa and ordinate arrays 
+	 --     for interpolated frequency-response plot
+	 NN=5001
+	 ARRAY x1[NN]+OUT1x[NN]=OUTx |  -- extended arrays
+	 ARRAY x2[NN]+OUT1y[NN]=OUTy
+	 --
+	 for i=1 to NN
+	   x1[i]=i |  x2[i]=i
+	   OUT1x[i]=OUTPUTx[i] |  OUT1y[i]=OUTPUTy[i]
+	   next
+	 ---------------------------------------------------
+	 t=1 |  TMAX=100 |  -- note t0=1
+	 drunr FFT |  -- drunr resets t=1
+	 write 'type go for amplitude/phase display' |  STOP
+	 scale=2
+	 drun SECOND |  -- amplitude/phase display
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 input=0 |  -- for impulse response
+	 output=x[n]+bb*input |  --  note feedforward term
+	 Vectr d/dt x=x{-1}+b*input-a*output
+	 dispt output
+	 ----------                                fill FFT array
+	 store OUTPUTx=output
+	 ---------------------------------------------------------	   
+	    label FFT
+	 xx=func1(t;OUTx) |  --       extended arrays
+	 yy=func1(t;OUTy)
+	 outx=xx-0.5*scale |  --      stripchart display
+	 outy=0.5*yy+0.5*scale
+	 dispt outx,outy
+	 --------------------     AMPLITUDE/PHASE DISPLAY
+	    label SECOND
+	 xx=func1(t;OUTx) |  yy=func1(t;OUTy) |  -- interpolate
+	 r=sqrt(xx^2+yy^2)
+	 phix=0.5*atan2(yy,xx)
+	 dispt r,phix
+

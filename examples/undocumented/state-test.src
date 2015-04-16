@@ -1,0 +1,17 @@
+
+
+	 -- MATRIX DIFFERENTIAL EQUATIONS
+	 --------------------------------------------------
+	 display R
+	 TMAX=1
+	 STATE X[3,3]=x
+	 ARRAY DAMP[3,3]=damp
+	 DAMP[3,3]=2 |  DAMP[2,1]=4
+	 X[3,3]=1 |  X[2,1]=-0.5 |  -- initial conditions
+	 drun
+	 -----------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------
+	 Vectr d/dt x=-damp*x
+	 dispt X[3,3],X[2,1]
+

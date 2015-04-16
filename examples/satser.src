@@ -1,0 +1,33 @@
+
+
+	 --                      A SIMPLE SERVO SIMULATION
+	 -------------------------------------------------
+	 TMAX=11 |  NN=2000 |  DT=0.005 |  --       timing
+	 scale=2 |  display N1 |  display C8 |  --      display
+	 display R
+	 -------------------------------------------------
+	 --  		 set system parameters
+	 --
+	 A=0.8 |  g2=2 |  maxtrq=0.85 |  k=200
+	 w=0.5 |  r=26 |  R=0.6
+	 drun
+	 STOP
+	 ------------------------------------------------------------
+	    label eee
+	 edit 70,72-110
+	 -------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------
+	 u=A*cos(w*t) |  --                input and error
+	 e=x-u
+	 Q=-k*e-r*xD |  --                   motor voltage
+	 --
+	 torque=maxtrq*atan(g2*Q/maxtrq) |  --     dynamics
+	 d/dt x=xD |  d/dt xD=torque-R*xD
+	 --
+	 --  --------------------------    RUNTIME DISPLAY
+	 X=x+0.5*scale |  U=u+0.5*scale
+	 TORQUE=torque-0.5*scale |  --       offset curves
+	 ERROR=e+0.5*scale
+	 dispt X,U,TORQUE,ERROR
+

@@ -1,0 +1,36 @@
+
+
+	 -- PARZEN-WINDOW AMPLITUDE DISTRIBUTION
+	 -- with non-Gaussian window
+	 ------------------------------------------------------------------
+	 display N1 |  display C8
+	 n=4000
+	 ARRAY X[n],f[n]
+	 s=0.5 |  b=0
+	 alpha=100 |  --                          inverse window width
+	 beta=0.5*alpha/n |  --                  scale factor
+	 BETA=98*beta |  --            (match for comparison)
+	 ------------------------------------------------
+	 m=3
+	 for i=1 to m
+	   NN=n |  DT=0.1 |  TMAX=20
+	   drun
+	   ---------------------------------------------
+	   t=0 |  TMAX=1 |  NN=4000
+	   drunr READOUT
+	   display 2
+	   next
+	 -----------------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------------
+	 --                                            measurement run
+	 x=s*ran()+b*sin(20*t)
+	 store X=x
+	 ----------------------------------------------------------
+	    label READOUT
+	 --
+	 xx=2*t-1 |  --                      display sweep
+	 Vector f=beta*exp(-abs(X-xx)*alpha)
+	 DOT F=f*1 |  F=F-scale
+	 dispxy xx,F
+

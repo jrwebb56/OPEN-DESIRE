@@ -1,0 +1,18 @@
+
+
+	 --                    Van der Pol's Differential Equation
+	 ------------------------------------------------------------------
+	 NN=10 |  scale=4 |  display N1
+	 DT=0.0035 |  TMAX=11
+	 x=0.5 |  A=2.2
+	 connect './testers/wiz' as output 3
+	 drun
+	 disconnect 3
+	 sh       cat ./testers/wiz.dat
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 d/dt x=xdot |  d/dt xdot=-x+A*(1-x^2)*xdot
+	 --
+	 type ##3,x,xdot
+

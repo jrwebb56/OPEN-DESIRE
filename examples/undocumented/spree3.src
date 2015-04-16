@@ -1,0 +1,38 @@
+
+
+	 --            COIN-TOSSING PROCESS
+	 ----------------------------------------------
+	 NN=1000 |  scale=0.05
+	 display N1 |  display C8 |  display R
+	 --                                                P=(1-a)/2  or a 
+	 p=0.4857 |  -- U.S. roulette
+	 a=1-2*p
+	 ----------------------------------------------
+	 n=1000
+	 ARRAY x[n],xsum[n],xavg[n]
+	 for i=1 to n |  x[i]=sgn(ran()-a) |  next  |  -- initialize
+	 drun
+	 --
+	 write "xsumAvg = ";xsumAvg;"  xsumVar =  ";xsumVar
+	 write "xavgAvg =  ";xavgAvg;"  xavgVar = ";xavgVar
+	 write
+	 write "E{x} = ";-a;"		     E{xsum} = ";-NN*a
+	 write "Var{xsum} = ";a*(1-a)/NN;"	Var{xSum} = ";a*(1-a)/(n*NN)
+	 write "Var{x} = ";a*(1-a);"   Var{xavg} = ";a*(1-a)/NN
+	 write "Var{xAvg}= ";a*(1-a)/(n*NN)
+	 ----------------------
+	 DYNAMIC
+	 ----------------------
+	 Vector x=sgn(ran()-a)
+	 Vectr delta xsum=x
+	 Vectr delta xavg=(x-xavg)/t
+	 AVG xsumAvg=xsum*1
+	 AVG xssAvg=xsum*xsum
+	 xsumVar=xssAvg-xsumAvg^2
+	 AVG xavgAvg=xavg*1
+	 AVG xaaAvg=xavg*xavg
+	 xavgVar=xaaAvg-xavgAvg^2
+	 -----------------------------------------------
+	 XSUMAVG=xsumAvg/NN+0.5*scale
+	 dispt XSUMAVG,xavgAvg,xavgVar
+

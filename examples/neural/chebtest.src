@@ -1,0 +1,87 @@
+
+
+	 --  5-BIT ENCODER LEARNING, BACKPROPAGATION
+	 ----------------------------------------------------------
+	 m=5 |  --         number of hidden-layer neurons
+	 n=2^m |  --        number of network inputs
+	 N=n |  --        number of patterns
+	 G=0.95 |  --     target amplitude
+	 --
+	 ARRAY x1[n]+x0[1]=layer1 |  ARRAY v1[m]+v0[1]=layer2
+	 ARRAY layer3[n]
+	 ARRAY W2[m,n+1],W3[n,m+1]
+	 ARRAY Dw2[m,n+1],Dw3[n,m+1]
+	 ARRAY INPUT[N,n]
+	 ARRAY error[n],ERROR[n]
+	 ARRAY d2[m]+d20[1]=delta2,delta3[n]
+	 --
+	 x0[1]=1 |  v0[1]=1 |  --    bias inputs
+	 --                                        fill arrays
+	 for i=1 to n
+	   for k=1 to n
+	     INPUT[i,k]=-G
+	     next
+	   INPUT[i,i]=G
+	   next
+	 --
+	 --   random initial weights "break symmetry"
+	 --
+	 for i=1 to m |  for k=1 to n+1
+	     W2[i,k]=0.3*ran() |  next  |  next
+	 for i=1 to n |  for k=1 to m+1
+	     W3[i,k]=0.3*ran() |  next  |  next
+	 ------------------------------------------------------------------
+	 f1=0 |  --            initialize error-measure accumulation
+	 ------------------------------------------------------------------
+	 --                                        set experiment parameter
+	 lrate2=.006 |  lrate3=.0025 |  mom2=0.3 |  mom3=0.3
+	 scale=2
+	 NN=400000
+	 --
+	 display N1 |  display C8 |  display Q |  --   colors, dots
+	 ------------------------------------------------------------------
+	 aa=tim(0) |  drun  |  bb=tim(0) |  write bb-aa
+	 STOP
+	 -----------------------------------------------------------
+	    label eee
+	 edit 230-270,530-550,820-830
+	 STOP  |  --                                  displays editing scr
+	 -----------------------------------------------------------
+	    label NOTE
+	 note #230-270,530-550,820-830
+	 STOP  |  --                            records lines in journal f
+	 -----------------------------------------------------------
+	 --             test routine, used on command after learning
+	    label jjj
+	 NNold=NN |  NN=N |  TMAX=NN-1 |  t=1
+	 drun RECALL |  --           makes a recall run
+	 NN=NNold |  TMAX=NN-1 |  --        restore NN for more runs
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 --                                      weight-learning run
+	 iRow=t |  Vector x1=INPUT#
+	 Vector v1=tanh(W2*layer1) |  Vector layer3=tanh(W3*layer2)
+	 -----------------------------------------------------------
+	 Vector error=x1-layer3 |  --               backpropagation
+	 Vector delta3=error*(1-layer3^2)
+	 Vector delta2=W3%*delta3*(1-layer2^2)
+	 --    "momentum" adds part of last change
+	 MATRIX Dw2=lrate2*d2*layer1+mom2*Dw2
+	 MATRIX Dw3=lrate3*delta3*layer2+mom3*Dw3
+	 DELTA W2=Dw2 |  DELTA W3=Dw3
+	 --
+	 DOT enormsqr=error*error |  MSQERR=enormsqr-scale
+	 -----------------------------------------------------------
+	 -- dispt MSQERR |  --    offset and display error measure
+	 --                                                          test r
+	    label RECALL
+	 iRow=t |  Vector x1=INPUT#
+	 Vector v1=tanh(W2*layer1) |  Vector layer3=tanh(W3*layer2)
+	 -----------------------------
+	 Vector error=x1-layer3
+	 DOT enormsqr=error*error
+	 --
+	 z1=layer2[1] |  z2=layer2[2] |  z3=layer2[3]
+	 type z1,z2,z3,enormsqr |  --   need short names for label
+

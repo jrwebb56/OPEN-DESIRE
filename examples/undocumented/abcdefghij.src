@@ -1,0 +1,18 @@
+
+
+	 --                                       SIMPLE BACKLASH
+	 --------------------------------------------------------
+	 TMAX=5 |  DT=0.00005 |  NN=10001 |  --    timing               
+	 scale=2.5 |  display N14
+	 ---------------------------------------------                     
+	 x=0.7 |  --           initial value for input
+	 abcdefghijk=0.25 |  --           deadspace for backlash          
+	 drun
+	 --------------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------------
+	 p=2*sgn(p-x) |  d/dt x=9*p |  --   square/triangle waves
+	 --
+	 y=y+abcdefghijk*deadz((x-y)/abcdefghijk)
+	 dispxy x,y
+

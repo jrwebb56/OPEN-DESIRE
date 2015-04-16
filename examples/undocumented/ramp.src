@@ -1,0 +1,13 @@
+
+
+	 display N1 |  display R
+	 DT=0.001 |  TMAX=1 |  NN=200
+	 x=-1 |  y=1
+	 drun
+	 -------------------
+	 DYNAMIC
+	 -------------------
+	 d/dt x=2
+	 d/dt y=-4*t
+	 dispt x,y
+

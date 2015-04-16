@@ -1,0 +1,11 @@
+
+
+	 NN=11 |  TMAX=10 |  DT=1 |  x1=0
+	 drun
+	 DYNAMIC
+	 d/dt y=0.1
+	 step
+	 x=x1
+	 x1=x+4
+	 type x,y
+

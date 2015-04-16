@@ -1,0 +1,61 @@
+
+
+	 --    CORRELATION  LEARNING WITH CONSCIENCE
+	 ------------------------------------------------------
+	 display N14 |  display C7
+	 nx=2 |  --                             number of inputs
+	 nv=16 |  --         number of competitive-layer neurons
+	 --
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=2
+	 ARRAY v[nv],hh[nv],w[nx+1],p[nv],W[nv,nx+1]
+	 ARRAY error[nx+1],h[nv]
+	 --
+	 for i=1 to nv
+	   for k=1 to nx+1
+	     W[i,k]=0.1*ran(0)
+	     next
+	   next
+	 ------------------------------------------------------
+	 --                           set experiment parameters
+	 lrate=0.04 |  lrate0=0.0001 |  kappa=0.99
+	 NN=50000
+	 ------------------------------------------------------
+	 drun  |  drun  |  drun  |  drun  |  --       4 simulation runs
+	 --------------------------------
+	 NN=50 |  a=1/NN |  t=1
+	 lrate=0
+	 drun recall
+	 ---------------------
+	 check=0 |  H=0 |  --     initialize checksum and entropy
+	 for i=1 to nv
+	   h[i]=a*h[i] |  --   statistical relative frequencies
+	   check=check+h[i] |  --               accumulate checksum
+	   H=H-h[i]*ln(h[i]+1.0E-25) |  --   accumulate entropy
+	   next
+	 -----------------------------          display results
+	 write h |  write
+	 write 'H=  ';H/ln(2);' bits','          checksum = ';check
+	 STOP
+	 write  |  write W
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 --                                 weight-learning run
+	 lrate=lrate0+lrate*kappa |  --     decrease learn rate
+	 Vector x=ran()
+	 DOT xnormsqr=x*x |  xnorm=sqrt(xnormsqr)
+	 Vector x=x/xnorm
+	 Vector v^=W*xx-hh |  Vector v=swtch(v)
+	 Vector w=sqrt(xnormsqr)*W%*v |  Vector error=xx-w
+	 DELTA W=lrate*v*error |  --      update winning weight
+	 Vectr delta p=v*nv-1 |  Vector hh=swtch(p) |  -- conscience
+	 DISPXY w[1],w[2],x[1],x[2]
+	 ------------------------------------------------------
+	    label recall
+	 Vector x=ran()
+	 DOT xnormsqr=x*x
+	 Vector x=x/sqrt(xnormsqr)
+	 Vector v^=W*xx-hh |  Vector v=swtch(v)
+	 Vectr delta p=v*nv-1 |  Vector hh=swtch(p)
+	 Vectr delta h=v |  --                  accumulate histogram
+

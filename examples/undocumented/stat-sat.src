@@ -1,0 +1,46 @@
+
+
+	 --            STUDY OF SAMPLING DISTRIBUTIONS
+	 ------------------------------------------------------------------
+	 display N0 |  display C8 |  display R |  scale=0.01
+	 NN=5000 |  --                  maximum sample size
+	 n=1000 |  --  number of replicated experiments
+	 ARRAY x[n],xavg[n],xxavg[n],xvar[n],f[n],g[n]
+	 x0=0.0 |  --                                 measured value
+	 --           xavg and xxavg are initialiy 0 by default
+	 drun
+	 write 'type go to continue' |  STOP
+	 -----------------------------------------------------
+	 h=0.01 |  alpha=-1/(2*h*h)
+	 beta=0.1/(h*n*sqrt(2*PI))
+	 t=0 |  TMAX=1 |  NN=5000 |  scale=1.
+	 display Y
+	 drun READOUT
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 Vector x=0.5*sat(1.3*sin(ran()))
+	 --
+	 --                                  compute SAMPLE statistics
+	 --
+	 Vector xavg=xavg+(x-xavg)/t
+	 Vector xxavg=xxavg+(x^2-xxavg)/t
+	 Vector xvar=xxavg-xavg^2
+	 -----------------------------
+	 --    compute SAMPLING-DISTRIBUTION statistics
+	 --
+	 DOT Xsum=xavg*1 |  DOT XXsum=xavg*xavg
+	 Xavg=Xsum/n |  XXavg=XXsum/n
+	 Xvar=XXavg-Xavg^2
+	 --
+	 xvaro10=0.1*xvar[1]-scale |  Xvarx100=100*Xvar-scale
+	 dispt Xavg,Xvarx100,xavg[1],xvaro10
+	 ------------------------------------------------------------------
+	    label READOUT |  --    estimate prob.-density 
+	 xx=2*t-TMAX |  --                     display sweep
+	 Vector f=beta*exp(alpha*(xx-x)^2)
+	 Vector g=beta*exp(alpha*(xx-xavg)^2)
+	 DOT F=f*1 |  DOT G=g*1
+	 F=F-scale |  G=G-scale
+	 dispxy xx,F,G
+

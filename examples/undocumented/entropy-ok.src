@@ -1,0 +1,54 @@
+
+
+	 -- PARZEN-WINDOW AMPLITUDE DISTRIBUTION
+	 --       AND ENTROPT ESTIMATION (in nats, not bits)
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  scale=4 |  --  display 
+	 n=1000 |  --                                        sample size
+	 ARRAY X[n],f[n] |  -- samples of n x-values and f-values
+	 nn=10 |  --          size of entropy sample - try 100!
+	 ARRAY H[nn] |  -- sample of nn entropy estimates
+	 -----------------------------------------------
+	 --  generate nn Gaussian samples of n measurements
+	 --
+	 for j=1 to nn
+	   write "nn runs proceeding - please wait!"
+	   NN=n |  Ascale=15
+	   irule 0 |  drun  |  --                   nn measurement runs
+	   ---------------------------------------------
+	   --   estimate probability density and entropy nn times
+	   --
+	   NN=400 |  display R |  --            thick display curves
+	   h=0.16 |  alpha=1/(2*h*h) |  -- Parzen- window width
+	   aa=Ascale/sqrt(2*PI) |  beta=aa/(n*h) |  --      scaling
+	   t=0 |  TMAX=scale |  --                        display sweep
+	   HH=0
+	   irule 1 |  drun READOUT
+	   ----------------------------------------------------------------
+	   H[j]=2*HH |  --           store sample value of entropy
+	   next
+	 ----------                average over sampling distribution    
+	 DOT Hsum=H*1 |  DOT HHsum=H*H
+	 Havg=Hsum/nn |  Hvar=HHsum/nn-(Hsum/nn)^2
+	 s=sqrt(Hvar)*nn/(nn-1)
+	 write "Havg= ";Havg," Hvar= ";Hvar,"s= ";s
+	 -----------------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------------
+	 --  measurement run (Box/Muller Gaussian data)
+	 --
+	 x=sqrt(-2*ln(abs(ran())))*cos(2*PI*abs(ran()))
+	 store X=x |  -- store a sample of n measurements
+	 ----------------------------------------------------------
+	    label READOUT
+	 --
+	 xx=2*t-TMAX |  --                              display sweep
+	 Vector f=beta*exp(alpha*(xx-X)*(X-xx))
+	 DOT F=f*1
+	 normal=aa*exp(-0.5*xx*xx)-scale |  -- exact normal
+	 -------------------------------
+	 fff=F/Ascale |  --	     probability-density estimate
+	 d/dt HH=-fff*ln(fff) |  --	    entropy estimate
+	 ----
+	 F=F-scale |  dispxy xx,F,normal
+

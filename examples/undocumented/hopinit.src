@@ -1,0 +1,89 @@
+
+
+	 --     HOPFIELD-TPE AUTO-ASSOCIATOR
+	 --        - inputs are not orthogonal
+	 ------------------------------------------------------
+	 display N1 |  scale=50000
+	 n=6 |  N=5 |  nn=n*n
+	 ARRAY INPUT[N,nn] |  --               5 pattern arrays
+	 ARRAY I[nn],y[nn],yy[nn]
+	 ARRAY W[nn,nn]
+	 --                                               
+	 data 1,1,1;-1,-1,-1
+	 data 1,1,1;-1,-1,-1
+	 data 1,1,1;-1,-1,-1
+	 data -1,-1,-1;1,1,1
+	 data -1,-1,-1;1,1,1
+	 data -1,-1,-1;1,1,1
+	 --
+	 data 1,1,-1;-1,-1,-1
+	 data 1,1,-1;-1,-1,-1
+	 data -1,-1,1;1,-1,-1
+	 data -1,-1,1;1,-1,-1
+	 data -1,-1,-1;-1,1,1
+	 data -1,-1,-1;-1,1,1
+	 --
+	 data -1,-1,1;1,-1,-1
+	 data -1,-1,1;1,-1,-1
+	 data 1,1,1;1,1,1
+	 data 1,1,1;1,1,1
+	 data -1,-1,1;1,-1,-1
+	 data -1,-1,1;1,-1,-1
+	 --
+	 data 1,-1,-1;-1,-1,1
+	 data -1,1,-1;-1,1,-1
+	 data -1,-1,1;1,-1,-1
+	 data -1,-1,1;1,-1,-1
+	 data -1,1,-1;-1,1,-1
+	 data 1,-1,-1;-1,-1,1
+	 --
+	 data 1,1,1;1,1,1
+	 data -1,-1,-1;-1,-1,-1
+	 data -1,-1,-1;-1,-1,-1
+	 data -1,-1,-1;-1,-1,-1
+	 data -1,-1,-1;-1,-1,-1
+	 data 1,1,1;1,1,1
+	 --
+	 read INPUT
+	 ------------------------------------------------------
+	 NN=N |  TMAX=NN-1 |  t=1 |  --   training run (N trials)
+	 drun  |  --                - use first DYNAMIC segment
+	 ------------------------------------------------------
+	 --  after training, do recall runs for each of N INPUT
+	 --       patterns; reset layers, but keep connections
+	 -----------------------------------------------------
+	 --                              experiment parameters
+	 SEED 1234567
+	 NN=50
+	 a=0.1 |  bias=0.9 |  noise=0.12
+	 ----------------------------------------
+	 restore  |  --         re-read the X patterns ...
+	 for i=1 to N |  --        ... successively into input
+	   read I
+	   NN=20 |  t=1
+	   drun init |  --   initialize x with pattern + noise
+	   NN=5000 |  t=1
+	   write '   type go to continue'
+	   drun testrun |  --   new DYNAMIC segment for recall
+	   STOP
+	   next
+	 -----------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------
+	 --                                weight-learning run
+	 iRow=t
+	 Vector I=INPUT#
+	 DELTA W=I*I |  --    direct product; Hebb learning
+	 -----------------------------------------------------
+	    label init
+	 Vector y=a*I+noise*ran()
+	 -----------------------------------------------------
+	 --                             recall run (no learning)
+	    label testrun
+	 Vector yy=W*y-bias |  Vector y=sgn(yy)
+	 --
+	 DOT measure=y*W*y |  --  runtime display
+	 dispt measure
+	 Vector y=10*y+10
+	 SHOW  |  SHOW y,n
+

@@ -1,0 +1,56 @@
+
+
+	 --       VECTORIZED MONTE CARLO STUDY OF A RANDOM WALK 
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display Q
+	 irule 2 |  --                                                    
+	 NN=10001 |  TMAX=1
+	 DT=TMAX/NN |  --           < COMINT  =  TMAX
+	 a=sqrt(3*NN) |  --          ---     scaled noise
+	 scale=2*TMAX^2 |  -- for first display only
+	 --
+	 n=5000 |  STATE x[n] |  ARRAY noise[n]
+	 for i=1 to n |  noise[i]=a*ran() |  next  |  --                
+	 drunr
+	 write "type go to continue" |  STOP
+	 scale=TMAX^2
+	 drun AVERAGES
+	 write "type go to continue" |  STOP
+	 ------------------------------------------------------------------
+	 --    post-run probability-density estimation
+	 ARRAY f[n]
+	 irule 0 |  --                            just sampled data
+	 scale=4 |  TMAX=1 |  NN=NN/4
+	 a=2*scale |  b=-scale
+	 t=0 |  h=0.15 |  --                        h is the Parzen-windo
+	 alpha=1/(2*h*h) |  beta=1/(h*sqrt(2*PI))
+	 drun PARZEN
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 Vectr d/dt x=a*ran()
+	 dispt x[1],x[2],x[3],x[4],x[5],x[6]
+	 -------------------------------------------------
+	    label AVERAGES
+	 --
+	 Vectr d/dt x=noise
+	 OUT
+	 Vector noise=a*ran()
+	 ------------------------------------                              
+	 AVG xAvg=x*1 |  AVG xxAvg=x*x
+	 xVar=xxAvg-xAvg^2
+	 Var=t*DT*(a^2)/3 |  --        theoretical variance of x
+	 --                                                                
+	 xAvgx20=20*xAvg |  --                      scaled display
+	 dispt xVar,Var,xAvgx20
+	 ------------------------------------------------------------------
+	    label PARZEN
+	 --
+	 xx=a*t+b |  --                          display sweep for Parzen 
+	 Vector f=beta*exp(-alpha*(xx-x)^2)
+	 AVG F=f*1 |  F=10*F-scale
+	 --                                         display Gaussian densit
+	 yy=10*exp(-(xx^2)/(2*TMAX^2))/(TMAX*sqrt(2*PI))-scale
+	 errorx2=2*(F-yy)+0.5*scale |  -- deviation from Gaussian density
+	 dispxy xx,yy,F,errorx2 |  --                      scaled and offs
+

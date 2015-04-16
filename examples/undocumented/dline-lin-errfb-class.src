@@ -1,0 +1,43 @@
+
+
+	 --     DELAY-LINE CLASSIFIER
+	 ------------------------------------------------------------
+	 display N14 |  display C7 |  display Q |  scale=4
+	 NN=50000
+	 ---------------
+	 nx=20 |  --     number of delay-line neurons
+	 --
+	 --                input delay line, input bias
+	 ARRAY x[nx]+x0[1]+error[2]=xx |  x0[1]=1
+	 ARRAY y[2],P[2],target[2]
+	 ARRAY WW[2,nx+3]
+	 ---------------
+	 for i=1 to 2 |  for k=1 to nx+3 |  -- initialize
+	     WW[i,k]=0.1*ran()
+	     next  |  next
+	 -----------------------------------------------------------
+	 lrate=003 |  Tnoise=0.0
+	 -------------
+	 N=6 |  --                  number of training runs
+	 for i=1 to N |  drun  |  next
+	 ---------
+	 write 'type go for a recall test' |  STOP
+	 lrate=0 |  drun  |  -- test run
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 switch=swtch(sin(10*t/NN)) |  --  alternate patterns
+	 p=0.8*switch*cos(200*t/NN) |  -- sine waves
+	 q=(1-switch)*sin(100*t/NN) |  --  sine waves
+	 x[1]=p+q+Tnoise*ran()
+	 target[1]=switch |  target[2]=1-switch
+	 -------	
+	 Vector y=exp(WW*xx) |  DOT ysum=y*1 |  -- softmax
+	 Vector P=y/ysum
+	 --
+	 Vector error=target-P
+	 DELTA WW=lrate*error*xx
+	 -----------------------------
+	 X=x[1]+0.7*scale |  errorx10=10*error[1]-0.5*scale
+	 dispt X,P[1],errorx10
+

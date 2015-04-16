@@ -1,0 +1,25 @@
+
+
+	 --                                   SIGNAL GENERATORS
+	 ------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 TMAX=5 |  DT=0.001 |  NN=5000 |  --                timing
+	 --------------------------------
+	 A=0.22 |  w=4 |  mod=0.6 |  --          signal parameters
+	 x=1
+	 p=1 |  -- initialize
+	 drun
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 d/dt x=w*p |  --     triangle waves
+	 y=p*x |  --              sawtooth timebase
+	 step
+	 p=sgn(p-x) |  --        square waves
+	 z=sgn(y-mod) |  --  pulse-width modulation
+	 --
+	 --------------------------   scaled stripchart-type displays
+	 --
+	 P=A*p+0.75 |  X=A*x+0.25 |  Y=A*y-0.25 |  Z=A*z-0.75
+	 dispt P,X,Y,Z
+

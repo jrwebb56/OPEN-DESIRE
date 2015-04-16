@@ -1,0 +1,53 @@
+
+
+	 --           COUNTERPROP SPIRAL CLASSIFIER
+	 --------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 ---------------------------------------------------------
+	 N=194
+	 --   create N points X[i,1] and X[i,2] on two 97-point spirals 
+	 --      and an N-by-2 pattern-row matrix TARGET with
+	 --                   alternate binary-selector rows for 2 spirals
+	 --
+	 ARRAY r[97],phi[97],X[194,2],TARGET[194,2]
+	 for k=1 to 97
+	   r[k]=0.8*(7+k)/104 |  phi[k]=PI*(97-k)/16
+	   X[2*k,1]=r[k]*cos(phi[k]) |  X[2*k,2]=r[k]*sin(phi[k])
+	   X[2*k-1,1]=-X[2*k,1] |  X[2*k-1,2]=-X[2*k,2]
+	   --   
+	   TARGET[2*k,1]=1 |  TARGET[2*k,2]=0
+	   TARGET[2*k-1,1]=0 |  TARGET[2*k-1,2]=1
+	   next
+	 ------------------------------------------------------------------
+	 nv=N |  --                              number of templates
+	 ARRAY W[nv,2] |  --                     template matrix
+	 MATRIX W=X |  -- set templates on spiral points
+	 --                                                                
+	 ARRAY x[2],w[2],v[nv],U[2,nv],y[2],error[2]
+	 ------------------------------------------------------------
+	 NN=6000 |  --                                         learn U
+	 lratex=0 |  crit=-1 |  --  no template  training !
+	 lratef=0.1 |  noise=0.04
+	 drun  |  --                            show spiral points
+	 write "type go to continue" |  STOP
+	 ---------------------                   
+	 NN=50000 |  --  input random points (recall)
+	 drun RECALL
+	 -----------------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------------
+	 iRow=t |  Vector x=X#
+	 CLEARN v=W(x)lratex,crit#
+	 Vector y=U*v
+	 Vector error=TARGET#-y |  --    counterpropagation
+	 DELTA U=lratef*error*v
+	 Vector w=W%*v+0.005*ran() |  -- display the templates
+	 dispxy w[1],w[2]
+	 ----------------------------------
+	    label RECALL
+	 Vector x=ran() |  --                   random points (x[1],x[2])
+	 CLEARN v=W(x)lratex,crit |  --   find nearest template
+	 Vector y=U*v
+	 Vector x=swtch(y[1])*x |  -- kills pixel if y[1]=0 
+	 dispxy x[1],x[2]
+

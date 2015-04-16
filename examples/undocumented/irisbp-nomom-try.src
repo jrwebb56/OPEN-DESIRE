@@ -1,0 +1,75 @@
+
+
+	 --           IRIS - BP/SOFTMAX PATTERN CLASSIFIER
+	 --                  estimates a posteriori probabilities
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=0.05
+	 --
+	 nx=4 |  -- number of features
+	 ny=3 |  -- number of categories
+	 nv=11 |  -- number of hidden neurons
+	 --
+	 Ntrain=114 |  Ntest=36
+	 ARRAY trainDATA[Ntrain,nx+ny],testDATA[Ntest,nx+ny]
+	 ARRAY input[nx]+target[ny]=data
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=1 |  -- note bias
+	 ARRAY y[ny],v[nv],p[ny],error[ny],deltav[nv]
+	 ARRAY WW1[nv,nx+1],W2[ny,nv]
+	 ARRAY V[ny,nx+1]
+	 --
+	 --  small random initial weights "break symmetry"
+	 --
+	 for i=1 to nv |  for k=1 to nx+1
+	     WW1[i,k]=0.1*ran() |  next  |  next
+	 for i=1 to ny |  for k=1 to nv
+	     W2[i,k]=0.1*ran() |  next  |  next
+	 ------------------------------------------------      parameters
+	 lrate1=0.01 |  lrate2=0.01
+	 Tnoise=0.0 |  Rnoise=0
+	 NN=2500000
+	 --------------------------------------------------
+	 connect './iris/iristrain.txt' as input 3
+	 input #3,trainDATA
+	 disconnect 3
+	 ----	 
+	 drun  |  -- training run
+	 --
+	 write 'type go for successive recall tests' |  STOP
+	 connect './iris/iristest.txt' as input 3
+	 input #3,testDATA
+	 disconnect 3
+	 -----
+	 NN=2
+	 for i=1 to Ntest
+	   drun RECALL
+	   write target,p,error |  -- show probabilities
+	   write 'type go to continue' |  STOP
+	   next
+	 ---------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------
+	 iRow=t |  Vector data=trainDATA#
+	 Vector x=input+Tnoise*ran()
+	 Vector v=tanh(WW1*xx)
+	 Vector y=exp(W2*v+V*xx) |  DOT ysum=y*1
+	 Vector p=y/ysum |  -- probability estimates
+	 Vector error=target-p
+	 ------------------------------------------------
+	 Vector deltav=W2%*error*(1-v^2)
+	 DELTA WW1=lrate1*deltav*xx
+	 DELTA W2=lrate2*error*v
+	 DELTA V=lrate2*error*xx
+	 --
+	 DOT enormsq=error*error
+	 msqavg=msqavg+(enormsq-msqavg)/100000
+	 MSQAVG=2*msqavg-scale |  -- offset display
+	 dispt MSQAVG
+	 ----------------------------------------
+	    label RECALL
+	 iRow=1000*abs(ran()) |  Vector data=testDATA#
+	 Vector x=input+Rnoise*ran()
+	 Vector v=tanh(WW1*xx)
+	 Vector y=exp(W2*v) |  DOT ysum=y*1
+	 Vector p=y/ysum |  -- probability estimate
+	 Vector error=target-p
+

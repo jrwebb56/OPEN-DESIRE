@@ -1,0 +1,20 @@
+
+
+	 -- SIMULATING ANALOG NOISE
+	 --------------------------------------------------------------
+	 display N1 |  display C8 |  scale=2
+	 NN=100000 |  TMAX=25 |  display Y
+	 r=0.4
+	 noise=ran() |  -- initialize
+	 drun
+	 ---------------------
+	 DYNAMIC
+	 ---------------------
+	 x=noise
+	 d/dt y=-r*y+x |  -- use analog time!
+	 d/dt z=-r*z+y
+	 ----------------------------------------------------------
+	 SAMPLE 200 |  -- sampled-data noise
+	 noise=ran()
+	 dispt x,y,z
+

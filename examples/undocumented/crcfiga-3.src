@@ -1,0 +1,23 @@
+
+
+	 --                                         SATELLITE ORBIT
+	 ----------------------------------------------------------
+	 NN=800 |  DT=0.030 |  TMAX=420000 |  --             timing
+	 scale=3000 |  display N1 |  display C8 |  display R
+	 irule 15 |  ERMAX=0.000001 |  --     Gear-type integration
+	 ----------------------------------------------------------
+	 GK=1.42E+16
+	 r=21.0E+06 |  v=36000 |  thdot=v/r |  --    initial values
+	 ----
+	 drun
+	 ----------------------------------------------------------
+	 DYNAMIC
+	 ----------------------------------------------------------       S
+	 d/dt r=rdot |  d/dt theta=thdot
+	 d/dt rdot=-GK/(r*r)+r*thdot*thdot
+	 d/dt thdot=-2*rdot*thdot/r
+	 -----------------------------------                               
+	 OUT
+	 dt=0.5*DT-scale |  R=5.0E-06*r
+	 dispt R,dt
+

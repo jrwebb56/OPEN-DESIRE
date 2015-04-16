@@ -1,0 +1,83 @@
+
+
+	 --      RADIAL-BASIS FUNCTION CLASSIFIER
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 cc=15 |  dd=15
+	 N=26 |  nx=25 |  -- pattern number and dimension
+	 ARRAY input[nx],x[nx]
+	 ARRAY INPUT[N,nx],TARGET[N,N]
+	 ARRAY f[N]+f0[1]=ff |  f0[1]=1 |  --  N RBFs and bias 
+	 ARRAY WW[N,N+1] |  --        weights include biases
+	 ARRAY p[N],q[N],y[nx],yy[nx]
+	 ARRAY error[N]
+	 ARRAY P[N,nx],pp[N]
+	 --------------------------------------------------------
+	 connect './pattern/newalphabet.txt' as input 2
+	 input #2,INPUT
+	 disconnect 2
+	 ------------------------   set parameters                         
+	 lrate=2
+	 a=0.16
+	 Tnoise=0 |  Rnoise=0.2
+	 NN=2500
+	 ----------------------------   	 read INPUT
+	 MATRIX TARGET=1 |  --  (binary-classifier rows)
+	 ------------------------------------------------------------------
+	 ---     template matrix P generates squared radii
+	 MATRIX P=INPUT
+	 for k=1 to N
+	   pp[k]=0
+	   for j=1 to nx |  pp[k]=pp[k]+P[k,j]^2 |  next
+	   next
+	 ----------------------------------------------------------------
+	 --                  train radial-basis-function network
+	 drun
+	 ---------------------------------------------------------------- 
+	 write 'type go for successive recall runs' |  STOP
+	 display F
+	 ----------
+	 NN=2
+	 for i=1 to N
+	   drun RECALL
+	   write p |  -- show probabilities
+	   for k=1 to 22000 |  write "wait" |  next
+	   next
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 iRow=t |  Vector input=INPUT#
+	 Vector x=input+Tnoise*ran()
+	 --
+	 --       rr=qq -2* P*x + pp is the vector of squared radii
+	 DOT xx=x*x |  Vector f=exp(a*(2*P*x-xx-pp))
+	 -- 
+	 --            softmax radial-basis-function expansion 
+	 Vector p=exp(WW*ff) |  DOT psum=p*1
+	 Vector p=p/psum |  -- pability estimate
+	 ------------------------------------------------
+	 Vector error=TARGET#-p
+	 DELTA WW=lrate*error*ff
+	 DOT enormsq=error*error
+	 -- 
+	 msqavg=msqavg+(enormsq-msqavg)/300
+	 msqavgx2=2*msqavg-scale |  -- offset display
+	 dispt msqavgx2
+	 ----------------------------------------
+	    label RECALL
+	 iRow=i
+	 Vector input=INPUT#
+	 Vector x=input+Rnoise*ran()
+	 DOT qq=x*x |  Vector f=exp(a*(2*P*x-qq-pp))
+	 Vector p=exp(WW*ff) |  DOT psum=p*1
+	 Vector p=p/psum |  -- probability estimate
+	 --
+	 Vector q^=p |  Vector q=swtch(q) |  -- binary selector
+	 Vector yy=INPUT%*p
+	 Vector y=INPUT%*q |  -- associative memory
+	 ---------------------------------------------------------------
+	 Vector input=dd*input |  Vector x=2*cc*x
+	 Vector yy=2*cc*yy |  Vector y=dd*y
+	 SHOW  |  SHOW input,5 |  SHOW x,5
+	 SHOW yy,5 |  SHOW y,5
+

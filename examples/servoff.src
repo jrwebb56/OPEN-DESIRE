@@ -1,0 +1,50 @@
+
+
+	 --    SERVOMECHANISM SIMULATION
+	 ------------------------------------------------------------------
+	 scale=2 |  display N1 |  display C8 |  display R
+	 TMAX=10 |  DT=0.0001 |  NN=10000
+	 ARRAY XX[NN],YY[NN] |  --            FFT arrays
+	 ------------------------------------------------------------------
+	 A=0.1 |  w=1.2 |  --              signal parameters
+	 B=100 |  maxtrq=1 |  --     motor parameters
+	 g1=10000 |  g2=1 |  R=0.6
+	 k=40 |  r=2 |  --                      control parameters
+	 xdot=1
+	 -------
+	 drunr  |  --     compute/display impulse response
+	 -------------------------------------------------
+	 FFT F,4096,XX,YY |  --             Fourier transform
+	 -------------------------------------------------
+	 scale=80 |  NN=20 |  --           change scales
+	 TMAX=NN/TMAX |  --    abscissa t is now frequency
+	 --
+	 write 'TYPE go TO CONTINUE'
+	 STOP
+	 display F
+	 display Y
+	 scale=scale*8
+	 drunr FREQ |  --       display frequency response
+	 -------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------
+	 u=0 |  --                input 
+	 error=x-u |  --                        servo error
+	 ------------------------------------------------------------------
+	 voltage=-k*error-r*xdot |  --  motor voltage
+	 d/dt V=-B*V+g1*voltage |  --  motor field delay
+	 torque=maxtrq*tanh(g2*V/maxtrq)
+	 d/dt x=xdot |  d/dt xdot=torque-R*xdot
+	 store XX=x |  --                     store for FFT
+	 --
+	 ---------------------------------------- stripchart display
+	 X=2.5*x+0.5*scale |  U=2.5*u+0.5*scale
+	 ERROR=100*error
+	 TORQUE=0.5*torque-0.5*scale
+	 dispt X,U,TORQUE,ERROR
+	 -----------------------------------------------------------
+	    label FREQ
+	 get xx=XX |  get yy=YY |  --     get FFT components
+	 q=sqrt(xx^2+yy^2) |  --  compute absolute value
+	 dispt q |  --          display frequency response
+

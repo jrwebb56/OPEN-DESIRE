@@ -1,0 +1,59 @@
+
+
+	 -- LINEAR-PERCEPTRON PATTERN CLASSIFIER
+	 --             no bias terms are needed
+	 --      computes Penrose pseudooinverse
+	 ---------------------------------------
+	 --                   Network Definition
+	 m=8 |  N=6
+	 ARRAY x[m],y[N]
+	 ARRAY INPUT[N,m],TARGET[N,N],error[N]
+	 ARRAY W[N,m]
+	 ---------------------------------------    input patterns
+	 data 1.7,-1,0,0,2,0,0,-3;0,0.1,-1,0,0,0,0,0
+	 data 0,0,1,1,0,0.5,0,5;0,0,0,3,1,0,0,0
+	 data 0,0,0,0,1,-0.1,0,0;0.3,2.2,0,0,0,1,1,0
+	 read INPUT
+	 ---------------------------------------   target patterns
+	 data 1,0,0,0,0,0;0,1,0,0,0,0 |  --  (one-of-n classifier)
+	 data 0,0,1,0,0,0;0,0,0,1,0,0
+	 data 0,0,0,0,1,0;0,0,0,0,0,1
+	 read TARGET
+	 ---------------------------------------
+	 lrate=.05
+	 scale=0.1 |  NN=1000
+	 display N1 |  display C8 |  --            display colors
+	 display R
+	 ---------------------------------------
+	 drun
+	 write 'type go for a recall run'
+	 write ' - maximize Command Window to see listing' |  STOP
+	 ----------
+	 NN=N |  TMAX=NN-1 |  t=1
+	 thresh=0.1
+	 restore
+	 drun RECALL
+	 ----------------------------------------
+	 DYNAMIC
+	 ----------------------------------------
+	 iRow=t
+	 Vector x=INPUT#
+	 Vector y=W*x
+	 --
+	 Vector error=TARGET#-y
+	 LEARN W=lrate*error*x
+	 --
+	 DOT enormsq=error*error
+	 ENORMSQ=enormsq-scale |  -- offset display
+	 dispt ENORMSQ
+	 ----------------------------------------
+	    label RECALL
+	 --
+	 iRow=t
+	 Vector x=INPUT#
+	 Vector y=W*x
+	 --
+	 Vector y=swtch(y-thresh) |  -- optional!
+	 ----
+	 type y[1],y[2],y[3],y[4],y[5]
+

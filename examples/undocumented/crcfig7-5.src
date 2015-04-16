@@ -1,0 +1,38 @@
+
+
+	 --                                EUROSIM PROBLEM No. 2
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display Q
+	 -- circuit parameters are scaled so t is in microseconds!
+	 VDC=5 |  RL=52.4
+	 L1=79.9 |  C2=17.9E-03 |  L3=232 |  C4=9.66E-03
+	 LL1=1/L1 |  CC2=1/C2 |  LL3=1/L3 |  CC4=1/C4
+	 ------------------------------------------------------
+	 irule 4 |  DT=1.0E-09 |  DTMIN=1.0E-11 |  ERMIN=1.0E-11
+	 NN=501 |  scale=25
+	 --------------------------------------------
+	 --                                       parameters for pulsed res
+	 TRF=1.0E-09
+	 t1=5.0 |  t2=t1+TRF |  TMAX=2*t1 |  tmax=5*t1
+	 base=5.0E-02 |  TRF=1.0E-09 |  slope=(1.0E+06-1.0E-02)/TRF
+	 ------------------------------------------
+	 t0=-tmax |  --                  offset for xy  plot
+	 R=base |  -- initial value for track-hold state variable R
+	 --
+	 drun  |  display 2
+	 for i=1 to 4 |  t0=i*t-tmax |  t=0 |  drun  |  next
+	 ---------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------
+	 VL=x3*RL |  RI=x2/R
+	 d/dt x1=(VDC-x2)*LL1 |  d/dt x2=(x1-RI-x3)*CC2
+	 d/dt x3=(x2-VL-x4)*LL3 |  d/dt x4=x3*CC4
+	 ----------
+	 step
+	 R=base+slope*(t-lim(t-TRF)-lim(t-t1)+lim(t-t2))
+	 --
+	 OUT
+	 vl=VL+0.5*scale |  ri=50*RI-0.5*scale
+	 tt=t+t0
+	 dispxy tt,vl,ri
+

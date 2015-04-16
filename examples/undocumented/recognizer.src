@@ -1,0 +1,36 @@
+
+
+	 --  COMPETITIVE KNOWN-IMAGE RECOGNIZER
+	 ------------------------------------------------------------------
+	 nx=25 |  --        number of input pixels
+	 N=26 |  --          number of patterns
+	 nv=N |  --          number of templates
+	 --
+	 ARRAY INPUT[N,nx]
+	 ARRAY x[nx],input[nx],v[nv],w[nx]
+	 ARRAY W[nv,nx] |  --             template matrix
+	 --------------------------------------------------------------
+	 connect './competitive/alphabet.txt' as input 2
+	 input #2,INPUT
+	 disconnect 2
+	 --------------------------------------------------------------
+	 --                     set experiment parameters
+	 NN=20
+	 lrate=0 |  crit=-1 |  Rnoise=0.5
+	 MATRIX W=INPUT |  -- no template training!
+	 ----------------------
+	 for i=1 to N |  -- slow down for better display
+	   drun
+	   for k=1 to 10000 |  write "wait" |  next
+	   next
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 iRow=i |  Vector input=INPUT#
+	 Vector x=input+Rnoise*ran()
+	 CLEARN v=W(x)lrate,crit |  --   compete/select               
+	 Vector w=W%*v |  --      reconstruct templates 
+	 -------------------------------------------------------
+	 --     show patterns
+	 SHOW  |  SHOW input,5 |  SHOW x,5 |  SHOW w,5
+

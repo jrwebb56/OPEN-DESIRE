@@ -1,0 +1,48 @@
+
+
+	 --    GENERIC 3-LAYER BACKPROPAGATION NETWORK
+	 ------------------------------------------------------------------
+	 display Q |  display N1 |  display C8 |  scale=0.5
+	 --
+	 nx=1 |  ny=1
+	 nv=6 |  --                       number of hidden neurons
+	 M=2000 |  -- batch size
+	 --                         
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=1 |  --       unity bias term
+	 ARRAY v[nv],y[ny],target[ny],error[ny],deltav[nv]
+	 ARRAY W1[nv,nx+1],W2[ny,nv],Dw1[nv,nx+1],Dw2[ny,nv]
+	 --
+	 --                         random initial weights "break symmetry"
+	 for i=1 to nv
+	   W1[i,1]=0.2*ran() |  W1[i,2]=0.2*ran() |  W2[1,i]=0.2*ran()
+	   next
+	 ------------------------------------------------------------------
+	 --                                   set experiment parameters
+	 lrate1=0.01 |  lrate2=0.01
+	 mom1=0.2 |  mom2=0.2
+	 NN=2000
+	 ----
+	 for i=1 to 200 |  drun  |  next  |  --  training run
+	 lrate1=0 |  lrate2=0 |  NN=20000 |  -- test run
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 x[1]=1.1*ran() |  target[1]=0.4*sin(2*x[1]) |  -- input, target
+	 --
+	 Vector v=tanh(W1*xx) |  --  bias can be included in W2$
+	 Vector y=W2*v
+	 ----------------------------------------
+	 Vector error=target-y
+	 Vectr delta deltav=W2%*error*(1-v^2)
+	 Vectr delta error=error
+	 --
+	 SAMPLE M
+	 MATRIX Dw1=lrate1*deltav*xx+mom1*Dw1
+	 MATRIX Dw2=lrate2*error*v+mom2*Dw2
+	 DELTA W1=Dw1 |  DELTA W2=Dw2
+	 Vector error=0 |  Vector deltav=0
+	 --                                                                
+	 ABSERRx100=100*abs(error[1])-scale |  Xin=scale*x[1]
+	 dispxy Xin,target[1],y[1],ABSERRx100
+

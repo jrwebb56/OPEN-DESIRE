@@ -1,0 +1,66 @@
+
+
+	 --  BIDIRECTIONAL ASSOCIATIVE MEMORY (BAM)
+	 ---------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=100
+	 --
+	 --                                  Network Definition
+	 --
+	 m=25 |  n=20 |  --                  neuron-layer sizes
+	 N=3 |  --                      number of pattern pairs
+	 --
+	 ARRAY x[m],y[n],YY[n] |  --     neuron and SHOW arrays
+	 ARRAY INPUT[N,m],TARGET[N,n] |  --            patterns
+	 ARRAY W[n,m] |  --                  connection weights
+	 ARRAY I[m],input[m] |  --             input for recall
+	 ---------------------
+	 --                                         fill arrays
+	 data 1,-1,-1,-1,1;-1,1,-1,1,-1;-1,-1,1,-1,-1
+	 data -1,1,-1,1,-1;1,-1,-1,-1,1
+	 data -1,-1,1,-1,-1;-1,-1,1,-1,-1;1,1,1,1,1
+	 data -1,-1,1,-1,-1;-1,-1,1,-1,-1
+	 data -1,-1,-1,-1,-1;-1,-1,-1,-1,-1;1,1,1,1,1
+	 data -1,-1,-1,-1,-1;-1,-1,-1,-1,-1
+	 read INPUT
+	 data -1,-1,1,-1,-1;-1,1,-1,1,-1;1,-1,-1,-1,1;1,1,1,1,1
+	 data 1,1,1,1,1;1,-1,-1,-1,1;-1,1,-1,1,-1;-1,-1,1,-1,-1
+	 data -1,1,1,1,-1;1,-1,-1,-1,1;1,-1,-1,-1,1;-1,1,1,1,-1
+	 read TARGET
+	 ------------------------------------------------------
+	 NN=N |  --   training run (N trials)
+	 drun  |  --       - use first DYNAMIC segment
+	 ------------------------------------------------------
+	 --  after training, do recall runs for each of N INPUT
+	 --      patterns; reset layers, but keep connections
+	 ------------------------------------------------------
+	 --                           set experiment parameters
+	 Ah=0.4 |  h=0.005 |  ah=0.05 |  noise=3
+	 NN=1000
+	 ---------------------------
+	 restore  |  --          we will re-read INPUT patterns
+	 for i=1 to N
+	   Vector x=0 |  Vector y=0
+	   read I
+	   drunr RECALL |  --  DYNAMIC segment for recall
+	   STOP
+	   next
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 --                                 weight-learning run
+	 iRow=t
+	 Vector x=INPUT# |  Vector y=TARGET#
+	 DELTA W=y*x |  --    Hebb learning; direct product
+	 ------------------------------------------------------
+	 --                                          recall run
+	    label RECALL
+	 Vector input=I+noise*ran()
+	 Vectr delta x=-Ah*x+h*W%*y+ah*input
+	 Vectr delta y=-Ah*y+h*W*x
+	 --
+	 DOT measure=y*W*x |  --            for runtime display
+	 Measure=11E-26*measure-scale |  --           offset the curve
+	 dispt Measure
+	 Vector YY=sgn(y)+3
+	 SHOW  |  SHOW I,5 |  SHOW input,5 |  SHOW YY,5
+

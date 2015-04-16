@@ -1,0 +1,61 @@
+
+
+	 --    PSEUDO-ART COMPETITIVE LEARNING 
+	 --  patterns in random sequence, noise; try fast-learn 
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=0.5
+	 null=0 |  minus=-1
+	 --	
+	 nx=25 |  --                        input-pattern dimension       
+	 nv=26 |  --    number of competitive-layer neurons
+	 N=26 |  --                                  number of patterns
+	 ------------------
+	 ARRAY input[nx],INPUT[N,nx] |  --   input pattern
+	 ARRAY x[nx],v[nv],h[nv],w[nx],error[nx]
+	 ARRAY W[nv,nx] |  --                     template matrix
+	 -----
+	 for i=1 to nv |  for k=1 to nx |  -- initialize
+	     W[i,k]=0.02*ran() |  next  |  next
+	 ---
+	 connect './compete/alphabet.txt' as input 2
+	 input #2,INPUT
+	 disconnect 2
+	 -----------------------       set experiment parameters
+	 lrate=0.9 |  --       learning rate (slow for display)
+	 crit=0.3 |  --  for pseudo-ART; crite=0 for FSCL
+	 cc=5.5 |  --    scales template SHOW operation
+	 NN=30*N
+	 Tnoise=1.0 |  Rnoise=1.1
+	 drun
+	 write 'learning is done; type go' |  STOP
+	 ------------------------------------------------------
+	 NN=2 |  restore
+	 for i=1 to N
+	   drun RECALL
+	   for k=1 to 12000 |  write "wait" |  next
+	   next
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 iRow=4000*abs(ran())
+	 Vector x=INPUT#+Tnoise*ran()
+	 Vector x=sgn(x)
+	 CLEARN v=W(x)lrate,crit |  --   compete/learn      
+	 Vector w=W%*v |  --                     get template 
+	 --
+	 Vector error=w-x
+	 DOT enormsqr=error*error
+	 ENORMSQR=enormsqr-scale |  --  offset display
+	 dispt ENORMSQR
+	 ---------------------------------------------------------
+	    label RECALL
+	 iRow=i
+	 Vector input=INPUT#
+	 Vector x=input+Rnoise*ran()
+	 CLEARN v=W(x)null,minus |  --  compete/select               
+	 Vector w=W%*v |  --                     get template 
+	 -------------------------------------------------------
+	 Vector x=cc*x |  --   scale and SHOW input and
+	 Vector w=cc*w |  --                   template arrays
+	 SHOW  |  SHOW input,5 |  SHOW x,5 |  SHOW w,5
+

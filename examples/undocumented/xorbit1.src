@@ -1,0 +1,18 @@
+
+
+	 -- orbit simulation with two suns
+	 -- a nice orbit has ydot=1.142 
+	 ------------------------------------------------------------------
+	 scale=8 |  display N1 |  display C8
+	 xdot=0 |  ydot=1.142 |  x=1 |  y=0
+	 TMAX=100 |  DT=0.001 |  NN=10000
+	 drun
+	 ------------------------------------
+	 DYNAMIC
+	 ------------------------------------
+	 d/dt xdot=-x/((x^2+y^2)^1.5)-(x+5)/(((x+5)^2+y^2)^1.5)
+	 d/dt ydot=-y/((x^2+y^2)^1.5)-y/(((x+5)^2+y^2)^1.5)
+	 d/dt x=xdot
+	 d/dt y=ydot
+	 dispxy x,y
+

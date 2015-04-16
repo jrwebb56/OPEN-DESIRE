@@ -1,0 +1,51 @@
+
+
+	 --              FUNCTION-LEARNING BACKPROPAGATION NETWORK
+	 ---------------------------------------------------------
+	 m=5 |  --                        number of hidden neurons
+	 --                                  note bias subvectors!
+	 ARRAY x1[1]+x0[1]=x,v1[m]+v0[1]=v,y[1]
+	 ARRAY error[1],v1delta[m]+v0delta[1]=vdelta,ydelta[1]
+	 ARRAY W2[m,2],W3[1,m+1] |  --    weights (include biases)
+	 --
+	 x0[1]=1 |  v0[1]=1 |  --                unity bias inputs
+	 --
+	 --                                 random initial weights
+	 SEED 12345
+	 for i=1 to m
+	   W2[i,1]=1 |  --                    fixed limiter slopes!
+	   W2[i,2]=ran() |  --                  initial random bias
+	   W3[1,i]=ran()
+	   next
+	 W3[1,m+1]=ran() |  --         initial random output offset
+	 ---------------------------------------------------------
+	 --                              set experiment parameters
+	 W2gain=0.2 |  W3gain=0.02
+	 scale=0.5 |  NN=10000
+	 t=1 |  TMAX=NN-1 |  --                  for display scale
+	 display N1 |  display C8 |  --          set display colors
+	 display Q |  --                                 thin line
+	 for i=1 to 25 |  drun  |  next  |  STOP
+	 ---------------------------------------------------------
+	    label eee
+	 edit 260,440-510,1012,1025 |  STOP  |  --    editing screen
+	 ---------------------------------------------------------
+	    label jjj
+	 help bpmap |  --                     optional help screen
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 Xin=ran() |  Vector x1=Xin |  --                note bias
+	 Vector v1=sat(W2*x) |  --                      note bias
+	 Vector y=W3*v |  --          no limiter needed on output!
+	 --
+	 target=0.4*sin(4*Xin) |  --    substitute other functions
+	 Vector error=target-y
+	 Vector vdelta=W3%*error*tri(v) |  --       tri(v) is fast
+	 --
+	 DELTA W2=W2gain*v1delta*x |  --  note partitioned vdelta!
+	 DELTA W3=W3gain*error*v
+	 --
+	 ERRx10=10*abs(error[1])-scale |  y1=y[1] |  XIN=scale*Xin
+	 dispxy XIN,target,y1,ERRx10
+

@@ -1,0 +1,45 @@
+
+
+	 --      PHYSBE PROBLEM (BLOOD CIRCULATION SIMULATION)
+	 ------------------------------------------------------------------
+	 display N1 |  display C8
+	 --     		                           Function Tables
+	 ARRAY FAA[16],FBB[16]
+	 data 0,.0625,.125,.1875,.25,.3125,.375,.4375
+	 data 0.0066,0.16,.32,.45,.625,.78,.27,.0066
+	 --
+	 data 0,.0625,.125,.1875,.25,.3125,.375,.4375
+	 data .0033,.41,.63,.73,.8,.76,.25,.0033
+	 read FAA,FBB
+	 --     --------------------                      Initial Values of
+	 VRV=91 |  VAP=220 |  VVP=613
+	 VLV=373 |  VAO=69 |  VSC=2785 |  VVC=450
+	 x=1
+	 FTV=0 |  FPV=0 |  FMV=0 |  FAV=0 |  -- track-hold state variab
+	 ------------------------------------------------------
+	 DT=0.0001 |  TMAX=3 |  NN=3001 |  scale=100
+	 drun
+	 ---------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------  MODEL EQUATIONS
+	 --
+	 p=sgn(p-x) |  d/dt x=2*p |  T=0.5*(p*x+1) |  --   sawtooth time
+	 func SRV=FAA(T |  func SLV=FBB(T
+	 ---------------------------------------------
+	 PRV=VRV*SRV |  PAP=0.133*VAP |  PPV=0.033*VVP
+	 PLV=VLV*SLV |  PAO=0.8*VAO |  PSC=0.0153*VSC |  PVC=0.004*VVC
+	 --
+	 FPS=7*(PAP-PPV) |  FAS=1.63*(PAO-PSC) |  FVS=1.65*(PSC-PVC)
+	 --
+	 d/dt VRV=FTV-FPV |  d/dt VAP=FPV-FPS |  d/dt VVP=FPS-FMV
+	 d/dt VLV=FMV-FAV |  d/dt VAO=FAV-FAS |  d/dt VSC=FAS-FVS
+	 d/dt VVC=FVS-FTV
+	 ------------------------------------------------------------------
+	 step
+	 FTV=78*lim(PVC-PRV) |  FPV=90*lim(PRV-PAP)
+	 FMV=17*lim(PPV-PLV) |  FAV=80*lim(PLV-PAO)
+	 --
+	 ----------------------------------------- offset  runtime display
+	 pao=PAO-scale |  plv=PLV-scale
+	 dispt pao,plv
+

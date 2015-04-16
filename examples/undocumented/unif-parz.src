@@ -1,0 +1,45 @@
+
+
+	 -- PARZEN-WINDOW AMPLITUDE DISTRIBUTION
+	 ------------------------------------------------------------------
+	 n=3000
+	 ARRAY X[n],f[n]
+	 display N1 |  display C8
+	 s=0.5 |  b=0.
+	 alpha=1000 |  --                          inverse window width
+	 beta=sqrt(alpha/PI)/n |  --                  scale factor
+	 ------------------------------------------------
+	 m=3
+	 ARRAY H[m]
+	 for i=1 to m
+	   NN=n |  TMAX=20
+	   drunr MEASURE
+	   --
+	   --                                NOTE! drunr is needed HERE, to
+	   ---------------------------------------------
+	   t=0 |  TMAX=1 |  NN=n
+	   irule 2
+	   drun
+	   H[i]=H1
+	   reset
+	   display 2
+	   next
+	 write 'entropy:' |  write H
+	 -----------------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------------
+	 --                                                   compute resul
+	 --
+	 xx=2*t-TMAX |  --                      display sweep
+	 Vector f=beta*exp(alpha*(xx-X)*(X-xx))
+	 DOT F=f*1
+	 --
+	 d/dt H1=-F*ln(F)
+	 F=F-scale |  -- HH=20*H1-scale
+	 dispt F |  -- ,HH
+	 ------------------------------------------------------------------
+	 --                                           measurement run
+	    label MEASURE
+	 x=s*ran()+b*sin(20*t)
+	 store X=x
+

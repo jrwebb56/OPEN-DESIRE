@@ -1,0 +1,47 @@
+
+
+	 --                           VECTOR QUANTIZATION AND ENTROPY
+	 -------------------------------------------------------------
+	 display R |  display N1 |  display C8
+	 n=32 |  --               number of categorizer neurons
+	 m=4 |  --                             number of inputs
+	 --
+	 ARRAY x[m],v[n],h[n],W[n,m],hh[n],h1[n],uvec[n],error[m]
+	 --
+	 for i=1 to n
+	   uvec[i]=1 |  h[i]=1.0E-25 |  -- for entropy computation
+	   for k=1 to m
+	     W[i,k]=ran()
+	     next
+	   next
+	 -------------------------------------------------------------
+	 --                                 set experiment parameters
+	 lrate=.3 |  lrate0=0.0001 |  kappa=0.994
+	 crit=0
+	 scale=2.5
+	 NN=600
+	 -------------------------------------------------------------
+	 drun
+	 write 'type go to edit parameters' |  STOP
+	 -------------------------------------------------------------
+	    label eee
+	 display F
+	 edit 230,240,370-400 |  --               parameter-edit screen
+	 -------------------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------------------
+	 lrate=lrate0+lrate*kappa |  --        learning-rate schedule
+	 Vector x=ran()
+	 DOT xnormsqr=x*x |  xxnorm=1/sqrt(xnormsqr)
+	 Vector x=xxnorm*x
+	 CLEARN v=W(x)lrate,crit |  --                  compete,learn
+	 Vectr delta h=v |  nn=1/t |  Vector h1=h*nn |  --  histogram
+	 Vector hh=-h1*ln(h1) |  --                   compute entropv
+	 DOT H=uvec*hh |  ENTROPY=H/ln(2)-scale
+	 -------------------------------------------------------------
+	 Vector error=x-W%*v |  DOT enormsq=error*error
+	 ----
+	 dd=dd+enormsq |  DSQ=dd/t-scale
+	 Ex10=10*enormsq-scale
+	 dispt ENTROPY,DSQ,Ex10
+

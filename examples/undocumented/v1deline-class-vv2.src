@@ -1,0 +1,62 @@
+
+
+	 --     DELAY-LINE SIGNAL CLASSIFIER
+	 ------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=4
+	 ------------------------------------------------------------ 
+	 TMAX=0.5 |  NN=100000
+	 ------------------------------------------------------------
+	 nx=4 |  --      number of delay-line neurons
+	 nv2=9 |  --  number of hidden-layer neurons
+	 --
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=1 |  -- delay line
+	 ARRAY v1[nx],deltav1[nx] |  --     combiner layer 
+	 ARRAY v2[nv2]+v20[1]=vv2 |  v20[1]=1
+	 ARRAY deltav2[nv2]+deltav20[1]=deltavv2 |  deltav20[1]=1
+	 ARRAY y[2],P[2],target[2],error[2]
+	 ARRAY WW1[nx,nx+1],W2[nv2,nx],WW3[2,nv2+1]
+	 --
+	 for i=1 to nx |  for k=1 to nx+1 |  -- initialize
+	     WW1[i,k]=0.1*ran()
+	     next  |  next
+	 for i=1 to nv2 |  for k=1 to nx
+	     W2[i,k]=0.1*ran()
+	     next  |  next
+	 -----------------------------------------------------------
+	 lrate1=0.8 |  lrate2=0.6 |  lrate3=0.5
+	 noise=0
+	 --
+	 N=10
+	 for i=1 to N |  drun  |  next  |  --  N training runs
+	 write "type go for a test" |  STOP
+	 lrate1=0 |  lrate2=0 |  lrate3=0 |  drun  |  -- test
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 switch=swtch(sin(10*t)) |  --  alternate patterns
+	 p=0.8*switch*sgn(cos(170*t)) |  -- sine waves
+	 q=(1-switch)*sin(100*t) |  --   sine waves
+	 input=p+q+noise*ran()
+	 target[1]=switch |  target[2]=1-switch
+	 -------------------------------------------------------
+	 Vector x=x{-1} |  x[1]=input
+	 -------------
+	 Vector v1=WW1*xx |  --              note bias
+	 Vector v2=tanh(W2*v1)
+	 Vector y=exp(WW3*vv2) |  DOT ysum=y*1
+	 Vector P=y/ysum
+	 --
+	 Vector error=target-P |  --           backprop
+	 Vector deltavv2=WW3%*error*(1-vv2^2)
+	 Vector deltav1=W2%*deltav2
+	 --
+	 DELTA WW1=lrate1*deltav1*xx
+	 DELTA W2=lrate2*deltav2*v1
+	 DELTA WW3=lrate3*error*vv2
+	 --
+	 X=x[1]+0.5*scale
+	 TARGET=target[1]-0.5*scale
+	 errorx10=10*error[1]-0.5*scale
+	 Y=y[1]+0.5*scale
+	 dispt X,P[1],errorx10
+

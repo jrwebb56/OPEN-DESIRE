@@ -1,0 +1,15 @@
+
+
+	 --                   Van der Pol's Differential Equation
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display Q
+	 NN=3000 |  scale=4
+	 DT=0.0035 |  TMAX=13 |  x=0.5
+	 for A=1 to 2.2 step 0.2 |  drunr  |  display 2 |  next
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 d/dt x=xdot |  d/dt xdot=-x+A*(1-x^2)*xdot
+	 --
+	 dispxy x,xdot
+

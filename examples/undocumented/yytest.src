@@ -1,0 +1,15 @@
+
+
+	 display N14 |  display C8 |  display R
+	 scale=10
+	 STATE x[3]
+	 NN=300
+	 TMAX=10
+	 drun
+	 write a,b
+	 DYNAMIC
+	 Vectr d/dt x=0.5
+	 a=4
+	 b=8
+	 dispt a,b,x[1],x[2]
+

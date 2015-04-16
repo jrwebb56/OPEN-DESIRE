@@ -1,0 +1,38 @@
+
+
+	 --                            PRINCIPAL COMPONENTS
+	 -----------------------------------------------------------------
+	 display N1 |  display C8 |  display Q |  scale=4
+	 nx=2 |  --                                  input dimension
+	 nv=2
+	 MM=35 |  -- display only every MMth point
+	 ARRAY input[nx],x[nv],v[nv]
+	 ARRAY W[nv,nx]
+	 -----------------------------------------------------------------
+	 for i=1 to nv |  for k=1 to nx
+	     W[i,k]=0.1*ran()
+	     next  |  next
+	 --
+	 ARRAY OFFSET[2,2],offset[2]
+	 data 0,-1,0,2 |  read OFFSET
+	 ------
+	 NN=1000000
+	 --------------------------------------
+	 a1=0.2 |  a2=0.4
+	 lratep=0.03 |  drun
+	 write "type go to continue" |  STOP
+	 display F
+	 display N16 |  display C17
+	 drun
+	 ----------------------------------------------------------------
+	 DYNAMIC
+	 ----------------------------------------------------------------
+	 iRow=t/2 |  Vector offset=OFFSET#
+	 v1=a1*sqrt(-2*ln(abs(ran())))*cos(2*PI*abs(ran()))+0.2
+	 v2=a2*sqrt(-2*ln(abs(ran())))*cos(2*PI*abs(ran()))
+	 input[1]=v1+offset[1] |  input[2]=v2+offset[2]
+	 Vector x=input
+	 PLEARN v=W*x;lratep
+	 -----------------------
+	 DISPXY x[1],x[2],v[1],v[2]
+

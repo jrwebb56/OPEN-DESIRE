@@ -1,0 +1,58 @@
+
+
+	 --         NONLINEAR  PREDICTOR
+	 --     predicts Mackey-Glass chaos generator
+	 ---------------------------------------------------------------
+	 display N3 |  display C8 |  display R |  scale=2
+	 --                                            for Mackey-Glass	 
+	 TMAX=500 |  DT=0.04 |  NN=TMAX/DT+1
+	 a=0.2 |  b=0.1 |  c=10 |  --      for Mackey-Glass
+	 tau=25
+	 --
+	 ARRAY DD[1000] |  --       time-delay buffer
+	 s=10 |  --             initialize time delay buffer
+	 ---------------------------------------------------------------
+	 m=50 |  --                                    predictor delay
+	 nx=50 |  --      number of predictor neurons
+	 nv=17 |  --      number of hidden-layer neurons
+	 --
+	 ARRAY signal[m],y[1],error[1]
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=1 |  --  delay line
+	 ARRAY v[nv]+v0[1]=vv |  v0[1]=1 |  -- hidden layer
+	 ARRAY deltav[nv]+deltav0[1]=deltavv |  deltav0[1]=1
+	 ARRAY WW1[nv,nx+1],WW2[1,nv+1]
+	 --
+	 for i=1 to nv |  for k=1 to nx+1 |  -- initialize
+	     WW1[i,k]=0.1*ran()
+	     next  |  next
+	 -----------------------------------------------------------
+	 lrate1=0.01 |  lrate2=0.003
+	 --
+	 N=10
+	 for i=1 to N |  drun  |  next  |  --  N training runs
+	 write 'type go for prediction tests' |  STOP
+	 lrate1=0 |  lrate2=0 |  drun  |  drun  |  -- test runs
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 tdelay Sd=DD,s,tau |  --  Mackey-Glass time series
+	 d/dt s=a*Sd/(1+Sd^c)-b*s
+	 OUT  |  --         we use sampled data from now on!
+	 target=s-0.7
+	 -----------------------------------------------------------
+	 Vector signal=signal{-1} |  signal[1]=target
+	 Vector x=x{-1} |  x[1]=signal[m]
+	 -------------
+	 Vector v=tanh(WW1*xx) |  --                      note bias
+	 Vector y=WW2*vv |  --  no limiter needed on output!
+	 --
+	 Vector error=target-y
+	 Vector deltavv=WW2%*error*(1-vv^2)
+	 --
+	 DELTA WW1=lrate1*deltav*xx
+	 DELTA WW2=lrate2*error*vv
+	 -----------------------------------------------------------
+	 Y=y[1]+0.5*scale |  TARGET=target+0.5*scale
+	 errorx10=10*error[1]-0.5*scale
+	 dispt Y,errorx10,TARGET
+

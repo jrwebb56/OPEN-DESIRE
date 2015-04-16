@@ -1,0 +1,41 @@
+
+
+	 --       VECTORIZED MONTE CARLO:
+	 --                CANNONBALL TRAJECTORIES
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  scale=5000
+	 DT=0.008 |  TMAX=50 |  NN=5000 |  -- timing
+	 ----------------------------------
+	 R=7.5E-05 |  g=32.2
+	 v0=900 |  --                     muzzle velocity
+	 a=0.03 |  --                      noise amplitude
+	 --    
+	 n=1000
+	 STATE x[n],y[n],xdot[n],ydot[n]
+	 ARRAY theta[n],v[n],xI[n],XI[n],Y[n]
+	 --                    
+	 for i=1 to n |  --        noisy elevation angle, radians
+	   theta[i]=70*PI/180+a*(ran()+ran()+ran()+ran())
+	   xdot[i]=v0*cos(theta[i]) |  ydot[i]=v0*sin(theta[i])
+	   next
+	 drun
+	 --
+	 DOT xISum=xI*1 |  DOT xIxISum=xI*xI
+	 xIAvg=xISum/n |  xIxIAvg=xIxISum/n
+	 s=sqrt(xIxIAvg-xIAvg^2)
+	 write "xIAvg = ";xIAvg,"    s = ";s
+	 ------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------
+	 Vector v=sqrt(xdot^2+ydot^2)
+	 Vectr d/dt x=xdot |  Vectr d/dt y=ydot
+	 Vectr d/dt xdot=-R*v*xdot |  Vectr d/dt ydot=-R*v*ydot-g
+	 --
+	 step
+	 Vector xI=xI+swtch(y)*(x-xI) |  --   hold impact abscissa
+	 --
+	 -------------------         runtime trajectory display
+	 OUT
+	 Vector Y=y-scale |  Vector XI=xI-scale
+	 dispt Y[3],XI[3],Y[4],Y[6],XI[4],XI[6]
+

@@ -1,0 +1,35 @@
+
+
+	 --                           PULSED NEURON
+	 -------------------------------------------
+	 display N1 |  display C8
+	 NN=40000 |  DT=0.000025 |  TMAX=3
+	 -------------------------------------------
+	 c=2000 |  -- integrator gain  
+	 a=0.001 |  --  input amplitude
+	 b1=0.04 |  -- determines pulse rise time
+	 b2=0.001 |  -- determines pulse duration         
+	 fire1=0.25 |  fire2=0.95
+	 y0=0.01 |  -- rest level
+	 peak=1 |  -- pulse amplitude
+	 PEAK=(1-y0)*peak |  -- precompute for speed
+	 r=0.03 |  -- 1/refractory time constant	
+	 ydot=0
+	 drun
+	 -------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------
+	 x=a*sin(2.5*t)+a |  --  positive input
+	 d/dt y=ydot
+	 step
+	 --
+	 z=swtch(y-peak+PEAK*z) |  -- state switch 
+	 --
+	 ydot1=x+(b1-x)*swtch(y-fire1)+(b2-b1)*swtch(y-fire2)
+	 ydot2=-r*y*swtch(y-y0) |  -- decay, refractory time
+	 ydot=c*comp(z,ydot1,ydot2)
+	 --------------------------------------------------
+	 X=40*x+0.5*scale |  --        offset display curves
+	 Y=y-scale
+	 dispt X,Y
+

@@ -1,0 +1,71 @@
+
+
+	 --                SPIRAL-LEARNING COUNTERPROPAGATION NETWORK
+	 --                 wx, wy; patterns in order, no normaliwation
+	 --                 try fast-learn mode, too!
+	 ------------------------------------------------------------
+	 null=0 |  minus=-1
+	 mx=2 |  my=1 |  --                 number of dimensions
+	 ------------------------------------------------------------
+	 ARRAY r[97],phi[97] |  --      pattern array for two spirals
+	 ARRAY X[194,2]
+	 ARRAY target[194,1]
+	 for k=1 to 97
+	   r[k]=0.8*(7+k)/104 |  phi[k]=PI*(97-k)/16
+	   X[2*k,1]=r[k]*cos(phi[k]) |  X[2*k,2]=r[k]*sin(phi[k])
+	   X[2*k-1,1]=-X[2*k,1] |  X[2*k-1,2]=-X[2*k,2]
+	   target[2*k,1]=1 |  target[2*k-1,1]=0
+	   next
+	 ------------------------------------------------------------
+	 nx=194 |  ny=2 |  --                             number of categ
+	 --
+	 ARRAY x[mx],vx[nx],hx[nx]
+	 ARRAY y[my],vy[ny],hy[ny]
+	 ARRAY Wx[nx,mx],Wy[ny,my] |  --   template matrices
+	 ARRAY w[mx],vv[ny],error[ny],U[ny,nx],ww[my]
+	 --
+	 for i=1 to nx |  for k=1 to mx |  Wx[i,k]=ran() |  next  |  ne_
+xt
+	 for i=1 to ny |  for k=1 to my |  Wy[i,k]=ran() |  next  |  ne_
+xt
+	 ------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  --   set up display
+	 scale=1
+	 ------------------------------------------------------------
+	 --                                  set  learning parameters
+	 lratex=0.5 |  lratey=0.5 |  lratef=1 |  nlearn=30
+	 critx=0.000001
+	 crity=0.000001
+	 noise=0.0
+	 ------------------------------------------------------------
+	 NN=6000 |  --                            learn input, output
+	 drun
+	 write 'type go to continue' |  STOP
+	 ------------------------------------------------------------
+	 --                              run with test input (recall)
+	    label test
+	 display R
+	 NN=20000 |  t=1
+	 drun RECALL
+	 ------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------
+	 iRow=t/nlearn+1 |  --                     select pattern-matrix r
+	 Vector x=X# |  --  +noise*ran()
+	 Vector y=target#
+	 CLEARN vx=Wx(x)lratex,critx |  --   learn/select x values
+	 CLEARN vy=Wy(y)lratey,crity |  --      and y values
+	 Vector vv=U*vx |  --                     category mapping
+	 Vector error=vy-vv
+	 DELTA U=lratef*error*vx
+	 Vector w=Wx%*vx |  --      x-templates for display
+	 dispxy w[1],w[2]
+	 -----------------------------------------------------------
+	    label RECALL
+	 --                                                test run (no lea
+	 Vector x=ran() |  --                            test input
+	 CLEARN vx=Wx(x)null,minus |  --             select
+	 Vector vv=U*vx |  Vector ww=Wy%*vv
+	 Vector w=ww[1]*x |  --               suppresses display if 0
+	 dispxy w[1],w[2]
+

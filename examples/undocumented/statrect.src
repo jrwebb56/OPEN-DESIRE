@@ -1,0 +1,31 @@
+
+
+	 --           PROBABILITY-DENSITY ESTIMATION
+	 ------------------------------------------------------------------
+	 display N1 |  display C8
+	 NN=10000 |  n=2000
+	 ARRAY X[n],f[n],ff[n]
+	 Xmin=-4 |  Xmax=4 |  --               interval for analysis
+	 delx=(Xmax-Xmin)/n |  --            class-interval width
+	 --
+	 for k=1 to n |  X[k]=Xmin+(k-0.5)*delx |  next
+	 scale=4 |  Ascale=15
+	 s=sqrt(3/6) |  --                 6 ran() terms, unit variance 
+	 h=0.15 |  --                                                  win
+	 alpha=1/h |  --                           inverse window width
+	 beta=0.5*Ascale/(h*NN) |  --                   scale factor
+	 write ' please wait'
+	 drun
+	 NN=n
+	 drun READOUT
+	 -----------------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------------
+	 x=gauss(0)
+	 Vectr delta f=rect(alpha*(X-x))
+	 -----------------------------------------------------------------
+	    label READOUT
+	 get xx=X |  get fff=f |  F=beta*fff-scale
+	 normal=Ascale*exp(-0.5*xx^2)/sqrt(2*PI)-scale
+	 dispxy xx,F,normal
+

@@ -1,0 +1,47 @@
+
+
+	 --                                 compute membership functions
+	 --
+	 ARRAY X$[1],mb$[1] |  --  dummy-argument arrays
+	 --
+	 SUBMODEL fuzzmemb(N$,X$,mb$,input$)
+	   Vector mb$=sigmoid(10*(X$-input$)/(X$-X${1}))
+	   mbb=mb$[1] |  mcc=mb$[N$-1]
+	   Vector mb$=mb${-1}-mb$
+	   mb$[1]=1-mbb |  mb$[N$]=mcc
+	   -- DOT norm=mb$*1 | normI=1/norm
+	   -- Vector mb$=normI*mb$
+	   end
+	 --
+	 --                 funny-shaped MEMBERSHIP FUNCTIONS
+	 --------------------------------------------------------------
+	 scale=4/3 |  x0=-0.6*scale
+	 --
+	 --   declare arrays for fuzzy-set membership functions
+	 --
+	 N=8
+	 ARRAY X[N] |  --                    peak ordinates
+	 ARRAY mb[N] |  --                  limiter functions
+	 ARRAY member[N] |  --           offset for display 
+	 ----------------------------------------------------
+	 --                                   non-uniformly spaced peaks
+	 --
+	 for i=1 to N |  X[i]=(i*i-N)/(4*N)+x0 |  next
+	 -- substitute any other set of X[i], e.g. via data/read
+	 -------------------------------------------------------
+	 NN=10000 |  TMAX=1 |  DT=0.0001
+	 display N1 |  display R |  display C8
+	 x=-scale |  --                 initialize display sweep
+	 drun
+	 -------------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------------
+	 d/dt x=2*scale |  --                      display sweep
+	 invoke fuzzmemb[N,X,mb,x)
+	 Vector member=2*mb-scale |  --    offset display
+	 ------------------------------------------------------
+	 m1=member[1] |  m2=member[2]
+	 m3=member[3] |  m4=member[4] |  m5=member[5]
+	 m6=member[6] |  m7=member[7] |  m8=member[8]
+	 dispxy x,m1,m2,m3,m4,m5,m6,m7,m8
+

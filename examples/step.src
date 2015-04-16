@@ -1,0 +1,48 @@
+
+
+	 --                   - NUCLEAR REACTOR, ILLUSTRATING STIFFNESS
+	 ------------------------------------------------------------------
+	 --    Reference:  D. Hetrick, Dynamics of Nuclear Reactors,
+	 --                      University of Chicago Press, 1971, Chp. 2
+	 ------------------------------------------------------------------
+	 --    REACTIVITY = R DOLLARS
+	 --    NORMALIZED POWER = EN (INITIAL VALUE 1.0)
+	 --    NORMALIZED PRECURSOR DENSITY = DI, I=1,...,6
+	 --    BETA/L = BOL, LAMBDA = ALI, I=1,...,6
+	 --    NORMALIZED DELAYED NEUTRON FRACTION = FI, I=1,...,6
+	 ------------------------------------------------------------------
+	 TMAX=2.0 |  NN=1001 |  scale=1
+	 display N1 |  display C8
+	 ------------------------------------------------------------------
+	 irule 15 |  DT=0.0001 |  ERMAX=0.01 |  --     Gear integration
+	 --
+	 A=0.5 |  B=0.0 |  --          parameters and initial conditions
+	 AL1=0.0124 |  F1=0.033
+	 AL2=0.0305 |  F2=0.219
+	 AL3=0.111 |  F3=0.196
+	 AL4=0.301 |  F4=0.395
+	 AL5=1.14 |  F5=0.115
+	 AL6=3.01 |  F6=0.042
+	 EN=1 |  D1=1 |  D2=1 |  D3=1 |  D4=1 |  D5=1 |  D6=1
+	 ------------------------------------------------------------------
+	 for p=1 to 3.6 step .2
+	   BOL=10^p
+	   drunr  |  display 2
+	   next
+	 STOP
+	 ------------------------------------------------------------------
+	    label eee
+	 edit 360-501 |  --                              editing screen
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 R=A+B*t
+	 SUM=F1*D1+F2*D2+F3*D3+F4*D4+F5*D5+F6*D6
+	 ENDOT=BOL*((R-1.0)*EN+SUM)
+	 d/dt EN=ENDOT
+	 d/dt D1=AL1*(EN-D1) |  d/dt D2=AL2*(EN-D2)
+	 d/dt D3=AL3*(EN-D3) |  d/dt D4=AL4*(EN-D4)
+	 d/dt D5=AL5*(EN-D5) |  d/dt D6=AL6*(EN-D6)
+	 -------------------------------
+	 END=EN-2*scale |  dispt END |  --    scaled and offset display
+

@@ -1,0 +1,61 @@
+
+
+	 --  MATCHING A NARMAX NETWORK TO A PLANT 
+	 --  Narendra's example with smaller neural network
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=0.5
+	 --
+	 nX=4 |  nf=5 |  -- plant parameters
+	 nv=21 |  --    number of hidden neurons
+	 ARRAY Y[nf] |  --  plant  feedback
+	 ARRAY X[nX]+feedback[nf]=xx |  --  input(both), net feedback
+	 ARRAY v[nv],y[1],error[1],WW1[nv,nX+nf],W2[1,nv]
+	 ARRAY deltav[nv]
+	 --                                               initialze weights
+	 for i=1 to nv |  for k=1 to nX+nf
+	     WW1[i,k]=ran() |  next  |  next
+	 for k=1 to nv
+	   W2[1,k]=ran() |  next
+	 ----------------------------------------------------------------
+	 w=2*PI/250 |  ww=10*w |  lrate1=0.01 |  lrate2=0.08
+	 --------------------------
+	 NN=20000 |  TMAX=1000 |  drunr  |  --  training/reset
+	 write "type go for a recall run" |  STOP
+	 NN=8000 |  Y[1]=0 |  drun RECALL |  -- recall
+	 ----------------------------------------------------------------
+	 DYNAMIC
+	 ----------------------------------------------------------------
+	 --         same input X for both plant and network
+	 Vector X=X{-1} |  X[1]=0.25*(ran()+ran()+ran()+ran())
+	 -- initially Y=feedback=0
+	 --------------------------------------------------------  PLANT
+	 f=(Y[1]*Y[2]*Y[3]*X[1]*(Y[3]-1)+X[2])/(1+Y[2]^2+Y[3]^2)
+	 Vector Y=Y{-1} |  Y[1]=f |  -- plant feedback
+	 target=f
+	 -----------------------------------------------  NEURAL NETWORK 
+	 --                   input X is the same for plant and net	 
+	 Vector v=tanh(WW1*xx)
+	 Vector y=W2*v
+	 --                             
+	 error[1]=target-y[1] |  --   update for next sample - backprop
+	 Vector deltav=W2%*error*(1-v^2)
+	 DELTA WW1=lrate1*deltav*xx
+	 DELTA W2=lrate2*error*v
+	 Vector feedback=feedback{-1} |  feedback[1]=target
+	 dispt error[1]
+	 --------------------------------------------------------------    
+	    label RECALL
+	 s=0.5*((1-0.2*swtch(t-500))*sin(w*t)+0.2*swtch(t-500)*sin(ww*t))
+	 Vector X=X{-1} |  X[1]=s |  --           same input for both
+	 -------------------------------------------------------           
+	 f=(Y[1]*Y[2]*Y[3]*X[1]*(Y[3]-1)+X[2])/(1+Y[2]^2+Y[3]^2)
+	 Vector Y=Y{-1} |  Y[1]=f |  -- note delay
+	 target=f
+	 --------------------------------------------------- NEURAL NET
+	 Vector v=tanh(WW1*xx)
+	 Vector y=W2*v
+	 Vector feedback=feedback{-1} |  feedback[1]=y[1]
+	 error[1]=target-y[1]
+	 --
+	 dispt target,y[1],error[1]
+

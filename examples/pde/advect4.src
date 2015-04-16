@@ -1,0 +1,35 @@
+
+
+	 --                            ADVECTION EQUATION
+	 ------------------------------------------------------------------
+	 display N1 |  display C8
+	 --  Schiesser 4th-order numerical-differentiation operator
+	 ARRAY vx[1],v[1] |  --    dummy arrays for submodel
+	 SUBMODEL DDx(n$,bb$,v,vx)
+	   Vector vx=(2*v{-2}-16*v{-1}+16*v{1}-2*v{2})*bb$
+	   vx[1]=(-50*v[1]+96*v[2]-72*v[3]+32*v[4]-6*v[5])*bb$
+	   vx[2]=(-6*v[1]-20*v[2]+36*v[3]-12*v[4]+2*v[5])*bb$
+	   vx[n$-1]=(-2*v[n$-4]+12*v[n$-3]-36*v[n$-2]+20*v[n$-1]+6*v[n$])*bb_
+$
+	   vx[n$]=(6*v[n$-4]-32*v[n$-3]+72*v[n$-2]-96*v[n$-1]+50*v[n$])*bb$
+	   end
+	 ------------------------------------------------------------------
+	 irule 4 |  -- variable-step Runge-Kutta
+	 n=51
+	 STATE u[n] |  ARRAY ux[n]
+	 ----------------------------------------------
+	 L=1
+	 DX=L/(n-1) |  bb=1/(24*DX) |  DT=0.0001
+	 TMAX=2 |  NN=TMAX/DT |  scale=2
+	 --
+	 --          no need to program u(x,0)=0 (default)
+	 drun
+	 ----------------------------------------------
+	 DYNAMIC
+	 ----------------------------------------------   
+	 u[1]=1 |  --                               boundary input
+	 invoke DDx(n,bb,u,ux) |  --    differentiate u to get ux
+	 Vectr d/dt u=-ux
+	 -----------------------------------------------------  display
+	 dispt u[51],u[20]
+

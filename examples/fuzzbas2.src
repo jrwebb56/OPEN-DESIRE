@@ -1,0 +1,100 @@
+
+
+	 --                           FUZZY-BASIS-FUNCTION NETWORK
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  --                     set display 
+	 FUNCTION TGT(p,q)=sin(p)*cos(q) |  -- (or other function)  
+	 ------------------------------------------------------------------
+	 --                                 compute membership functions
+	 --
+	 ARRAY XX$[1] |  -- dummy peak-ordinate array
+	 ARRAY mb$[1],MEMBER$[1] |  --  dummy membership arrays
+	 --
+	 SUBMODEL fuzzmemb(n$,XX$,mb$,MEMBER$,input$)
+	   Vector mb$=SAT((XX$-input$)/(XX$-XX${1})) |  mb$[n$+1]=0
+	   Vector MEMBER$=mb$-mb${1}
+	   end
+	 -----------------------------
+	 n1=10
+	 ARRAY X1dum[1]+X1[n1]=XX1 |  --        peak ordinates
+	 X1dum[1]=-1E+25 |  --                              dummy left end
+	 ARRAY mb1[n1+1] |  --                   membership functions
+	 ARRAY mbr1[n1]+M1dum[1]=MEMBER1
+	 ----------------------------- 
+	 n2=12
+	 ARRAY X2dum[1]+X2[n2]=XX2 |  -- peak ordinates
+	 X2dum[1]=-1.0E+25 |  --                         dummy left end!
+	 ARRAY mb2[n2+1] |  --                   membership functions
+	 ARRAY mbr2[n2]+M2dum[1]=MEMBER2
+	 --------------------------------------------------------
+	 ARRAY x1[1]+x2[1]=x,y[1],error[1] |  --    input variables, error
+	 ARRAY W[n1*n2,2],v[n1*n2],h[n1*n2]
+	 ARRAY M12[n1,n2]=m12
+	 ARRAY W3[1,n1*n2]
+	 ARRAY z1[1]+z2[1]=z
+	 ---------------------------------------------------------
+	 -------------                                  set parameters
+	 lratex=0.2 |  kappa=0.99998 |  lrate0=0.00
+	 crit=0 |  --                 (crit=0 for FSCL conscience)
+	 NN=100000
+	 ------------------------------------------------------------------
+	 --
+	 drun COMPETE
+	 write 'type go to continue' |  STOP
+	 ------------------------------------    sort routine
+	 for i=1 to n1
+	   X1[i]=1.0E+25
+	   for k=1 to n1
+	     if W[k,1]<X1[i] then X1[i]=W[k,1] |  K1=k |  else proceed
+	     next
+	   W[K1,1]=1.0E+25
+	   next
+	 ------------------
+	 for i=1 to n2
+	   X2[i]=1.0E+25
+	   for k=1 to n2
+	     if W[k,2]<X2[i] then X2[i]=W[k,2] |  K2=k |  else proceed
+	     next
+	   W[K2,2]=1.0E+25
+	   next
+	 --------------------
+	 ARRAY b1[n1+1],b2[n2+1]
+	 for i=1 to n1 |  b1[i]=1/(XX1[i]-XX1[i+1]) |  next  |  --      
+	 for i=1 to n2 |  b2[i]=1/(XX2[i]-XX2[i+1]) |  next
+	 ---------------------------------------------------------
+	 NN=20000 |  lratef=0.4 |  kappa=1
+	 drun  |  -- function-learning run
+	 NN=2000 |  lratex=0 |  lratef=0 |  lrate0=0 |  --    recall 
+	 drun
+	 --------------------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------------------
+	 lratef=kappa*lratef+lrate0 |  --     reduce learning rate
+	 --
+	 Vector x=ran()
+	 Y=TGT(x1[1],x2[1])
+	 ------------
+	 --		compute membership functions
+	 --
+	 Vector mb1=SAT(b1*(XX1-x1[1])) |  Vector MEMBER1=mb1-mb1{1}
+	 Vector mb2=SAT(b2*(XX2-x2[1])) |  Vector MEMBER2=mb2-mb2{1}
+	 ----
+	 MATRIX M12=mbr1*mbr2 |  --  joint membership functions
+	 ------------------------------------------------------------------
+	 Vector y=W3*m12 |  Vector error=Y-y
+	 DELTA W3=lratef*error*m12
+	 ---------------------------------------              display varia
+	 ERx10=10*abs(error[1])-scale
+	 p1=x1[1] |  p2=x2[1]
+	 m7=mbr1[7] |  m8=mbr1[8] |  m9=mbr1[9]
+	 M7=mbr2[7]-scale |  M8=mbr2[8]-scale |  M9=mbr2[9]-scale
+	 DISPXY Y,y[1],Y,ERx10,p1,m7,p1,m8,p2,M7,p2,M8
+	 -----------------------------------------------------
+	    label COMPETE
+	 lratex=kappa*lratex+lrate0 |  -- reduce learning rate
+	 Vector x=1.5*ran()
+	 CLEARN v=W(x)lratex,crit
+	 Vectr delta h=v
+	 Vector z=W%*v
+	 dispxy z1[1],z2[1]
+

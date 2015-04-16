@@ -1,0 +1,51 @@
+
+
+	 --  GUIDED TORPEDO SIMU:ATION
+	 --  (x,y) is torpedo, (xt,yt) is target
+	 -------------------------------------------------------------
+	 irule 4 |  ERMAX=0.1
+	 display N1 |  scale=1.5
+	 DT=0.00001 |  TMAX=0.3 |  NN=20000
+	 -------------------------------------------------------           
+	 UC=8 |  --                               torpedo parameters
+	 a1=0.8155 |  a2=0.8155
+	 UT=a1*UC^2
+	 b1=-15.701 |  b2=-0.23229 |  b3=0 |  -- (or -2.0002) 
+	 c1=-303.801 |  c2=-44.866 |  c3=500 |  -- 243.866
+	 --
+	 gain=300 |  rumax=0.25 |  -- control parameters
+	 RR=0.01 |  rr=RR^2 |  --      distance to target
+	 DD=100*rr
+	 m=100 |  --     sampling rate is (NN-1)/(mT*MAX)
+	 rudder=0 |  --                   initialize sampled data
+	 dd=100
+	 --
+	 vxt=0.1 |  vyt=-0.5 |  --    target velocity vector
+	 x=-0 |  y=0 |  rudder=0 |  --         initial values
+	 ---------------------
+	 for a=0 to 2*PI step PI/10
+	   xt0=cos(a) |  yt0=sin(a)
+	   phi=atan2(yt0-y,xt0-x)
+	   drunr  |  display 2
+	   next
+	 ----------------------------------------
+	 DYNAMIC
+	 ----------------------------------------
+	 d/dt u=UT-a2*u^2
+	 d/dt v=u*(b1*v+b2*phidot+b3*rudder)
+	 d/dt phidot=u*(c1*v+c2*phidot+c3*rudder)
+	 d/dt phi=phidot
+	 d/dt x=u*cos(phi)-v*sin(phi)
+	 d/dt y=u*sin(phi)+v*cos(phi)
+	 --
+	 xt=xt0+vxt*t |  yt=yt0+vyt*t
+	 psi=atan2(yt-y,xt-x)
+	 dd=(x-xt)^2+(y-yt)^2
+	 ---------------------------------------
+	 SAMPLE m |  --        digital controller
+	 error=(phi-psi)*swtch(dd-DD)
+	 rudder=-rumax*sat(gain*error)
+	 term rr-dd
+	 --------------------------------------------------------
+	 DISPXY x,y,xt,yt
+

@@ -1,0 +1,46 @@
+
+
+	 --                                PSEUDO-ART LEARNING                    
+	 -------------------------------------------------------
+	 m=2 |  --                              number of inputs
+	 nn=10 |  N=nn*nn |  --               number of patterns
+	 n=110 |  --            no. of competitive-layer neurons
+	 --
+	 ARRAY x[m],v[n],h[n],z[m],W[n,m],INPUT[N,2]
+	 -------------------------------------------------------
+	 --              set up uniformly spaced cluster centers
+	 s=0.85
+	 for i=1 to nn |  for k=1 to nn
+	     INPUT[i+(k-1)*nn,1]=s*(1+nn-2*i)/(1-nn)
+	     INPUT[i+(k-1)*nn,2]=s*(1+nn-2*k)/(1-nn)
+	     next  |  next
+	 -------------------------------------------------------
+	 for i=1 to n
+	   for k=1 to m |  --        set random initial weights
+	     W[i,k]=ran()
+	     next  |  next
+	 --------------------------------------------------------
+	 display N1 |  display C8 |  display Q |  --  set display
+	 scale=1
+	 --------------------------------------------------------
+	 --                              set  learning parameters
+	 lrate=0.6 |  kappa=0.99995
+	 crit=0.01
+	 noise=0.03
+	 --------------------------------------------------------
+	 NN=20000 |  --                       learn input, output
+	 drun
+	 write ' type go to continue' |  STOP
+	 NN=4000
+	 display R |  lrate=0
+	 drun
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 iRow=3000*abs(ran())+1 |  -- select pattern-matrix row
+	 lrate=kappa*lrate
+	 Vector x=INPUT#+noise*ran()
+	 CLEARN v=W(x)lrate,crit |  -- learn/select input values
+	 Vector z=W%*v |  --     reconstruct learned x values
+	 dispxy z[1],z[2]
+

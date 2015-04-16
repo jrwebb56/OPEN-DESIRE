@@ -1,0 +1,247 @@
+
+
+	 --                 Backprop Pattern Classifier
+	 -- SOFTMAX, select desired char.
+	 -----------------------------------------------------------
+	 display N1 |  display C8 |  display Q |  --        display 
+	 m=25 |  --               number of network inputs (pixels)
+	 NH=33 |  --                     number of hidden-layer neurons
+	 N=26 |  --                                number of patterns
+	 --
+	 ARRAY x1[m]+x0[1]=x,y[NH],z[N],P[N]
+	 ARRAY w1[NH,m+1],w2[N,NH]
+	 ARRAY Dw1[NH,m+1],Dw2[N,NH],R[m],Q[N],INput[m]
+	 ARRAY X[m],input[m]
+	 ARRAY INPUT[N,m],TARGET[N,N]
+	 ARRAY error[N],delta2[NH]
+	 -----
+	 x0[1]=1 |  --                         bias input
+	 --                                              fill arrays
+	 -----------------------------------------    input patterns
+	 --                         A
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 --                         B
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,-1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         C
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         D
+	 data 1,1,1,1,-1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,-1
+	 --                         E
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,1,1,1,1
+	 --                         F
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,1,1,1,-1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,-1
+	 --                         G
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         H
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 --                         I
+	 data -1,1,1,1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,1,1,1,-1
+	 --                         J
+	 data -1,1,1,1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,1,1,-1,-1
+	 --                         K
+	 data 1,-1,-1,1,1
+	 data 1,-1,1,1,-1
+	 data 1,1,-1,-1,-1
+	 data 1,-1,1,1,-1
+	 data 1,-1,-1,1,1
+	 --                         L
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,-1
+	 data 1,1,1,1,1
+	 --                         M
+	 data 1,1,-1,1,1
+	 data 1,-1,1,-1,1
+	 data 1,-1,1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 --                         N
+	 data 1,-1,-1,-1,1
+	 data 1,1,-1,-1,1
+	 data 1,-1,1,-1,1
+	 data 1,-1,-1,1,1
+	 data 1,-1,-1,-1,1
+	 --                         O
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         P
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,-1,-1,-1,-1
+	 --                         Q
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 data -1,-1,1,-1,-1
+	 --                         R
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 data 1,-1,1,1,-1
+	 data 1,-1,-1,1,1
+	 --                         S
+	 data 1,1,1,1,1
+	 data 1,-1,-1,-1,-1
+	 data 1,1,1,1,1
+	 data -1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         T
+	 data 1,1,1,1,1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,1,1,1,-1
+	 --                         U
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,1,1,1,1
+	 --                         V
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data 1,-1,-1,-1,1
+	 data -1,1,-1,1,-1
+	 data -1,-1,1,-1,-1
+	 --                         W
+	 data 1,-1,-1,-1,1
+	 data 1,-1,1,-1,1
+	 data 1,-1,1,-1,1
+	 data 1,1,-1,1,1
+	 data 1,1,-1,1,1
+	 --                         X
+	 data 1,-1,-1,-1,1
+	 data -1,1,-1,1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,1,-1,1,-1
+	 data 1,-1,-1,-1,1
+	 --                         Y
+	 data 1,-1,-1,-1,1
+	 data -1,1,-1,1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,-1,1,-1,-1
+	 --                         Z
+	 data 1,1,1,1,1
+	 data -1,-1,-1,1,-1
+	 data -1,-1,1,-1,-1
+	 data -1,1,-1,-1,-1
+	 data 1,1,1,1,1
+	 --------------------------------------------
+	 read INPUT
+	 --
+	 MATRIX TARGET=1 |  --               (one-of-n classifier)
+	 ---------------------------------------
+	 --         small random initial weights to "break symmetry"
+	 --
+	 for i=1 to NH |  for k=1 to m
+	     w1[i,k]=0.01*ran() |  next  |  next
+	 for i=1 to N |  for k=1 to NH
+	     w2[i,k]=0.01*ran() |  next  |  next
+	 -----------------------------------------------------------
+	 --                                set experiment parameters
+	 gain2=0.02 |  gain3=0.02 |  a=0.1
+	 mom2=0.4 |  mom3=0.4
+	 noise=0.2
+	 scale=1 |  cc=12 |  NN=20000
+	 --
+	 -----------------------------------------------------------
+	 drun
+	 write " type go to continue" |  STOP
+	 display F
+	 -----------------------------------------------------------
+	 --             test routine, used on command after learning
+	    label recall
+	 write "supply a new value of M, or type !; then RETURN"
+	 input M
+	 NN=2 |  t=1 |  restore
+	 for i=1 to M
+	   read input
+	   drun RECALL
+	   write Q
+	   next
+	 go to recall
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 --                                      weight-learning run
+	 iRow=t |  Vector x1=0.5*(INPUT#+noise*ran())
+	 Vector y=tanh(w1*x)
+	 -----------------------------------------------------
+	 Vector z=exp(a*w2*y) |  -- SOFTMAX
+	 DOT zsum=z*1
+	 Vector Q=z/zsum
+	 Vector error=TARGET#-Q |  --                backpropagation
+	 Vector delta2=w2%*error*(1-y^2)
+	 --	 --
+	 --    "momentum" adds part of last change
+	 MATRIX Dw1=gain2*delta2*x+mom2*Dw1 |  DELTA w1=Dw1
+	 MATRIX Dw2=gain3*error*y+mom3*Dw2 |  DELTA w2=Dw2
+	 -----------------------------------------------------------
+	 DOT enormsqr=error*error
+	 MSQERRx2=2*enormsqr-scale |  --            offset display curve
+	 dispt MSQERRx2 |  --                    display error measure
+	 ----------------------------------------------------------
+	 --                                   test run (no learning)
+	    label RECALL
+	 Vector x1=0.5*(input+noise*ran())
+	 Vector y=tanh(w1*x)
+	 Vector z=exp(w2*y) |  -- no factor a!
+	 -----------------------------------------------------------------
+	 DOT zsum=z*1
+	 Vector Q=z/zsum
+	 Vector R=INPUT%*Q |  -- reconstruct 
+	 -----------------------------------------------------------
+	 -- Vector P^=abs(Q) |   Vector P=swtch(P) | -- not needed
+	 ----------------------------------------------------------------  
+	 if i-M+1
+	   Vector INput=cc*input |  Vector X=cc*x1 |  Vector R=cc*R
+	   SHOW  |  SHOW INput,5 |  SHOW X,5 |  SHOW R,5
+

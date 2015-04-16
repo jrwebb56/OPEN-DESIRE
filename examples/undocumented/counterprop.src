@@ -1,0 +1,29 @@
+
+
+	 --   COUNTERPROPAGATION NETWORK
+	 --------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 n=2500 |  -- possible number of categories
+	 ARRAY x[1],v[n],y[1],error[1]
+	 ARRAY W[n,1],U[1,n]
+	 --
+	 for i=1 to n |  W[n,1]=0.1*ran() |  next  |  -- initialize
+	 ---------------------------------
+	 Tnoise=0 |  -- set parameters
+	 lratex=0.5 |  lratef=0.09
+	 crit=-1
+	 NN=12000
+	 --
+	 drun
+	 write " type go for a test run" |  STOP
+	 lratex=0 |  lratef=0 |  drun
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 x[1]=ran() |  target=sin(5*x[1])+Tnoise*ran()
+	 CLEARN v=W(x)lratex,crit |  -- compete/learn
+	 Vector y=U*v |  -- network output
+	 Vector error=target-y
+	 DELTA U=lratef*error*v |  -- LMS algorithm
+	 dispxy x[1],y[1],target
+

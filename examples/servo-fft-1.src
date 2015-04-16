@@ -1,0 +1,45 @@
+
+
+	 --   SERVO IMPULSE AND FREQUENCY RESPONSE
+	 --      successive servo-output samples are stored
+	 --          in an array used to compute the FFT		 
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=0.25
+	 TMAX=20 |  DT=TMAX/(NN-1) |  NN=2048
+	 ARRAY OUTPUTx[NN],OUTPUTy[NN] |  -- FFT arrays 
+	 -------------------------------------------------
+	 gain=8 |  r=3 |  --        servo gain and damping
+	 u=0 |  xdot=1 |  --            get impulse response 
+	 --
+	 drun  |  --  compute and display impulse response
+	 write 'type go for frequency response' |  STOP
+	 -----------------------------------------------------
+	 FFT F,NN,OUTPUTx,OUTPUTy |  -- Fourier transform
+	 scale=20
+	 -----------------------------------------------------
+	 --  create x and y breakpoint arrays
+	 --     for interpolted freuency-response plot
+	 ARRAY x1[NN]+OUT1x[NN]=OUTx
+	 ARRAY x2[NN]+OUT1y[NN]=OUTy
+	 --
+	 for i=1 to NN
+	   x1[i]=i |  x2[i]=i
+	   OUT1x[i]=OUTPUTx[i] |  OUT1y[i]=OUTPUTy[i]
+	   next
+	 ---------------------------------------------------
+	 t=1 |  TMAX=30 |  -- note t0=1
+	 drun FREQ
+	 ---------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------
+	 d/dt xdot=gain*(u-x)-r*xdot |  --      velocity
+	 d/dt x=xdot |  --                                  position
+	 store OUTPUTx=x |  --             fill FFT array	 
+	 dispt x |  --          display impulse response
+	 --
+	 --------------------        amplitude/phase display
+	    label FREQ
+	 xx=func1(t;OUTx) |  yy=func1(t;OUTy) |  -- interpolate
+	 r=sqrt(xx^2+yy^2) |  phix5=5*atan2(yy,xx)
+	 dispt r,phix5
+

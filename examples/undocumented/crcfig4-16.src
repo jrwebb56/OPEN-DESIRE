@@ -1,0 +1,53 @@
+
+
+	 --       	 R.M. HOWE'S SATELLITE ATTITUDE CONTROLLER
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 SUBMODEL gyro(x$,xdot$,a$,z$)
+	   d/dt x$=xdot$ |  d/dt xdot$=d*xdot$+a$*(z$-x$)
+	   end
+	 ------------------------------------------------------------------
+	 STATE thets,thetp,thetds,thetdp,f,thet,thetd
+	 A=6 |  B=6
+	 TMAX=5 |  DT=0.004 |  NN=1000
+	 thete=0 |  -- must be initialized because of step!
+	 ------------------------------------------------------------------
+	 THETAC=0.09 |  --             command pitch step, radians
+	 delta1=0.008 |  --                 half deadspace , radians
+	 TD=0.025 |  --                                     time delay, se
+	 TC=0.05 |  --                         actuator time constant, sec
+	 I=100 |  --                                 spacecraft inertia, k
+	 OMEGA=94.24478 |  --      sensor natural circ. freq., 1/sec
+	 ZETA=0.7 |  --                      sensor damping ratio
+	 KR=0.5 |  --                           rate feedback constant, se
+	 FM=25 |  --                           actuator torque, kg m^2/sec
+	 FD=12.1875 |  --                  disturbance torque, kg m^2/sec^
+	 ------------------------------------------------------------------
+	 a=-1/TC |  b=FM/TC |  c=1/I |  deltm1=1/delta1
+	 d=-2*ZETA*OMEGA |  e=OMEGA*OMEGA
+	 ------------------------------------------------------------------
+	 ARRAY EE[1000] |  --                        delay buffer
+	 offset=0.5
+	 drunr  |  --                                               initia
+	 display 2
+	 display N13
+	 DT=DT/100
+	 offset=0.75
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 invoke gyro(thets,thetp,e,thet) |  --          attitude sensor
+	 invoke gyro(thetds,thetdp,e,thetd) |  --            rate sensor
+	 ethet=THETAC-(thets+KR*thetds) |  --      controller input
+	 tdelay u=EE,thete,TD |  --                actuator time delay
+	 d/dt f=a*f+b*u |  --                      actuator output torque
+	 d/dt thet=thetd |  d/dt thetd=c*(f+FD) |  -- vehicle attitude
+	 --
+	 step
+	 thete=deadc(ethet*deltm1-0.01*thete) |  --        actuator deadzo
+	 ------------------------------------------------------------------
+	 theta=A*thet |  thedot=B*thetd |  --   runtime display
+	 THETE=0.08*thete-offset
+	 dispt theta,thedot,THETE
+

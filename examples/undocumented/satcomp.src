@@ -1,0 +1,32 @@
+
+
+	 --                      A BANG-BANG-SERVO SIMULATION
+	 --     tests discontinuous integration by decreasing DT
+	 --                                note instability for larger DT
+	 irule 5
+	 -------------------------------------------------
+	 TMAX=9 |  NN=40000 |  --       timing
+	 scale=2 |  display N1 |  display C8 |  --               display
+	 -------------------------------------------------
+	 A=0.8 |  g2=2 |  maxtrq=0.85 |  k=200
+	 w=0.5 |  r=26 |  R=0.6
+	 DT=0.0001 |  display N15 |  drunr
+	 display 2
+	 DT=0.1*DT |  display N12 |  drun
+	 -------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------
+	 u=A*cos(w*t) |  --                input and error
+	 e=x-u
+	 Q=-k*e-r*xD |  --                   motor voltage
+	 --
+	 torque=maxtrq*sgn(Q) |  --     dynamics
+	 d/dt x=xD |  d/dt xD=torque-R*xD
+	 --
+	 --  --------------------------    RUNTIME DISPLAY
+	 OUT
+	 X=x+0.5*scale |  U=u+0.5*scale
+	 TORQUE=torque-0.5*scale |  --       offset curves
+	 ERROR=e+0.5*scale
+	 dispt X,U,TORQUE,ERROR
+

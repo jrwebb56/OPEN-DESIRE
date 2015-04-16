@@ -1,0 +1,102 @@
+
+
+	 --               BACKPROP PATTERN CLASSIFIER
+	 --   implements associative memory
+	 --   has extra "unknown" category
+	 --  uses softmax for optimization, probabilities
+	 --------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 nx=25 |  -- pattern dimension (5x5 pixel grid)
+	 N=26 |  -- number of known categories (A to Z)
+	 nv=32 |  -- number of hidden neurons
+	 ARRAY INPUT[N,nx] |  -- prototype-pattern array
+	 ARRAY TARGET[N,N] |  -- binary-selector array
+	 -------------------                                        network
+	 ARRAY target[N]+Tunknown[1]=bigtarget
+	 ARRAY input[nx],s[nx]
+	 ARRAY INput[nx],x[nx]+x0[1]=xx |  x0[1]=1
+	 ARRAY v[nv],deltav[nv]
+	 ARRAY y[N+1],Prob[N]+Punknown[1]=P
+	 ----                                              connection weigh
+	 ARRAY W1[nv,nx+1],W2[N+1,nv]
+	 -------------------------------------------------  error measure
+	 ARRAY error[N+1],ERROR[N+1]
+	 -----------------------------------------------------------------
+	 --   random initial weights "break symmetry"
+	 --
+	 for i=1 to nv |  for k=1 to nx+1
+	     W1[i,k]=ran() |  next  |  next
+	 for i=1 to N+1 |  for k=1 to nv
+	     W2[i,k]=ran() |  next  |  next
+	 -----------------------------------------  	 --
+	 MATRIX TARGET=1 |  --        (one-of-N classifier)
+	 ------------------------------------------------------------------
+	 --                                set experiment parameters
+	 lrate1=0.08 |  lrate2=0.05
+	 Tnoise=0.35 |  Rnoise=0.35
+	 cc=20
+	 --------------------------                   get patterns from fil
+	 connect './pattern/alphabet.txt' as input 2
+	 input #2,INPUT
+	 disconnect 2
+	 --------------------------------------------------------------
+	 NN=10000
+	 known=0 |  Tunknown[1]=1 |  --   random-input run
+	 drun
+	 --                                                                
+	 known=1 |  Tunknown[1]=0 |  --   pattern-learning run 
+	 t=1
+	 drun
+	 -------------------------------------  test runs
+	 Vector P=0
+	 NN=2
+	 write 'type go for a random-input test' |  STOP
+	 display F
+	 known=0 |  -- test with unknown input
+	 drun RECALL
+	 write P
+	 --
+	 write 'type go for successive recall runs' |  STOP
+	 known=1 |  -- test with known patterns
+	 t=1
+	 for i=1 to N
+	   drun RECALL
+	   for k=1 to 10000 |  write "wait" |  next
+	   next
+	 ---------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------
+	 --
+	 iRow=t |  Vector input=INPUT#+Tnoise*ran()
+	 Vector x=known*input+(1-known)*ran()
+	 --
+	 Vector v=tanh(W1*xx)
+	 Vector y=exp(W2*v) |  DOT ysum=y*1
+	 Vector P=y/ysum
+	 --------------------------------------        backprop
+	 Vector target=known*TARGET#
+	 Vector error=bigtarget-P
+	 Vector deltav=W2%*error*(1-v^2)
+	 DELTA W1=lrate1*deltav*xx
+	 DELTA W2=lrate2*error*v
+	 --
+	 DOT enormsqr=error*error |  MSQERR=enormsqr-scale
+	 dispt MSQERR |  --    offset display 
+	 ------------------------------------------------
+	    label RECALL
+	 iRow=i
+	 Vector input=known*INPUT#+(1-known)*ran()
+	 Vector x=input+Rnoise*ran()
+	 Vector v=tanh(W1*xx)
+	 Vector y=exp(W2*v) |  DOT ysum=y*1
+	 Vector P=y/ysum
+	 -------------------------------------------------------
+	 if known
+	   --   set largest Prob[i]=1 for display
+	   Vector Prob^=Prob |  Vector Prob=swtch(Prob)
+	   Vector s=INPUT%*Prob |  -- associative memory
+	   --
+	   Vector INput=2*cc*input |  Vector x=cc*x
+	   Vector s=2*cc*s
+	   SHOW  |  SHOW INput,5 |  SHOW x,5 |  SHOW s,5
+

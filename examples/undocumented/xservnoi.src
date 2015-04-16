@@ -1,0 +1,33 @@
+
+
+	 --    SERVO WITH LOW-PASS NOISE INPUT
+	 --      note noise sampling and initialization
+	 ------------------------------------------------------------------
+	 A=0.8 |  w=1
+	 B=100 |  maxtrq=1 |  g2=2 |  R=0.6 |  --  servo 
+	 k=100000 |  r=1500 |  --                    controller 
+	 -----------------------------------------------------------------
+	 NN=10000 |  TMAX=10 |  DT=0.001 |  --  simulation 
+	 scale=0.025
+	 display N1 |  display C8 |  --        display colors
+	 p=A*gauss(0) |  --         must intialize the noise!
+	 drun
+	 --------------------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------------------
+	 d/dt pp=-w*pp+p |  d/dt u=-w*u+pp |  -- low-pass 
+	 --
+	 e=x-u |  --                                       servo error
+	 voltage=-k*e-r*xdot |  --                 motor voltage
+	 d/dt VV=-B*VV+voltage |  --     motor-field buildup 
+	 --
+	 torque=maxtrq*tanh(g2*VV/maxtrq) |  -- dynamics
+	 d/dt x=xdot |  d/dt xdot=torque-R*xdot
+	 ------------------------------------------------------------------
+	 --              sample noise at communication points
+	 OUT
+	 p=A*gauss(0) |  --                         sampled noise
+	 --
+	 errorx20=20*e
+	 dispt x,u,errorx20
+

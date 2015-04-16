@@ -1,0 +1,115 @@
+
+
+	 -- WORLD II GAME (based on Forrester, World Dynamics) - base case
+	 --
+	 --             "ERITIS SICUT DEUS, SCIENTES BONUM ET MALUM"
+	 ------------------------------------------------------------------
+	 --                      Function Tables
+	 -- ---------------------------------------------------------------
+	 dimension BRMM[12],NREM[10],DRMM[16],DRPM[14],DRFM[16],DRCM[12]
+	 dimension BRCM[12],BRFM[10],BRPM[14],FCM[12],FPCI[14],CIM[12]
+	 dimension FPM[14],POLCM[12],POLAT[14],CFIFR[10],QLM[12],QLC[22]
+	 dimension QLF[10],QLP[14],NRMM[22],CIQR[10]
+	 --
+	 data 0,1,2,3,4,5;1.2,1,.85,.75,.7,.7 |  -- BRMM
+	 data 0,.25,.5,.75,1;0,.15,.5,.85,1 |  -- NREM
+	 data 0,.5,1,1.5,2,2.5,3,3.5;3,1.8,1,.8,.7,.6,.53,.5 |  -- DRMM
+	 data 0,10,20,30,40,50,60;.92,1.3,2,3.2,4.8,6.8,9.2 |  -- DRPM
+	 data 0,.25,.5,.75,1,1.25,1.5,1.75;30,3,2,1.4,1,.7,.6,.5 |  -- DRF
+	 data 0,1,2,3,4,5;.9,1,1.2,1.5,1.9,3 |  -- DRCM
+	 data 0,1,2,3,4,5;1.05,1,.9,.7,.6,.55 |  -- BRCM
+	 data 0,1,2,3,4;0,1,1.6,1.9,2 |  -- BRFM
+	 data 0,10,20,30,40,50,60;1.02,.9,.7,.4,.25,.15,.1 |  -- BRPM
+	 data 0,1,2,3,4,5;2.4,1,.6,.4,.3,.2 |  -- FCM
+	 data 0,1,2,3,4,5,6;.5,1,1.4,1.7,1.9,2.05,2.2 |  -- FPCI
+	 data 0,1,2,3,4,5;.1,1,1.8,2.4,2.8,3 |  -- CIM
+	 data 0,10,20,30,40,50,60;1.02,.9,.65,.35,.2,.1,.05 |  -- FPM
+	 data 0,1,2,3,4,5;.05,1,3,5.4,7.4,8 |  -- POLCM
+	 data 0,10,20,30,40,50,60;.6,2.5,5,8,11.5,15.5,20 |  -- POLAT
+	 data 0,.5,1,1.5,2;1,.6,.3,.15,.1 |  -- CFIFR
+	 data 0,1,2,3,4,5;.2,1,1.7,2.3,2.7,2.9 |  -- QLM
+	 data 0,.5,1,1.5,2,2.5,3,3.5,4,4.5,5;2,1.3,1,.75,.55,.45,.38
+	 data .3,.25,.22,.2 |  -- QLC
+	 data 0,1,2,3,4;0,1,1.8,2.4,2.7 |  -- QLF
+	 data 0,10,20,30,40,50,60;1.04,.85,.8,.3,.15,.05,.02 |  -- QLP
+	 data 0,1,2,3,4,5,6,7,8,9,10;0,1,1.8,2.4,2.9,3.3,3.6,3.8,3.9
+	 data 3.95,4 |  -- NRMM
+	 data 0,.5,1,1.5,2;.7,.8,1,1.5,2 |  -- CIQR
+	 --
+	 read BRMM,NREM,DRMM,DRPM,DRFM,DRCM,BRCM,BRFM,BRPM,FCM,FPCI,CIM
+	 read FPM,POLCM,POLAT,CFIFR,QLM,QLC,QLF,QLP,NRMM,CIQR
+	 --
+	 ------------------------------------------------------------------
+	 --                 Constant Parameters
+	 ------------------------------------------------------------------
+	 BRN=0.04
+	 DRN=0.028
+	 LA=1.35E+08
+	 PDN=26.5
+	 FC1=1
+	 FN=1
+	 CIGN=0.05
+	 CIDN=.025
+	 CIAFT=15
+	 CIAFN=0.3 |  -------------- =3 IN ORIGINAL WAS PRINTING ERROR??
+	 NRUN=1
+	 POLS=3.6E+09
+	 POLN=1
+	 QLS=1
+	 NR1=9.0E+11
+	 ---------------------------------------------------------------
+	 --                     Initial Values
+	 ---------------------------------------------------------------
+	 P=1.65E+09
+	 NR=9.0E+11
+	 CI=0.4E+09
+	 POL=0.2E+09
+	 CIAF=0.2
+	 ---------------------------------------------------------------
+	 --                                                 make one run
+	 DT=0.1
+	 TMAX=200
+	 t=1900
+	 NN=2001 |  display N1 |  display C8 |  display R
+	 irule 2 |  -- Euler integration
+	 drun
+	 ---------------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------------
+	 NRFR=NR/NR1 |  func NRM=NREM(NRFR
+	 --
+	 CIR=CI/P |  CIRA=CIR*CIAF/CIAFN
+	 func PO=POLCM(CIR |  func FP=FPCI(CIRA
+	 --
+	 MSL=CIR*NRM*(1-CIAF)/(1-CIAFN)
+	 func CM=CIM(MSL |  func BRM=BRMM(MSL |  func DRM=DRMM(MSL
+	 func NM=NRMM(MSL |  func QM=QLM(MSL
+	 --
+	 CR=P/(LA*PDN)
+	 func BRC=BRCM(CR |  func DRC=DRCM(CR
+	 func FC=FCM(CR |  func QC=QLC(CR
+	 --
+	 POLR=POL/POLS
+	 func BRP=BRPM(POLR |  func DRP=DRPM(POLR |  func FM=FPM(POLR
+	 func PT=POLAT(POLR |  func QP=QLP(POLR
+	 --
+	 FR=FC1*FC*FM*FP
+	 func BRF=BRFM(FR |  func CC=CFIFR(FR
+	 func DRF=DRFM(FR |  func QF=QLF(FR
+	 --
+	 QL=QC*QF*QM*QP*QLS |  QX=QM/QF
+	 func CQ=CIQR(QX
+	 --
+	 -----------------------------------------------------------
+	 d/dt P=P*(BRN*BRF*BRM*BRC*BRP-DRN*DRF*DRM*DRC*DRP)
+	 d/dt NR=-P*NRUN*NM
+	 d/dt CI=P*CM*CIGN-CI*CIDN
+	 d/dt POL=P*POLN*PO-POL/PT
+	 d/dt CIAF=(CC*CQ-CIAF)/CIAFT
+	 ------------------------------------------------------------
+	 OUT  |  --                                  run-time display
+	 popul=P*2.0E-10-1
+	 pollut=0.25*POLR-1
+	 qualif=0.5*QL
+	 dispt popul,pollut,qualif
+

@@ -1,0 +1,21 @@
+
+
+	 --     Impulse Response of a Linear System
+	 --           a simple repeated-run study
+	 -----------------------------------------------------------
+	 display N1 |  display C8 |  scale=0.05
+	 TMAX=0.5 |  DT=0.0001 |  NN=1001
+	 ww=400 |  u=0
+	 xdot=1
+	 -----------------------------------------------------------
+	 for i=1 to 5 |  -- set parameter values
+	   r=10*i
+	   drunr  |  display 2
+	   next
+	 --------------------------------
+	 DYNAMIC
+	 --------------------------------
+	 d/dt x=xdot
+	 d/dt xdot=-ww*x-r*xdot+u
+	 dispt x
+

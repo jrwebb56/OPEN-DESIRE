@@ -1,0 +1,30 @@
+
+
+	 n=10
+	 scale=4
+	 two=2 |  half=0.5
+	 ARRAY X[n],member[n],Y[n],mb1[n],b[n]
+	 for i=1 to n |  X[i]=i-(n+1)/2 |  next
+	 for i=1 to n-1
+	   Y[i]=4*cos(X[i+1])
+	   b[i]=1/(X[i]-X[i+1]) |  next
+	 NN=6000 |  TMAX=1 |  DT=0.0001
+	 x=-scale
+	 display N1 |  display C8 |  display Q
+	 drun
+	 ----------------------
+	 DYNAMIC
+	 ----------------------
+	 Vector mb1=b*SAT(X-x)
+	 Vector member=two*mb1-two*mb1{1}+half*scale
+	 ------------------------------------
+	 d/dt x=2*scale
+	 lin=0.5*scale
+	 m1=member[1] |  m2=member[2]
+	 m3=member[3] |  m4=member[4] |  m5=member[5]
+	 m6=member[6] |  m7=member[7] |  m8=member[8]
+	 dif=m6-m7
+	 u=m2+m3-2*scale |  U=m7+lim(dif)-1.5*scale
+	 v=(m2-0.5*scale)*(m3-0.5*scale) |  V=m7-lim(-dif)-0.5*scale
+	 dispxy x,u,v,U,V,m2,m3,m6,m7,lin
+

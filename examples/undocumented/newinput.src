@@ -1,0 +1,6 @@
+
+
+	 ARRAY gee[14]
+	 input gee[2],gee[4],gee[6]
+	 write gee
+

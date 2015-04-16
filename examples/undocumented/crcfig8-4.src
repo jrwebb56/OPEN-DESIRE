@@ -1,0 +1,30 @@
+
+
+	 --                               FFT OF A PULSE
+	 -------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 NN=16384
+	 --------------------------       define a pulse
+	 n=20
+	 ARRAY x[NN+2],y[NN+2]
+	 for i=1 to n |  x[i]=1 |  next
+	 scale=n
+	 -------------------------        compute transform, display
+	 FFT F,NN,x,y
+	 drunr
+	 write 'type go to continue' |  STOP
+	 drunr SECOND |  --                second display
+	 -----------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------
+	 get xx=x |  get yy=y |  --         FIRST DISPLAY
+	 XX=0.5*(xx+scale)
+	 YY=0.5*(yy-scale) |  --             offset this curve
+	 dispt XX,YY
+	 -------------------------                      SECOND DISPLAY
+	    label SECOND
+	 get xx=x |  get yy=y
+	 r=sqrt(xx*xx+yy*yy)
+	 phi=atan2(yy,xx)-0.5*scale |  --     offset
+	 dispt r,phi
+

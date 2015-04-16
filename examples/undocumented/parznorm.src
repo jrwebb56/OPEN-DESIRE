@@ -1,0 +1,34 @@
+
+
+	 -- PARZEN-WINDOW AMPLITUDE DISTRIBUTION
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=1/4
+	 n=1000 |  --                     sample size
+	 ARRAY X[n],f[n]
+	 NN=n
+	 drun  |  --   create a normal sample of size n
+	 ---------------------------------  display prob. density
+	 NN=10000
+	 maxx=4
+	 h=0.12
+	 alpha=1/(2*h*h) |  beta=1/(h*sqrt(2*PI))
+	 drun READOUT
+	 write HH/NN
+	 -----------------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------------
+	 --               create a normal sample of size n
+	 x=sqrt(-2*ln(abs(ran())))*cos(2*PI*abs(ran()))
+	 store X=x
+	 ----------------------------------------------------------
+	    label READOUT
+	 --
+	 xx=maxx*ran() |  --                  display abscissa
+	 Vector f=beta*exp(alpha*(xx-X)*(X-xx))
+	 AVG F=f*1
+	 HH=HH-ln(F) |  --      entropy estimate
+	 --                                 for comparison
+	 normal=exp(-0.5*xx*xx)/sqrt(2*PI)-scale
+	 F=F-scale |  xx=xx*scale/maxx
+	 dispxy xx,F,normal
+

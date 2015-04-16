@@ -1,0 +1,92 @@
+
+
+	 --    7-BIT ENCODER LEARNING, creeping random search
+	 ----------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 nv=7 |  --         number of hidden-layer neurons
+	 N=128 |  --      number of network inputs
+	 --
+	 ARRAY x[N]+x0[1]=xx |  x0[1]=1
+	 ARRAY v[nv]+v0[1]=vv |  v0[1]=1
+	 ARRAY y[N],error[N]
+	 ------------
+	 ARRAY W1[nv,N+1],W2[N,nv+1]
+	 ARRAY DELW1[nv,N+1],DELW2[N,nv+1]
+	 ARRAY DW1[nv,N+1],DW2[N,nv+1]
+	 ARRAY delW1[nv,N+1],delW2[N,nv+1]
+	 -----------------
+	 --                                  initialize connection weights
+	 for i=1 to nv |  for k=1 to N+1
+	     W1[i,k]=0.01*ran()
+	     next  |  next
+	 for i=1 to N |  for k=1 to nv+1
+	     W2[i,k]=0.01*ran()
+	     next  |  next
+	 ------------
+	 ARRAY INPUT[N,N] |  MATRIX INPUT=1
+	 ------------------------------------------------------------------
+	 fsav=1000 |  fmin=1000 |  --   initialize optimization
+	 ------------------------------------------------------------------
+	 --                                                  set parameters
+	 gain=0.2 |  gain1=0.006 |  mom=0.1 |  crit=0.02
+	 scale=1 |  NN=5000
+	 ------------------------------------------------------------------
+	 drun  |  --           simulation runs (NN trials) 
+	 write fmin,measure,YSUM
+	 STOP
+	 scale=scale/500 |  crit=0.00001
+	 NN=100000
+	 drun
+	 write fmin,measure,YSUM
+	 write 'type go to make a test run' |  STOP
+	 -----------------------------------------------------------
+	 --             test routine, used on command after learning
+	 NN=N |  TMAX=NN-1 |  t=1
+	 display 2
+	 drun TEST |  --           makes a recall run
+	 write fmin
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 --                                      weight-learning run
+	 iRow=t |  Vector x=INPUT#
+	 Vector v=tanh(W1*xx)
+	 Vector y=tanh(W2*vv)
+	 -- DOT ysum=y*1 |  Vector y=y/ysum
+	 --
+	 Vector error=x-y
+	 DOT measure=error*error
+	 DOT YSUM=y*1
+	 -------------------------------------------------------
+	 term crit-measure |  --                terminate run on success
+	 delf=comp(fsav-measure,-1,gain) |  --  kills unsuccessful changes
+	 fsav=measure |  --                                   save measure
+	 FSAV=fsav-scale |  --                  offset the curves
+	 ------------------------------------------------------------
+	 --                                            	      update
+	 MATRIX DW1=delW1
+	 MATRIX DW1=delf*DELW1 |  -- note order!
+	 DELTA W1=delW1+mom*DW1 |  --    note use of previous value
+	 DELTA W2=delf*DELW2 |  --    no second-order term here!
+	 --------------------------------------------------------
+	 --                       try pseudorandom perturbations
+	 --
+	 MATRIX DELW1=gain1*ran()
+	 MATRIX DELW2=gain1*ran()
+	 DELTA W1=DELW1 |  DELTA W2=DELW2
+	 --------------------------------------------------------
+	 if fmin-fsav
+	   fmin=fsav
+	   FMIN=fmin-scale |  --                 offset the curve
+	   -------------------------------------------
+	   dispt FMIN,FSAV |  --  display error measures
+	   -----------------------------------------------------
+	   --                                         test run
+	      label TEST
+	   iRow=t |  Vector x=INPUT#
+	   Vector v=tanh(W1*xx)
+	   Vector y=tanh(W2*vv)
+	   -----------------------------
+	   Vector error=x-y
+	   DOT measure=error*error
+

@@ -1,0 +1,63 @@
+
+
+	 --                ONE-STEP 1-LAYER PREDICTOR
+	 --                       predicts  satellite orbit
+	 ----------------------------------------------------------------
+	 display N3 |  display C8 |  display R |  scale=2
+	 ----------------------------------------------------------------
+	 TMAX=300 |  DT=0.091 |  NN=TMAX/DT+1
+	 x1=0 |  x4=1 |  x1=1 |  x2=0 |  -- process data
+	 w1=0.1 |  w2=0.2 |  w3=0.15 |  w4=0.02
+	 -------------------------------------------------------------
+	 m=2 |  --                                predictor delay 
+	 nx=10 |  --             number of delay-line taps
+	 ARRAY signal[2*m]
+	 ARRAY x[4],y[4],deltay[4],error[4],W[4,4]
+	 -- ARRAY target[4]
+	 --
+	 for i=1 to 4 |  for k=1 to 4 |  --      initialize
+	     W[i,k]=0.1*ran()
+	     next  |  next
+	 -------------------------------          online network
+	 ARRAY X[4],Y[4],ERROR[4]
+	 -- ARRAY TARGET[4]
+	 -------------------------------------    parameters
+	 lrate=0.001
+	 vnoise=0.05 |  --       measurement  noise 
+	 --
+	 N=2 |  --                   make N training runs
+	 for i=1 to N |  drun  |  next
+	 ---------
+	 write 'type go for prediction tests' |  STOP
+	 lrate=0 |  drun  |  drun  |  -- test runs
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 rr=(x1^2+x2^2)^(-1.5)
+	 d/dt x1=x3+w1*gauss(0) |  d/dt x2=x4+w2*gauss(0)
+	 d/dt x3=-x1*rr+w3*gauss(0) |  d/dt x4=x2*rr+w4*gauss(0)
+	 OUT  |  --        sampled data from here on!
+	 TARGET=x1
+	 ---------------------------------------------------------------
+	 VNOISE=vnoise*gauss(0)
+	 Vector signal=signal{-1}
+	 signal[1]=TARGET+VNOISE
+	 target=signal[m+1] |  --  train net trains on delayed signal
+	 Vector x=x{-1} |  x[1]=signal[2*m] |  -- delay line
+	 Vector y=tanh(W*x)
+	 --
+	 Vector error=target-y |  --     LMS Algorithm
+	 Vector deltay=error*(1-y^2)
+	 DELTA W=lrate*deltay*x
+	 ---------------------------------------
+	 Vector X=X{-1} |  X[1]=signal[m+1] |  --  "present" online input
+	 Vector Y=tanh(W*X)
+	 Vector ERROR=TARGET-Y
+	 -------------------------          
+	 YY=Y[1]+0.5*scale |  --           stripchart-type display        
+	 Target=TARGET+0.5*scale
+	 ERSQx20=20*ERROR[1]^2-0.5*scale
+	 ERRORx1=ERROR[1]-0.5*scale
+	 errorx1=error[1]-0.5*scale
+	 dispt YY,Target,ERRORx1,errorx1,VNOISE
+

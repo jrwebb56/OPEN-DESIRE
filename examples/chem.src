@@ -1,0 +1,24 @@
+
+
+	 -- Chemical Reaction Rates
+	 -------------------------------------------
+	 -- A + 2B <==> C --> D
+	 -- kf : A + 2B --> C
+	 -- kb : C --> A + 2B
+	 -- kd : C --> D
+	 --
+	 kf=1 |  kb=1 |  kd=0.2
+	 a=0.2 |  b=0.25 |  c=0 |  d=0
+	 TMAX=2000 |  DT=0.1 |  NN=1000
+	 display N1 |  display C8
+	 scale=0.25
+	 drun
+	 -----------------------
+	 DYNAMIC
+	 -----------------------
+	 d/dt a=kb*c-kf*a*b^2
+	 d/dt b=kb*c-kf*a*b^2
+	 d/dt c=kf*a*b^2-(kb+kd)*c
+	 d/dt d=kd*c
+	 dispt a,b,c,d
+

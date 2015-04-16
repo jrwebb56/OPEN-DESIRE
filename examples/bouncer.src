@@ -1,0 +1,39 @@
+
+
+	 --                            BOUNCING-BALL SIMULATION
+	 --           tests whether DT is small enough!
+	 ------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 scale=1
+	 DT=0.0005 |  TMAX=1 |  NN=1500
+	 k=0.94
+	 g=32.2 |  --                   acceleration of gravity
+	 ------------------------------
+	 ------------------------------------
+	 flag=1 |  --               we want to run only twice!
+	 --
+	    label back
+	 x=-1 |  xdot=1 |  --   set or reset initial conditions
+	 y=0.8 |  ydot=0
+	 drun  |  display 2 |  --  one run per bounce, keep display on
+	 repeat
+	   ydot=-k*ydot |  --     reverse the vertical velocity
+	   xdot=k*xdot
+	   y=0.00001 |  --     needed to prevent re-termination!
+	   drun
+	   until x>0.6
+	 ------------------------------------------------
+	 if flag>0 then flag=0 |  --            -- go back only once!
+	   write "type go to test DT"
+	   STOP
+	   display N2 |  DT=0.01*DT
+	   write 'checking DT' |  go to back |  -- change color and DT
+	   else proceed
+	 ------------------------------------------------------ 
+	 DYNAMIC
+	 ------------------------------------------------------
+	 d/dt x=xdot |  d/dt y=ydot |  d/dt ydot=-g
+	 term -y |  --         each run is terminated on impact
+	 Y=2*y-scale |  --   rescale and offset display
+	 dispxy x,Y
+

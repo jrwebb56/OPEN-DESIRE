@@ -1,0 +1,28 @@
+
+
+	 --                                         SATELLITE ORBIT
+	 -- illustrates variable-step/variable-order
+	 --                    (Gear) integration
+	 ---------------------------------------------------------------
+	 display N1 |  display C8
+	 NN=3000 |  DT=0.03 |  TMAX=220000 |  --   timing
+	 scale=3E+08 |  --             display scale  and color
+	 ---------------------------------------------------------------
+	 irule 15 |  --                                            Gear ru
+	 ERMAX=0.000001 |  --    NOTE! relative error
+	 ----------------------------------------------------------
+	 GK=1.42E+16
+	 r=21.0E+06 |  v=36000 |  thdot=v/r |  --    initial values
+	 ----------------------------------------------------------
+	 drun
+	 -----------------------------------
+	 DYNAMIC
+	 -----------------------------------              SYSTEM EQUATIONS
+	 d/dt r=rdot |  d/dt theta=thdot
+	 d/dt rdot=-GK/(r*r)+r*thdot*thdot
+	 d/dt thdot=-2*rdot*thdot/r
+	 ----------------------------------------------------------
+	 OUT  |  --                          scaled runtime display
+	 XX=r*cos(theta)+0.8*scale |  YY=r*sin(theta)
+	 dispxy XX,YY
+

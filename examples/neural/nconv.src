@@ -1,0 +1,28 @@
+
+
+	 --                    MATCHED-FILTER PATTERN DETECTION
+	 ------------------------------------------------------
+	 ARRAY x[880],y[880],v[880],s[880],xx[880],PP[3,3]
+	 --
+	 --                              two identical patterns
+	 --
+	 PP[2,1]=1 |  PP[2,2]=-1 |  PP[2,3]=1 |  PP[3,2]=1 |  PP[1,2]=1
+	 s[299]=1 |  s[300]=-1 |  s[301]=1 |  s[380]=1 |  s[220]=1
+	 s[349]=1 |  s[350]=-1 |  s[351]=1 |  s[430]=1 |  s[270]=1
+	 --
+	 lrate=0.05 |  --                            learn rate
+	 a=14 |  b=a |  bias=1 |  --            color scaling
+	 NN=6 |  TMAX=NN-1 |  t=1
+	 SEED 123456
+	 drun  |  STOP
+	 display F |  --                    leave graphics mode
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 Vector x=ran()+s |  Vector xx=a*x+b
+	 Vector v=PP[2,1]*x{-1}+PP[2,2]*x+PP[2,3]*x{1}+PP[3,2]*x{80}+PP[1,2]_
+*x{-80}
+	 Vectr delta y=lrate*v |  Vector v=a*swtch(y-bias)
+	 SHOW
+	 SHOW xx |  SHOW v
+

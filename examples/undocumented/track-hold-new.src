@@ -1,0 +1,24 @@
+
+
+	 --              TRACK/HOLD DEMONSTRATION            
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 TMAX=15 |  DT=0.001 |  NN=10000
+	 ------------
+	 w=6 |  --         determines control pulse rate            
+	 ctrl=1 |  r=0 |  y=0 |  --                   initial values
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 x=0.5*sin(0.5*t) |  --                                   signal  
+	 d/dt r=w*ctrl |  --           control  squarewave
+	 step
+	 ctrl=0.25*sgn(ctrl-r)
+	 -------
+	 yy=y |  --                                     output variable
+	 y=y+swtch(ctrl)*(x-y) |  --                track-hold
+	 -------                                        stripchart display
+	 CTRL=ctrl+0.5*scale |  YY=yy-0.5*scale
+	 dispt CTRL,YY
+

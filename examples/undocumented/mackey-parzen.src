@@ -1,0 +1,67 @@
+
+
+	 --  Analysis of a Mackey-Glass Time Series
+	 ---------------------------------------------------------------- 
+	 -- time starts at t=.00001 with xavg=x
+	 --
+	 display N1 |  display C8 |  display Q
+	 scale=2
+	 DT=0.04
+	 TMAX=5000
+	 NN=TMAX/DT+1 |  --  maximum sample size
+	 t=0.00001 |  xx=1
+	 --
+	 ------------------  Mackey-Glass parameters
+	 offset=0.91 |  --   make average close to 0
+	 a=0.2 |  b=0.1 |  c=10
+	 tau=23
+	 ARRAY DD[1000] |  -- time-delay ring buffer       
+	 --------------------------------    
+	 --        arrays used for Parzen
+	 nf=4096*4
+	 ARRAY XX[nf],YY[nf]
+	 ------
+	 irule 1
+	 xavg=xx+offset
+	 flag=-1 |  -- flag switches data collection
+	 drun
+	 flag=1
+	 drun
+	 ----------------------------------------
+	 write 'type go to continue' |  STOP
+	 -----------------------------------------------------
+	 irule 0
+	 scale=1 |  display N1 |  display R
+	 NN=3000
+	 h=0.05
+	 alpha=1/(2*h*h) |  --   inverse window width
+	 Ascale=15
+	 aa=Ascale/sqrt(2*PI) |  beta=aa/(nf*h)
+	 drun PARZREAD
+	 -----------------------------
+	 DYNAMIC
+	 -----------------------------
+	 tdelay Xd=DD(xx,tau
+	 xxdot=a*Xd/(1+Xd^c)-b*xx
+	 d/dt xx=xxdot
+	 x=xx-offset
+	 --------
+	 OUT
+	 xavg=xavg+(x-xavg)/t
+	 xxavg=xxavg+(x^2-xxavg)/t
+	 xvar=xxavg-xavg^2
+	 --	 --
+	 xvar1=10*xvar-scale
+	 X=x+0.5*scale
+	 ---------------------------------------
+	 if flag
+	   store XX=x
+	   dispt X,xavg,xvar1
+	   ----------------------------------------------------------
+	      label PARZREAD
+	   xx=scale*ran() |  --                  display abscissa
+	   Vector YY=beta*exp(alpha*(xx-XX)*(XX-xx))
+	   DOT F=YY*1
+	   FF=0.05*F-scale
+	   dispxy xx,FF
+

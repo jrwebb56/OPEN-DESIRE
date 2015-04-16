@@ -1,0 +1,38 @@
+
+
+	 -- PARZEN-WINDOW AMPLITUDE DISTRIBUTION
+	 ------------------------------------------------------------------
+	 n=3000
+	 ARRAY X[n],f[n]
+	 display N1 |  display C8 |  display R
+	 scale=4
+	 s=sqrt(3)/2 |  Ascale=15
+	 h=0.075
+	 alpha=1/(2*h*h) |  --           inverse window width
+	 aa=Ascale/sqrt(2*PI) |  beta=aa/h |  --    scale 
+	 ------------------------------------------------
+	 m=3
+	 for i=1 to m
+	   NN=n |  DT=0.1 |  TMAX=20
+	   drun
+	   ---------------------------------------------
+	   t=0 |  TMAX=4 |  NN=2000
+	   drunr READOUT
+	   display 2
+	   next
+	 -----------------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------------
+	 --                                           measurement run
+	 --
+	 x=sqrt(-2*ln(abs(ran())))*cos(2*PI*abs(ran()))
+	 store X=x
+	 ----------------------------------------------------------
+	    label READOUT
+	 --
+	 xx=2*t-TMAX |  --                      display sweep
+	 normal=aa*exp(-0.5*xx*xx)-scale
+	 Vector f=beta*exp(alpha*(xx-X)*(X-xx))
+	 AVG F=f*1 |  F=F-scale
+	 dispxy xx,F,normal
+

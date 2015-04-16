@@ -1,0 +1,59 @@
+
+
+	 --     MODEL-MATCHING ELMAN NETWORK
+	 --     matches Lorenz-attractor system
+	 ---------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=2
+	 TMAX=25 |  DT=0.0001 |  NN=TMAX/DT+1
+	 --------------------------------------------------------------
+	 m=1000 |  -- predictor delay (try larger m, too!)
+	 nv=37 |  --      number of hidden-layer neurons
+	 --
+	 --        input, bias, hidden layer (context layer)
+	 ARRAY x[3]+x0[1]+v[nv]=xx |  x0[1]=1
+	 ARRAY deltav[nv],y[3],error[3],target[3]
+	 ARRAY WW1[nv,nv+4],WW2[3,nv]
+	 --
+	 for i=1 to nv |  for k=1 to nv+4 |  -- initialize
+	     WW1[i,k]=0.1*ran()
+	     next  |  next
+	 -----------------------------------------------------------
+	 STATE q[3] |  --     for Lorenz state equations
+	 --
+	 --                        Lorenz-system parameters
+	 b=28 |  c=2.6667 |  A=10
+	 -- q[1]=0.001 | --          optional initial value 
+	 ---------------------------  
+	 lrate1=0.03 |  lrate2=0.02
+	 N=4 |  --                  number of training runs
+	 for i=1 to N |  drun  |  next
+	 ---------
+	 write 'type go for a recall test' |  STOP
+	 lrate1=0 |  lrate2=0 |  drun  |  -- test run
+	 write error
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 d/dt q[1]=A*(q[2]-q[1])+0.0002 |  -- Lorenz
+	 d/dt q[2]=q[1]*(b-q[3])-q[2]
+	 d/dt q[3]=q[1]*q[2]-c*q[3]
+	 ---------------------------------------------------------------
+	 OUT  |  --   we use sampled data from now on!
+	 Vector target=0.05*q
+	 Vector v=tanh(WW1*xx) |  --    includes bias
+	 Vector y=WW2*v |  --  no output limiter needed
+	 --
+	 Vector error=target-y
+	 Vector deltav=WW2%*error*(1-v^2) |  -- backprop
+	 DELTA WW1=lrate1*deltav*xx
+	 DELTA WW2=lrate2*error*v
+	 --
+	 -----------------------------     stripchart-type display
+	 yy=y[1]+0.5*scale |  TARGET=target[1]+0.5*scale
+	 errorx10=10*error[1]-0.5*scale
+	 dispt yy,TARGET,errorx10
+	 -----------------------------         phase-plane display
+	 y1=y[1]-0.5*scale |  y3=y[3]-0.5*scale
+	 q1=0.05*q[1]+0.5*scale |  q3=0.05*q[3]-0.5*scale
+	 -- DISPXY y1,y3,q1,q3
+

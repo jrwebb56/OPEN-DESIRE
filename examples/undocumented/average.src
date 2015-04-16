@@ -1,0 +1,22 @@
+
+
+	 display N1 |  display C8 |  display R |  sxcale=2
+	 TMAX=1 |  DT=0.0001 |  NN=1001
+	 t=1.0e-275
+	 x=ran()
+	 xAvg=x
+	 xavg=x
+	 drun
+	 write y
+	 DYNAMIC
+	 -------------------------------------
+	 d/dt xintg=x
+	 xavg=xintg/t
+	 d/dt xAvg=(x-xAvg)/t
+	 OUT
+	 y=100000*(xAvg-xavg)
+	 x=5*ran()
+	 z1=xAvg-0.5*scale
+	 z2=xavg+0.5*scale
+	 dispt z1,z2
+

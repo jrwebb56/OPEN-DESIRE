@@ -1,0 +1,37 @@
+
+
+	 -- STUDY SAMPLE AVERAGES, SAMPLE VARIANCES,
+	 --    AND THEIR SAMPLING DISTRIBUTIONS
+	 ------------------------------------------------------------------
+	 ARRAY x$[1]
+	 SUBMODEL STAT(x$)
+	   Vector xavg=xavg+(x$-xavg)/t
+	   Vector xxavg=xxavg+(x$^2-xxavg)/t
+	   Vector xvar=xxavg-xavg^2
+	   ----------------------------------------------------------------
+	   --  compute the sampling distributions by
+	   --    averaging statistics over m different samples
+	   --
+	   DOT Xsum=xavg*1 |  DOT XXsum=xavg*xavg
+	   Xavg=Xsum/m |  XXavg=XXsum/m
+	   Xvar=XXavg-Xavg^2
+	   --
+	   --------->   offset and rescale the display
+	   --
+	   xvaro10=0.1*xvar[1] |  Xvarx100=100*Xvar
+	   dispt Xavg,Xvarx100,xavg[1],xvaro10
+	   end
+	 ------------------------------------------------------------------
+	 -- Parzen-window probability-density estimation
+	 --
+	 SUBMODEL PARZEN(q1$,q2$)
+	   alpha=1/(2*h^2) |  beta=Ascale/(m*h*sqrt(2*PI))
+	   xx=2*t-TMAX |  --                   display sweep
+	   Vector f=beta*exp(alpha*(xx-x)*(x-xx))
+	   Vector g=beta*exp(alpha*(xx-xavg)*(xavg-xx))
+	   DOT F=f*1 |  DOT G=g*1
+	   --                                                 offset displa
+	   F=F-scale |  G=G-scale
+	   dispxy xx,F,G
+	   end
+

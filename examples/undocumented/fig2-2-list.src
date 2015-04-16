@@ -1,0 +1,25 @@
+
+
+	 --           SAMPLING DEMONSTRATION
+	 --  analog x is converted to digital q;
+	 --        then x is converted to analog y
+	 ----------------------------------------------------------
+	 connect './testers/wutz.dat' as output 2
+	 irule 4 |  --               adjusts DT properly
+	 NN=6 |  TMAX=10
+	 x=0.9 |  --                    analog initial value
+	 -----------------------------------------------------------
+	 m=1 |  -- sampling rate is (NN-1)/(m*TMAX)
+	 q=x |  --                                         initialize q	 
+	 drun
+	 disconnect 2
+	 ------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------
+	 d/dt x=xdot |  d/dt xdot=-0.4*x |  -- analog system
+	 y=q |  --                                  D/A converter
+	 SAMPLE m
+	 q=x |  --                                  A/D converter
+	 ------------------------
+	 type #2,x,q,y
+

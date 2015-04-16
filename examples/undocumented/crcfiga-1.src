@@ -1,0 +1,40 @@
+
+
+	 --                   A SIMPLE INTEGRATION-ERROR STUDY
+	 -----------------------------------------------------
+	 --    compares results from two integration rules
+	 --         after solution has run for Tacc time units
+	 -----------------------------------------------------
+	 Tacc=5 |  --            time to let errors accumulate
+	 --                                    connect printer
+	 --
+	 --   connect 'lpt1' as output 3
+	 --
+	 irule 1 |  --       start with irule 1 (2nd-order RK)
+	 i=2 |  --                       run test loop twice -
+	 while i>0 |  --          second time will use irule 3
+	   -----------------
+	   display 0 |  --                  run without output
+	   TMAX=Tacc |  DT=0.002 |  NN=2 |  --     until t=Tacc
+	   t=0 |  x=1 |  y=0
+	   drun  |  --                            do not reset
+	   -----------------
+	   display 1 |  --                 then turn output on
+	   TMAX=0.2 |  NN=11 |  --    record data at 11 points
+	   drun  |  --                while continuing the run
+	   -----------------
+	   irule 3 |  --                4th-order RK next time
+	   reset  |  i=i-1 |  --             - loop runs twice
+	   end while
+	 --                   restore default integration rule
+	 --                             and disconnect printer
+	 irule 1
+	 -- disconnect 3
+	 -----------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------
+	 d/dt x=y |  d/dt y=-x
+	 X=cos(t) |  --                    comparison solution
+	 ERRORx=x-X
+	 type x,X,ERRORx
+

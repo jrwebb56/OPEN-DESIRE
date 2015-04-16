@@ -1,0 +1,21 @@
+
+
+	 -- ACTIVATION FUNCTIONS AND DERIVATIVES
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display Q
+	 t=0 |  --  needed only for NEUNET
+	 NN=4000
+	 drun  |  STOP
+	    label jjj
+	 help sweeptst
+	 -------------------
+	 DYNAMIC
+	 -------------------
+	 x=0.001*t-2
+	 y=tanh(x)
+	 z=1-y*y |  -- this is dy/dx
+	 r=sat(x)
+	 s=tri(y)
+	 ss=tri(r)
+	 dispt y,r,z,s,ss
+

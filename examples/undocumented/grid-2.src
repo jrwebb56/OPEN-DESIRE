@@ -1,0 +1,36 @@
+
+
+	 --  TWO-DIMENSIONAL REPLICATION OF A GROWTH MODEL 
+	 --                               (EVOLON) ON AN NN-BY-NN MAP GRID 
+	 --                                                  nn must be les
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 --
+	 nn=30 |  n=nn^2
+	 alpha=0.2 |  beta=0.04 |  gamma=0.02 |  delta=0.05
+	 STATE X[nn,nn]=x
+	 ARRAY A[nn,nn]=a,B[nn,nn]=b,C[nn,nn]=c,D[nn,nn]=d
+	 r=1
+	 --
+	 for i=1 to n
+	   x[i]=0.001 |  --                          initial value
+	   a[i]=1+alpha*sqrt(-2*ln(abs(ran())))*cos(2*PI*abs(ran()))
+	   b[i]=1+beta*sqrt(-2*ln(abs(ran())))*cos(2*PI*abs(ran()))
+	   c[i]=1+gamma*sqrt(-2*ln(abs(ran())))*cos(2*PI*abs(ran()))
+	   d[i]=1+gamma*sqrt(-2*ln(abs(ran())))*cos(2*PI*abs(ran()))
+	   --
+	   next
+	 ---------
+	 TMAX=20 |  DT=0.01 |  NN=1000
+	 drun
+	 write X[7,21]
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 Vectr d/dt x=a*x^b*(c-x^d)^r
+	 -----
+	 OUT
+	 AVG xAvg=x*1 |  AVG xxAvg=x*x
+	 xvar=abs(xxAvg-xAvg^2) |  s=sqrt(xvar)
+	 dispt s,xAvg
+

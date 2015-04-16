@@ -1,0 +1,34 @@
+
+
+	 --                             PRINCIPAL COMPONENTS
+	 ------------------------------------------------------------------
+	 scale=2.5 |  display R |  display N1 |  display C8
+	 --                                  slowed for better display   
+	 nx=2 |  ny=2
+	 ARRAY x[nx],y[ny],error[nx],z[nx]
+	 ARRAY W[ny,nx]
+	 -----------------------------------------------------------------
+	 for i=1 to ny |  for k=1 to nx |  W[i,k]=0.1*ran()
+	     next  |  next
+	 ------
+	 NN=20000
+	 --------------------------------------
+	 w=20 |  noise1=0.3 |  noise2=0.3
+	 a1=1 |  a2=1
+	 lrate=0.05
+	 drun
+	 write "type go to continue" |  STOP
+	 gain=0.05 |  drun
+	 ----------------------------------------------------------------
+	 DYNAMIC
+	 ----------------------------------------------------------------
+	 x[1]=a1*sgn(sin(w*t))+noise1*ran()
+	 x[2]=a2*sgn(sin(w*t))+noise2*ran()
+	 --
+	 PLEARN y=W*x;lrate
+	 Vector z=W%*y
+	 ----------------------------------------  shorter symbols for disp
+	 --
+	 w1=2*W[1,1] |  w2=2*W[1,2] |  W1=2*W[2,1] |  W2=2*W[2,2]
+	 DISPXY x[1],x[2],y[1],y[2],w1,w2,W1,W2
+

@@ -1,0 +1,58 @@
+
+
+	 -- GLUCOSE TOLERANCE TEST SIMULATION
+	 -- from Randall, Physiological Simulation
+	 --------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 --
+	 -- PARAMETERS
+	 --
+	 EX=15000 |  --              extracellular space, ml
+	 CG=150 |  CI=150 |  --   glucose and insulin capacitances, ml
+	 --
+	 Q=8400 |  --                liver glucose release rate, mg/hr
+	 QT=80000 |  --              glucose infusion rate, mg/hr
+	 --
+	 DD=24.7 |  --               first-order glucose loss, mg/hr/mg
+	 GG=13.9 |  --               controlled glucose loss, mg/hr/mg
+	 GK=250 |  --                renal threshold, mg
+	 MU=72 |  --                 renal loss rate, mg/hr/mg
+	 G0=51 |  --                 pancreas threshold, mg
+	 BB=14.3 |  --               insulin release rate, mU/hr/mg
+	 AA=76 |  --                 first-order insulin loss, mU/hr/mg
+	 --
+	 G=81 |  --                  extracellular glucose, mg
+	 I=5.5 |  --                 extracellular insulin, mU
+	 ------------------------------------------------------------
+	 DT=1/2000 |  TMAX=8 |  T1=1 |  T2=1.5 |  --       time in hrs
+	 NN=16000
+	 ------------------------------------------------------------
+	 newvar1=0 |  newvar2=0 |  -- track-hold state variables
+	 ------------------------------------------
+	 drun
+	 write 'type "go" to continue' |  STOP
+	 reset  |  I=2.9 |  BB=0.2*BB |  drun
+	 write "PANCREATIC SENSITIVITY 0.2 TIMES NORMAL"
+	 write 'type "go" to continue' |  STOP
+	 reset  |  I=6.9 |  G=69.4 |  BB=10*BB |  drun
+	 write "PANCREATIC SENSITIVITY 2 TIMES NORMAL"
+	 -- ------------------------------------------------------------
+	 DYNAMIC
+	 -- -------------------------------------  MODEL EQUATIONS
+	 -- Glucose Rate Computation
+	 --
+	 d/dt G=newvar1
+	 --
+	 -- Insulin Rate Computation
+	 --
+	 d/dt I=newvar2
+	 ---------------------------------------------------------------
+	 step
+	 newvar1=(Q-G*(GG*I+DD)+QT*(swtch(t-T1)-swtch(t-T2))-swtch(G-GK)*MU*_
+(G-GK))/CG
+	 newvar2=(-AA*I+swtch(G-G0)*BB*(G-G0))/CI
+	 ---------------------------
+	 OUT
+	 GL=0.005*G-1 |  IS=0.07*I-1
+	 dispt GL,IS
+

@@ -1,0 +1,54 @@
+
+
+	 --   SPIRAL COUNTERPROP NETWORK
+	 --       in order, pseudo-ART;  try fast-learn mode?
+	 ------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 ------------------------------------------------------------
+	 --   create N=194 points X on two 97-point spirals 
+	 --      and an N-by-1 pattern-row matrix TARGET with
+	 --                  alternate binary-selector rows for 2 spirals
+	 --
+	 N=194 |  --                               number of categories
+	 ARRAY r[N/2],phi[N/2] |  --      pattern array for two spirals
+	 ARRAY X[N,2],TARGET[N,1]
+	 for k=1 to N/2
+	   r[k]=0.8*(7+k)/104 |  phi[k]=PI*(97-k)/16
+	   X[2*k,1]=r[k]*cos(phi[k]) |  X[2*k,2]=r[k]*sin(phi[k])
+	   X[2*k-1,1]=-X[2*k,1] |  X[2*k-1,2]=-X[2*k,2]
+	   TARGET[2*k,1]=1 |  TARGET[2*k-1,1]=0
+	   next
+	 ------------------------------------------------------------
+	 nv=N |  --                                   number of templates
+	 ARRAY W[nv,2] |  --                           template matrix
+	 ARRAY x[2],w[2],v[nv],h[nv],U[1,nv],y[1],error[1]
+	 ------------------------------------------------------------
+	 --                                  set  learning parameters
+	 lratex=0.2 |  lratef=1 |  nlearn=25
+	 crit=0 |  --                           FSCL conscience
+	 noise=0.001
+	 ---------------------------                         training run
+	 NN=6000 |  drun
+	 write "type go to continue" |  STOP
+	 lratex=0 |  crit=-1
+	 NN=50000 |  drun RECALL |  --      test run
+	 ------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------
+	 iRow=t/nlearn |  Vector x=X#+noise*ran()
+	 CLEARN v=W(x)lratex,crit |  --   learn/select
+	 Vectr delta h=v |  --   FSCL conscience counter
+	 Vector y=U*v
+	 Vector error=TARGET#-y |  --     counterpropagation
+	 DELTA U=lratef*error*v
+	 Vector w=W%*v |  --   reconstruct selected templates
+	 dispxy w[1],w[2]
+	 -----------------------------------------------------------
+	    label RECALL
+	 --                                     test run (no learning)
+	 Vector x=ran() |  --                            test input
+	 CLEARN v=W(x)lratex,crit |  --   select (no learning)
+	 Vector y=U*v |  --               counterpropagation outstar
+	 Vector x=y[1]*x |  --               suppresses display if 0
+	 dispxy x[1],x[2]
+

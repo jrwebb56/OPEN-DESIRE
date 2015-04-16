@@ -1,0 +1,29 @@
+
+
+	 --     CANNONBALL TRAJECTORIES
+	 --------------------------------------------------------
+	 DT=0.0008 |  TMAX=100 |  NN=5000
+	 display N1 |  display C8
+	 scale=6000
+	 ----------------------------------
+	 R=7.5E-05 |  g=32.2
+	 v0=900 |  --                     muzzle velocity
+	 --                              change elevation
+	 for i=1 to 8
+	   THETA=10*i*PI/180 |  --            in radians
+	   xdot=v0*cos(THETA)
+	   ydot=v0*sin(THETA)
+	   drunr  |  display 2 |  --     run, don't erase
+	   next
+	 display 1 |  --                  restore display
+	 ------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------
+	 v=sqrt(xdot*xdot+ydot*ydot)
+	 d/dt x=xdot |  d/dt y=ydot
+	 d/dt xdot=-R*v*xdot |  d/dt ydot=-R*v*ydot-g
+	 --
+	 --------------------    runtime trajectory display
+	 X=x-scale |  Y=1.5*y-scale
+	 dispxy X,Y
+

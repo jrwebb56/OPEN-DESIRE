@@ -1,0 +1,28 @@
+
+
+	 --                       RIGID PENDULUM: PHASE PORTRAIT
+	 -------------------------------------------------------
+	 display C8
+	 TMAX=10 |  DT=0.00025 |  NN=8001 |  --              timing     
+	 scale=5*PI |  b=1.5 |  --                 display scale
+	 -------------------------------------------------------
+	 g=32.2 |  weight=5 |  length=2 |  kdamp=0.03
+	 --    ( - precompute model coefficients for high speed)
+	 mass=weight/g |  kk=g/length |  kkdamp=kdamp/mass
+	 -------------------------------------------------------
+	 --             produce 5 phase-plane plots in different colors
+	 --
+	 display N1 |  theta=0 |  thedot=10 |  drunr  |  display 2
+	 display N2 |  thedot=-10 |  drunr
+	 display N3 |  theta=-15 |  thedot=6 |  drunr
+	 display N4 |  theta=15 |  thedot=-6 |  drunr
+	 display N5 |  theta=10 |  thedot=-5 |  drunr
+	 --------------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------------
+	 d/dt theta=thedot |  --                            MODEL
+	 d/dt thedot=-kk*sin(theta)-kkdamp*thedot
+	 --------------------------------------------------------
+	 THEDOT=b*thedot |  --                     scaled display
+	 dispxy theta,THEDOT
+

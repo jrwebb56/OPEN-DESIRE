@@ -1,0 +1,19 @@
+
+
+	 --     "GAMMA"
+	 ----------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 scale=0.5
+	 NN=2000
+	 ARRAY x[25],X[25]
+	 mu=0.025
+	 x[1]=1
+	 drun
+	 ----------------
+	 DYNAMIC
+	 -----------------
+	 Vectr delta x=mu*(x{-1}-x)
+	 --
+	 Vector X=x-scale
+	 dispt X[1],X[2],X[3],X[4],X[5],X[6],X[17],X[19]
+

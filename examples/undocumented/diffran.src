@@ -1,0 +1,10 @@
+
+
+	 display N1 |  display C8 |  display R
+	 scale=5
+	 NN=1100 |  x=0.4
+	 drun
+	 DYNAMIC
+	 x=2*x*(x-1)
+	 dispt x
+

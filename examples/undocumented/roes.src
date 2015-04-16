@@ -1,0 +1,65 @@
+
+
+	 --  Analysis of a Roessler Time Series
+	 ---------------------------------------------------------------- 
+	 -- time starts at t=.00001 with xavg=x
+	 --
+	 display N1 |  display C8 |  display Q
+	 scale=15
+	 DT=0.01
+	 TMAX=500
+	 NN=TMAX/DT+1 |  --  maximum sample size
+	 t=0.00001
+	 ---------------------------
+	 x=0.001 |  y=0.001 |  z=0.001
+	 a=0.2 |  b=0.2 |  c=5.7
+	 --------------------------------    
+	 --               arrays used for Parzen
+	 nf=4096*4
+	 ARRAY XX[nf],YY[nf]
+	 ------
+	 irule 1
+	 x=-1 |  -- try different initial values!
+	 xavg=x
+	 flag=-1 |  -- switches data collection OFF
+	 drun
+	 flag=1 |  -- switches data collection ON
+	 drun
+	 ----------------------------------------
+	 write 'type go to continue' |  STOP
+	 -----------------------------------------------------
+	 irule 0
+	 scale=15 |  display N1 |  display R
+	 NN=6000
+	 h=0.3
+	 alpha=1/(2*h*h) |  --   inverse window width
+	 Ascale=15
+	 aa=Ascale/sqrt(2*PI) |  beta=aa/(nf*h)
+	 drun PARZREAD
+	 -----------------------------
+	 DYNAMIC
+	 -----------------------------
+	 d/dt x=-y-z
+	 d/dt y=x+a*y
+	 d/dt z=b+z*(x-c)
+	 --------
+	 OUT
+	 xavg=xavg+(x-xavg)/t
+	 xxavg=xxavg+(x^2-xxavg)/t
+	 xvar=xxavg-xavg^2
+	 --	 --
+	 xvar1=0.25*xvar-scale
+	 X=0.5*x+0.5*scale
+	 Xavg=0.5*xavg
+	 ---------------------------------------
+	 if flag
+	   store XX=x
+	   dispt X,Xavg,xvar1
+	   ----------------------------------------------------------
+	      label PARZREAD
+	   xx=scale*ran() |  -- display abscissa
+	   Vector YY=beta*exp(alpha*(xx-XX)*(XX-xx))
+	   DOT F=YY*1
+	   FF=20*F-scale
+	   dispxy xx,FF
+

@@ -1,0 +1,30 @@
+
+
+	 --    SERVOMECHANISM SIMULATION
+	 ------------------------------------------------------------------
+	 scale=2 |  display N1 |  display C8 |  --   display
+	 TMAX=4 |  DT=0.0001 |  NN=10000
+	 ------------------------------------------------------------------
+	 A=0.1 |  w=1.2 |  --              signal parameters
+	 B=90 |  maxtrq=1 |  --     motor parameters
+	 g1=10000 |  g2=1 |  R=0.6
+	 k=40 |  r=2 |  --                      control parameters
+	 -------
+	 drun
+	 -------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------
+	 u=A*cos(w*t) |  --                input 
+	 error=x-u |  --                        servo error
+	 ------------------------------------------------------------------
+	 voltage=-k*error-r*xdot |  --  motor voltage
+	 d/dt V=-B*V+g1*voltage |  --  motor field delay
+	 torque=maxtrq*tanh(g2*V/maxtrq)
+	 d/dt x=xdot |  d/dt xdot=torque-R*xdot
+	 --
+	 ---------------------------------------- stripchart display
+	 X=5*x+0.5*scale |  U=5*u+0.5*scale
+	 ERROR=4*error
+	 TORQUE=0.5*torque-0.5*scale
+	 dispt X,U,TORQUE,ERROR
+

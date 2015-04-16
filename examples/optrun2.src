@@ -1,0 +1,38 @@
+
+
+	 --           SIMPLE SERVO OPTIMIZATION
+	 --          intentionally slow for good demo
+	 ------------------------------------------------------------------
+	 TMAX=3 |  NN=4000 |  DT=0.0005 |  --       timing
+	 scale=0.25 |  display N1 |  display C8
+	 ------------------------------------------------------------------
+	 A=0.8 |  g2=2 |  maxtrq=0.85 |  gain=200
+	 w=0.5 |  r=26 |  R=0.6 |  u=0.5
+	 opgain=20000 |  crit=0.00002 |  Dr=0.8 |  --  optimizer
+	 drun  |  --                                       initial trial r
+	 display 2 |  --               multiple runs on one plot
+	 repeat
+	   oldISE=ISE
+	   r=r+Dr
+	   reset  |  drun  |  --             run with perturbation
+	   Derr=ISE-oldISE |  --             gradient measurement
+	   if abs(Derr)<crit then exit  |  --         we are done!
+	     else proceed
+	   r=r-Dr-opgain*Derr |  --                   working step 
+	   reset  |  drun
+	   until 0>1 |  --                                     keep trying
+	 ------------------------------------------------------------------
+	 reset  |  display R |  display N12 |  drun  |  -- change color
+	 write 'optimal values: r=';r,'ISE=';ISE
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 error=x-u |  --                                        input and 
+	 V=-gain*error-r*xdot |  --                    controller output
+	 torque=maxtrq*tanh(g2*V/maxtrq) |  --         dynamics
+	 d/dt x=xdot |  d/dt xdot=torque-R*xdot
+	 --
+	 d/dt ISE=error^2 |  --                 integral square error
+	 ------------------------------------------------------------------
+	 xx=2*x-1 |  dispt xx |  --           offset runtime display
+

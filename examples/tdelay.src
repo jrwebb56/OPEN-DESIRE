@@ -1,0 +1,20 @@
+
+
+	 --               TIME-DELAY DEMONSTRATION
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 DT=0.001 |  NN=801 |  TMAX=1
+	 w=10
+	 tau1=0.125 |  tau2=0.125 |  tau3=0.125
+	 x=0.6
+	 ARRAY XX[1000],YY[1000],ZZ[1000]
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 d/dt x=-w*y |  d/dt y=w*x
+	 tdelay xx=XX(x,tau1
+	 tdelay yy=YY(xx,tau2
+	 tdelay zz=ZZ(yy,tau3
+	 dispt x,xx,yy,zz
+

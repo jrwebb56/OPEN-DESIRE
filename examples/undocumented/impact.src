@@ -1,0 +1,39 @@
+
+
+	 --  REPEATED-RUN MONTE CARLO:  1776 CANNON
+	 ------------------------------------------------------------------
+	 DT=0.008 |  TMAX=50 |  NN=5000 |  scale=5000
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display Q
+	 R=7.5E-05 |  g=32.2
+	 v0=900 |  --                                 muzzle velocity
+	 a=0.03 |  --                                 noise amplitude
+	 --    
+	 n=10 |  ARRAY xImpact[n] |  --  sample values
+	 --                         
+	 for i=1 to n |  --                  elevation in radians
+	   xI=0 |  --                             initialize track-hold
+	   theta=70*PI/180+a*(ran()+ran()+ran()+ran())
+	   xdot=v0*cos(theta) |  ydot=v0*sin(theta)
+	   drunr  |  display 2 |  --    run, don't erase display
+	   xImpact[i]=xI |  -- read the impact abscissa xI
+	   next
+	 --               COMPUTE STATISTICS AFTER n RUNS
+	 --
+	 AVG xAvg=xImpact*1
+	 AVG xxAvg=xImpact*xImpact
+	 s=sqrt(abs(xxAvg-xAvg^2)) |  --           dispersion
+	 write "xAvg = ";xAvg,"    s = ";s
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 v=sqrt(xdot^2+ydot^2)
+	 d/dt x=xdot |  d/dt y=ydot
+	 d/dt xdot=-R*v*xdot |  d/dt ydot=-R*v*ydot-g
+	 --
+	 step
+	 xI=xI+swtch(y)*(x-xI) |  --  hold the impact abscissa 
+	 -----
+	 OUT
+	 Y=y-scale |  XI=xI-scale |  dispt Y,XI
+

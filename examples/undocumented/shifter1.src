@@ -1,0 +1,24 @@
+
+
+	 --   SHIFT TIME-FUNCTION SAMPLES INTO VECTOR ARRAY
+	 --------------------------------------------------
+	 NN=9
+	 TMAX=NN-1 |  t=1
+	 -------------------
+	 ARRAY x[10],X[10]
+	 -------------------
+	 drun
+	 write t,input,x
+	 NN=3
+	 drun SHIFTOUT
+	 write t,output,x
+	 --------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------
+	 input=t*t |  --              input a function of t
+	 --                                      and shift
+	 VECTOR x=x{-1} |  x[1]=input
+	 ---------------------------------------------------
+	    label SHIFTOUT
+	 output=x[1] |  VECTOR X=x{1} |  VECTOR x=X
+

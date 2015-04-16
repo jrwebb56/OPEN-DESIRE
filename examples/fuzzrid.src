@@ -1,0 +1,76 @@
+
+
+	 --                           FUZZY-BASIS-FUNCTION NETWORK
+	 ---------------------------------------------------------
+	 n=12 |  --                           number of categories
+	 FUNCTION TGT(p,q)=sin(p)*cos(q) |  -- (or other function)
+	 ----------------------------------------------------------
+	 ARRAY x1[1]+x2[1]=x
+	 ARRAY X1dummy[1]+X1[n]=XX1 |  X1dummy[1]=-1.0E+25
+	 ARRAY X2dummy[1]+X2[n]=XX2 |  X2dummy[1]=-1.0E+25
+	 ARRAY W1[n,1],v1[n],h1[n]
+	 ARRAY W2[n,1],v2[n],h2[n]
+	 ARRAY member1[n]+M1dummy[1]=MEMBER1
+	 ARRAY member2[n]+M2dummy[1]=MEMBER2
+	 ARRAY mb[n+1],b1[n+1],b2[n+1]
+	 ARRAY U[n,n]=u
+	 ARRAY YY[n,n]=yy
+	 ---------------------------------------------------------
+	 display N1 |  --                      set display colors
+	 --                                         set parameters
+	 lratex=0.2 |  kappa=0.9996 |  lrate0=0
+	 crit=0 |  --                 (crit=0 for FSCL conscience)
+	 NN=30000
+	 ---------------------------------------------------------
+	 drun COMPETE
+	 ------------------------------------ sort routine
+	 for i=1 to n
+	   X1[i]=1.0E+25 |  X2[i]=1.0E+25
+	   for k=1 to n
+	     if W1[k,1]<X1[i] then X1[i]=W1[k,1] |  K1=k |  else proceed
+	     if W2[k,1]<X2[i] then X2[i]=W2[k,1] |  K2=k |  else proceed
+	     next
+	   W1[K1,1]=1.0E+25 |  W2[K2,1]=1.0E+25
+	   -----------------------------------------------------
+	   b1[i]=1/(XX1[i]-XX1[i+1]) |  --       set the slopes
+	   b2[i]=1/(XX2[i]-XX2[i+1])
+	   next
+	 -------------------------------   used if no optimization
+	 for i=1 to n |  for k=1 to n
+	     YY[i,k]=TGT(X1[i],X2[k])
+	     next  |  next
+	 ---------------------------------------------------------
+	 drun  |  --                                     recall run
+	 NN=20000 |  lratex=0 |  lratef=0 |  lrate0=0
+	 drun  |  STOP
+	 ---------------------------------------------------------
+	    label eee
+	 edit 230-242,330-380 |  --      for parameter editing
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 -- lratef=kappa*lratef+lrate0 |  --     reduce learning rate
+	 --
+	 Vector x=ran()
+	 tgt=TGT(x1[1],x2[1])
+	 --
+	 Vector mb=SAT(b1*(XX1-x1[1])) |  Vector MEMBER1=mb-mb{1}
+	 Vector mb=SAT(b2*(XX2-x2[1])) |  Vector MEMBER2=mb-mb{1}
+	 MATRIX U=member1&member2
+	 DOT sum=u*1 |  sum=1/sum |  Vector u=sum*u |  -- renormalize
+	 DOT y=u*yy
+	 error=tgt-y
+	 ---------------------------------------
+	 ERx10=10*abs(error)-scale
+	 p1=x1[1] |  p2=x2[1]
+	 m3=member1[3] |  m4=member1[4] |  m5=member1[5]
+	 M3=member2[3]-scale |  M4=member2[4]-scale
+	 M5=member2[5]-scale
+	 DISPXY tgt,y,tgt,ERx10,p1,m3,p1,m4,p2,M3,p2,M4
+	 -----------------------------------------------------
+	    label COMPETE
+	 lratex=kappa*lratex+lrate0 |  -- reduce learning rate
+	 Vector x=ran()
+	 CLEARN v1=W1(x1)lratex,crit |  CLEARN v2=W2(x2)lratex,crit
+	 Vectr delta h1=v1 |  Vectr delta h2=v2
+

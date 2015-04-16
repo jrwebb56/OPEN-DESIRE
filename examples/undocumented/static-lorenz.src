@@ -1,0 +1,56 @@
+
+
+	 --                     STATIC-NETWORK PREDICTOR
+	 --            predicts Lorenz-attractor time series
+	 -----------------------------------------------------------------
+	 display N3 |  display C8 |  display Q |  scale=2
+	 TMAX=150 |  DT=0.0001 |  NN=1.5e+06
+	 --------------------------------------------------------------
+	 m=50 |  -- predictor delay (try larger m, too!)
+	 nx=1 |  --                                      single input
+	 nv=17 |  --      number of hidden-layer neurons
+	 --
+	 ARRAY signal[m],y[1],error[1]
+	 --
+	 ARRAY x[nx]+x0[1]=xx |  x0[1]=1
+	 ARRAY v[nv],deltav[nv]
+	 ARRAY WW1[nv,2],W2[1,nv]
+	 --
+	 for i=1 to nv |  for k=1 to 2 |  -- initialize
+	     WW1[i,k]=0.1*ran()
+	     next  |  next
+	 -----------------------------------------------------------
+	 lrate1=0.0001 |  lrate2=0.0001
+	 --
+	 --                      Lorenz-system parameters
+	 b=28 |  c=2.6667 |  A=10
+	 -----------------------------------------------------------	  
+	 N=2 |  --                 number of training runs
+	 for i=1 to N |  drun  |  next
+	 ---------
+	 write 'type go for prediction tests' |  STOP
+	 lrate1=0 |  lrate2=0 |  drun  |  -- test run
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 d/dt X=A*(Y-X)+0.001 |  --     Lorenz attractor
+	 d/dt Y=X*(b-Z)-Y
+	 d/dt Z=X*Y-c*Z
+	 OUT  |  --           sampled data from now on!
+	 target=0.05*X
+	 --------------------------------------------------------------
+	 Vector signal=signal{-1} |  signal[1]=target
+	 x[1]=signal[m]
+	 Vector v=tanh(WW1*xx) |  --  includes bias
+	 Vector y=W2*v |  --            no output limiter 
+	 --
+	 Vector error=target-y
+	 Vector deltav=W2%*error*(1-v^2)
+	 DELTA WW1=lrate1*deltav*xx
+	 DELTA W2=lrate2*error*v
+	 --------------------------     stripchart-type dislay
+	 yy=y[1]+0.5*scale
+	 Target=target+0.5*scale
+	 errorx10=10*error[1]-0.5*scale
+	 dispt yy,Target,errorx10
+

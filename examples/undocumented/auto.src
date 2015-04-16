@@ -1,0 +1,26 @@
+
+
+	 --                            SIMPLE AUTOPILOT SIMULATION
+	 ------------------------------------------------------------------
+	 DT=0.00021 |  TMAX=3 |  NN=2000
+	 display N1 |  display C1
+	 gain=3 |  damp=0.75 |  a=1 |  b=7 |  --     set parameters
+	 phi=0.9999 |  --                                    initial pitch
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 --                                                                
+	 u=-gain*phi-damp*phidot |  --             autopilot controller
+	 d/dt elevtr=b*(a*u-elevtr) |  --     simplified servo model
+	 -----------------------------------------------------------
+	 --                                                                
+	 gamma=phi-theta |  --                             angle of attack
+	 d/dt theta=gamma-0.1*elevtr |  --         flight path angle
+	 d/dt phi=phidot |  --                                       pitch
+	 --
+	 d/dt phidot=-10*gamma-0.5*phidot+10*elevtr |  -- pitch rate
+	 -----------------------------------------------------------
+	 ELEVTR=0.1*elevtr-0.5 |  --            RUN-TIME DISPLAY
+	 dispt ELEVTR,phi
+

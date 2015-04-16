@@ -1,0 +1,54 @@
+
+
+	 --  GUIDED TORPEDO SIMU:ATION
+	 --     (x,y) is torpedo, (xt,yt) is target
+	 -------------------------------------------------------------
+	 irule 4 |  ERMAX=0.1
+	 display N1 |  display R |  scale=1.5
+	 DT=0.00001 |  TMAX=0.3 |  NN=20000
+	 -------------------------------------------------------------     
+	 UC=8 |  --                                torpedo parameters
+	 a1=0.8155 |  a2=0.8155
+	 UT=a1*UC^2
+	 b1=-15.701 |  b2=-0.23229 |  b3=0 |  -- (or -2.0002) 
+	 c1=-303.801 |  c2=-44.866 |  c3=500 |  -- 243.866
+	 --
+	 gain=300 |  rumax=0.25 |  -- control parameters
+	 RR=0.005 |  rr=RR^2 |  --          distance limit
+	 DD=100*rr
+	 --
+	 xt0=-0.5 |  yt0=.5 |  --    initial target position
+	 vxt=0.1 |  vyt=-0.5 |  --    target velocity vector
+	 x=-1.5 |  y=1.3 |  rudder=0 |  --       initial value
+	 phi=atan2(yt0-y,xt0-x) |  --           aiming angle
+	 ---------------------
+	 drun
+	 --------------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------------
+	 d/dt u=UT-a2*u^2 |  --          state equations
+	 d/dt v=u*(b1*v+b2*phidot+b3*rudder)
+	 d/dt phidot=u*(c1*v+c2*phidot+c3*rudder)
+	 d/dt phi=phidot
+	 d/dt x=u*cos(phi)-v*sin(phi)
+	 d/dt y=u*sin(phi)+v*cos(phi)
+	 --
+	 xt=xt0+vxt*t |  yt=yt0+vyt*t |  --  target
+	 psi=atan2(yt-y,xt-x) |  --    target angle
+	 dd=(x-xt)^2+(y-yt)^2 |  -- squared distance
+	 --
+	 error=(phi-psi) |  --    *swtch(dd-DD) |  -- control
+	 -------
+	 step
+	 rudder=-rumax*sat(gain*error)
+	 --
+	 term rr-dd
+	 --------------------------------------------------------
+	 -- DISPXY x,y,xt,yt
+	 rudderx2=2*rudder+0.5*scale
+	 errx40=40*error
+	 DDx10=20*dd-0.5*scale
+	 phix2=2*phi+0.5*scale
+	 --                            alternate display (stripchart)
+	 dispt rudderx2,errx40,DDx10,phix2
+

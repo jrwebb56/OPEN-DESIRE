@@ -1,0 +1,57 @@
+
+
+	 --     VECTORIZED MONTE CARLO RANDOM WALK
+	 ------------------------------------------------------------------
+	 display N1 |  display C8
+	 irule 2 |  --                                                    
+	 NN=10001 |  TMAX=1 |  DT=TMAX/(NN-1)
+	 n=5000 |  STATE x[n] |  ARRAY noise[n]
+	 --                           note: all x[i] default to 0 for t=0
+	 aa=sqrt(3*NN) |  --        scaled noise amplitude
+	 -------------------------       
+	 scale=3 |  --     display some random walks            
+	 drunr  |  --   preserves t0=0    
+	 ------  run replicated walks, compute statistics                  
+	 write "type go to continue" |  STOP
+	 display R |  scale=TMAX^2
+	 drun AVERAGES |  --          compute statistics
+	 write "type go to see histogram" |  STOP
+	 -------------------------------------------------
+	 --                        end-of-run probability-density
+	 ARRAY f[n]
+	 irule 0 |  --                                                    
+	 scale=4 |  TMAX=scale |  NN=2500
+	 a=2*scale |  b=-scale |  --             for display sweep
+	 t=0 |  h=0.15 |  --            h is the Parzen-window width
+	 alpha=1/(2*h*h) |  beta=1/(h*n*sqrt(2*PI))
+	 drun PARZEN
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 Vectr d/dt x=noise |  --    "continuous" noise
+	 OUT
+	 Vector noise=aa*ran()
+	 dispt x[1],x[2],x[3],x[4],x[5],x[6] |  --  display some walks
+	 ------------------------------------     
+	    label AVERAGES
+	 Vectr d/dt x=noise
+	 OUT
+	 Vector noise=aa*ran()
+	 DOT xSum=x*1 |  DOT xxSum=x*x |  --     compute statistics
+	 xAvg=xSum/n |  xxAvg=xxSum/n
+	 xVar=xxAvg-xAvg^2
+	 Var=t*DT*(aa^2)/3 |  --       THEORETICAL Var{x} for comparison
+	 --                                                                
+	 xAvgx20=20*xAvg |  --                                            
+	 dispt xVar,Var,xAvgx20
+	 ----------------------------------  extra DYNAMIC  segment plots h
+	    label PARZEN
+	 --
+	 xx=a*t+b |  --                                    display sweep f
+	 Vector f=beta*exp(-alpha*(xx-x)^2)
+	 DOT F=f*1 |  F=10*F-scale
+	 --                             compare with Gaussian
+	 yy=10*exp(-(xx^2)/(2*Var))/sqrt(2*Var*PI)-scale
+	 errorx2=2*(F-yy)+0.5*scale
+	 dispxy xx,yy,F,errorx2 |  --        rescaled stripchart
+

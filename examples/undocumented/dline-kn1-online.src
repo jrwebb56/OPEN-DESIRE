@@ -1,0 +1,64 @@
+
+
+	 --     ONE-STEP BACKPROP PREDICTOR
+	 --     predicts Mackey-Glass chaos generator
+	 ----------------------------------------------------------------
+	 display N14 |  display C7 |  display R |  scale=2
+	 ----------------------------------------------------------------
+	 TMAX=320 |  DT=0.04 |  NN=8000
+	 a=0.2 |  b=0.1 |  c=10 |  --   for Mackey-Glass
+	 tau=25 |  s=10 |  --         s=10 initializes buffer
+	 ARRAY DD[1000] |  --           time-delay buffer
+	 --------------------------------------------------------------
+	 m=2 |  --                                 predictor delay
+	 nx=20 |  --              number of delay-line taps               
+	 nv=17 |  --   number of hidden-layer neurons
+	 --
+	 ARRAY signal[2*m] |  --        signal delay line
+	 ------------------------------
+	 --                                             training network
+	 ARRAY x[nx],v[nv],deltav[nv],y[1],error[1]
+	 ARRAY W1[nv,nx],W2[1,nv]
+	 --
+	 for i=1 to nv |  for k=1 to nx |  -- initialize
+	     W1[i,k]=0.1*ran()
+	     next  |  next
+	 -------------------------------          online network
+	 ARRAY X[nx],V[nv],Y[1],ERROR[1]
+	 -----------------------------------------------------------
+	 lrate1=0.005 |  lrate2=0.002
+	 Tnoise=0.01
+	 drun
+	 write "delay is TMAX/";NN/m
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 tdelay Sd=DD,s,tau |  -- Mackey-Glass time series
+	 d/dt s=a*Sd/(1+Sd^c)-b*s
+	 OUT  |  --                         sampled data from here on!
+	 TARGET=s-0.85 |  --     "future" signal to be predicted
+	 --------------------------------- 
+	 Vector signal=signal{-1} |  signal[1]=TARGET+Tnoise*ran()
+	 -----------          
+	 target=signal[m+1] |  --  train net trains on delayed signal 
+	 Vector x=x{-1} |  x[1]=signal[2*m] |  --   training network
+	 Vector v=tanh(W1*x)
+	 Vector y=W2*v |  --               no limiter needed on output
+	 --
+	 Vector error=target-y |  --                    training error
+	 Vector deltav=W2%*error*(1-v^2) |  --    backprop
+	 DELTA W1=lrate1*deltav*x
+	 DELTA W2=lrate2*error*v
+	 -----------------------------
+	 Vector X=X{-1} |  X[1]=signal[m+1] |  --  "present" online input
+	 Vector V=tanh(W1*X)
+	 Vector Y=W2*V
+	 Vector ERROR=TARGET-Y |  -- online prediction error
+	 -----------------------------
+	 YY=Y[1]+0.5*scale |  --           stripchart-type display        
+	 Target=TARGET+0.5*scale
+	 ERSQx20=20*ERROR[1]^2-0.5*scale
+	 ERRORx50=50*ERROR[1]-0.5*scale
+	 errorx50=50*error[1]-0.5*scale
+	 dispt YY,Target,ERRORx50,errorx50
+

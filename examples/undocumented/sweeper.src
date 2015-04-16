@@ -1,0 +1,17 @@
+
+
+	 --                     NONLINEAR LIBRARY FUNCTIONS
+	 ------------------------------------------------------------------
+	 display N16 |  display C17 |  display R
+	 NN=20000 |  TMAX=20 |  DT=0.0001
+	 scale=2
+	 x=-2 |  p=1
+	 drun
+	 -------------------
+	 DYNAMIC
+	 -------------------
+	 d/dt x=p
+	 p=sgn(1-p)
+	 y=lim(tri(x))
+	 dispxy x,y
+

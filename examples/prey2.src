@@ -1,0 +1,21 @@
+
+
+	 --     A PREDATOR-PREY PROBLEM
+	 --                      showing the  effect of crowding
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 TMAX=2000 |  DT=0.01 |  NN=5000 |  scale=4000
+	 k1=0.05 |  k2=0.01 |  k3=2.0E-05 |  k4=1.0E-04
+	 b=0
+	 prey=2000 |  predator=200 |  --       initial values
+	 drunr
+	 write " type go to see effect of predator crowding"
+	 STOP
+	 b=1.0E-05 |  drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 d/dt prey=(k1-k4*predator)*prey
+	 d/dt predator=(-k2+k3*prey-b*predator)*predator
+	 dispt prey,predator
+

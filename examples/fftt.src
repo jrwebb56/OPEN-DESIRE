@@ -1,0 +1,45 @@
+
+
+	 --       FFT OF A PULSE (with optionakl timing)
+	 -----------------------------------------------
+	 NN=8192
+	 --------------------------       define a pulse
+	 display N1
+	 n=30 |  --                           pulse width
+	 ARRAY x[NN+2],y[NN+2]
+	 for i=1 to n
+	   x[i]=1
+	   next
+	 -------------------------     compute transform
+	 -- hh=tim(0)
+	 FFT F,NN,x,y
+	 -- hhh=tim(0) |  write hhh-hh;'  seconds'
+	 -- write 'type go to continue' 
+	 -- STOP
+	 -------  3 DYNAMIC segments display the results
+	 --
+	 scale=n
+	 drunr  |  -- first display, resets t=1
+	 write 'type go for amplitude/phase display' |  STOP
+	 drunr SECOND |  --                second display
+	 write 'type go to continue' |  STOP
+	 display N14
+	 drun THIRD |  --                   third display
+	 -----------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------
+	 get xx=x |  get yy=y |  --          FFT DISPLAY
+	 XX=0.5*(xx+scale)
+	 YY=0.5*(yy-scale) |  --             offset
+	 dispt XX,YY
+	 ---------------------- AMPLITUDDE/PHASE DISPLAY
+	    label SECOND
+	 get xx=x |  get yy=y
+	 r=sqrt(xx*xx+yy*yy)
+	 phi=atan2(yy,xx)-0.5*scale |  --     offset
+	 dispt r,phi
+	 -----------------------------------------------
+	    label THIRD
+	 get xx=x |  get yy=y |  --  COMPLEX-PLANE DISPLAY
+	 dispxy xx,yy
+

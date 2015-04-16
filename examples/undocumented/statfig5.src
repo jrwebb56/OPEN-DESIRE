@@ -1,0 +1,40 @@
+
+
+	 ----------------------------------------------
+	 -- AVERAGE USING A DIFFERENCE EQUATION
+	 -- time starts at t=1 with xavg=x, goes to t=NN=n
+	 ------------------------------------------------
+	 display N1 |  display C8 |  display Q
+	 NN=1000 |  N=NN |  --   sample size
+	 m=10000 |  -- number of replicated experiments
+	 ARRAY x[m],xsum[m],f[m]
+	 a=sqrt(3/NN) |  -- sigma^2=1
+	 --
+	 cc=tim(0)
+	 drun
+	 -----------------------------------------------------
+	    label PARZEN
+	 scale=4
+	 h=400/m
+	 alpha=-1/(2*h*h) |  --   inverse window width
+	 Ascale=15
+	 aa=Ascale/sqrt(2*PI) |  beta=aa/(h) |  --   scale 
+	 t=0 |  TMAX=scale |  NN=10000
+	 drun READOUT
+	 bb=tim(0) |  write bb-cc
+	 write "we used";N*m;"  measurements"
+	 -----------------------------
+	 DYNAMIC
+	 -----------------------------
+	 Vector x=a*ran() |  -- note that a=1/NN
+	 Vector xsum=xsum+x
+	 -----------------------------
+	    label READOUT
+	 --
+	 xx=2*t-TMAX |  --                      display sweep
+	 Vector f=beta*exp(alpha*(xx-xsum)^2)
+	 AVG F=f*1 |  F=F-scale
+	 y=Ascale*exp(-xx*xx/2)/sqrt(2*PI)
+	 Y=y-scale
+	 dispxy xx,F,Y
+

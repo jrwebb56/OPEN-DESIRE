@@ -1,0 +1,38 @@
+
+
+	 -- ARGESIM MONTE CARLO BENCHMARK
+	 -- a single simulation run does all r cases!
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 r=1000
+	 STATE x[r],xdot[r] |  ARRAY dd[r]
+	 --
+	 k=9000 |  m=450 |  kk=k/m |  -- parameters
+	 dd0=1000/m |  -- mean damping factor
+	 AA=200/m |  -- noise ampitude
+	 --
+	 -- set r initial values and random damping factors
+	 --
+	 for i=1 to r
+	   xdot[i]=0.1 |  -- x[i] = 0 by default!
+	   dd[i]=dd0+AA*ran()
+	   next
+	 --
+	 irule 1 |  -- 2nd-order RK integration
+	 DT=0.00005 |  TMAX=2 |  nn=201 |  -- timing
+	 scale=0.025 |  -- display scale
+	 ss=tim(0)
+	 drunr
+	 pp=tim(0) |  -- measure time
+	 drun
+	 qq=tim(0) |  write qq-pp,pp-ss
+	 ------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------
+	 Vectr d/dt x=xdot
+	 Vectr d/dt xdot=-kk*x-dd*xdot
+	 --- compute average at display points only!
+	 OUT
+	 DOT xsum=x*1 |  xavg=xsum/r
+	 dispt xavg
+

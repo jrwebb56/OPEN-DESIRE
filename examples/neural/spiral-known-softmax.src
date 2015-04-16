@@ -1,0 +1,55 @@
+
+
+	 --           COUNTERPROP SPIRAL CLASSIFIER
+	 --------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 null=0 |  minus=-1
+	 ---------------------------------------------------------
+	 N=194
+	 --   create N points X[i,1] and X[i,2] on two 97-point spirals 
+	 --      and an N-by-2 pattern-row matrix TARGET with
+	 --                   alternate binary-selector rows for 2 spirals
+	 --
+	 ARRAY r[97],phi[97],X[194,2],TARGET[194,2]
+	 for k=1 to 97
+	   r[k]=0.8*(7+k)/104 |  phi[k]=PI*(97-k)/16
+	   X[2*k,1]=r[k]*cos(phi[k]) |  X[2*k,2]=r[k]*sin(phi[k])
+	   X[2*k-1,1]=-X[2*k,1] |  X[2*k-1,2]=-X[2*k,2]
+	   --   
+	   TARGET[2*k,1]=1 |  TARGET[2*k,2]=0
+	   TARGET[2*k-1,1]=0 |  TARGET[2*k-1,2]=1
+	   next
+	 ------------------------------------------------------------------
+	 nv=N |  --                              number of templates
+	 ARRAY W[nv,2] |  --                     template matrix
+	 MATRIX W=X |  -- set templates on spiral points
+	 --                                                                
+	 ARRAY x[2],w[2],v[nv],U[2,nv],p[2],error[2]
+	 ------------------------------------------------------------
+	 NN=6000 |  --                                      learn U
+	 lratef=0.03 |  noise=0.04
+	 drun  |  --                         show spiral points
+	 write "type go to continue" |  STOP
+	 ---------------------                   
+	 NN=50000 |  --  run with random-point input (recall)
+	 drun RECALL
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 iRow=t |  Vector x=X#
+	 CLEARN v=W(x)null,minus
+	 Vector p=exp(U*v) |  DOT psum=p*1 |  -- softmax
+	 Vector p=p/psum
+	 Vector error=TARGET#-p |  --    unterpropagation
+	 DELTA U=lratef*error*v
+	 Vector w=W%*v+0.005*ran() |  -- display the templates
+	 dispxy w[1],w[2]
+	 ----------------------------------
+	    label RECALL
+	 Vector x=ran() |  --                   random points (x[1],x[2])
+	 CLEARN v=W(x)null,minus |  --   find nearest template
+	 Vector p=exp(U*v) |  DOT psum=p*1
+	 Vector p=p/psum
+	 Vector x=swtch(p[1]-p[2])*x |  -- kills pixel if p[1]=0 
+	 dispxy x[1],x[2]
+

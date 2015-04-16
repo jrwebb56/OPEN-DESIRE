@@ -1,0 +1,91 @@
+
+
+	 -- RANDOM WALK WITH PROBABILITY DENSITY
+	 --                        vectorized Monte Carlo study
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=3
+	 irule 2 |  --                                Euler integration
+	 NN=10000 |  TMAX=1 |  DT=TMAX/(NN-1)
+	 MM=4 |  --       slow the output sampling rate
+	 --                                         scale a, sigmasq to fit
+	 a=sqrt(3*(NN-1)) |  --  scaled random-walk amplitude
+	 sigmasq=a^2*DT/3 |  --     mean square at TMAX
+	 --
+	 n=4000 |  STATE x[n] |  ARRAY noise[n]
+	 for i=1 to n |  noise[i]=a*ran() |  next  |  --   initialize 
+	 --                  noise; all x[i] default to 0
+	 aa=tim(0)
+	 drunr
+	 bb=tim(0)
+	 write n;" ";NN-1;"-step random walks took ";bb-aa;" seconds"
+	 write "type go to continue" |  STOP
+	 --
+	 scale=1
+	 for i=1 to n |  noise[i]=a*ran() |  next  |  --  initialize
+	 aa=tim(0)
+	 drun AVERAGES
+	 bb=tim(0)
+	 write n;" ";NN-1;"-step random walks took ";bb-aa;" seconds"
+	 write "      with statistics computation at every step"
+	 write "type go to continue" |  STOP
+	 ------------------------------------------------------------------
+	 --  Parzen-window probability density estimate
+	 --
+	 ARRAY f[n]
+	 irule 0 |  --                                                    
+	 scale=4 |  TMAX=scale |  NN=NN/4
+	 flag=0 |  h=0.1
+	 MM=1 |  --        un-slow output sampling rate
+	 --
+	    label PARZRUN
+	 alpha=1/(2*h*h) |  beta=1/(h*n*sqrt(2*PI))
+	 t=0 |  aa=tim(0)
+	 drun PARZEN
+	 bb=tim(0)
+	 write "probability-density estimation took ";bb-aa;" seconds"
+	 if flag=0 then flag=1 |  h=0.15
+	   write "type go to increase window width" |  STOP
+	   go to PARZRUN
+	   else proceed
+	 -- 
+	 write "we used ";4*n*NN;" noise samples"
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 Vectr d/dt x=noise
+	 --
+	 OUT
+	 Vector noise=a*ran()
+	 --
+	 dispt x[1],x[2],x[3],x[4],x[5],x[6]
+	 -------------------------------------------------
+	    label AVERAGES
+	 Vectr d/dt x=noise
+	 ------
+	 OUT
+	 Vector noise=a*ran()
+	 --
+	 DOT xSum=x*1 |  DOT xxSum=x*x
+	 xAvg=xSum/n |  xxAvg=xxSum/n
+	 xVar=xxAvg-xAvg^2
+	 --
+	 truVar=t*TMAX |  --  (=a^2*t*COMINT/3)
+	 --
+	 xVarx2=2*xVar-scale
+	 truVarx2=2*truVar-scale
+	 --            
+	 xAvgx20=20*xAvg+0.5*scale
+	 Uox10=0.1*xAvg*sqrt(n/truVar)
+	 Verrorx4=4*(xVar/truVar-1)-0.5*scale |  -- 4 x relative error
+	 --
+	 dispt xVarx2,truVarx2,xAvgx20,Uox10,Verrorx4
+	 ------------------------------------------------------------------
+	    label PARZEN
+	 --
+	 xx=2*t-TMAX |  --                      display sweep
+	 Vector f=beta*exp(-alpha*(xx-x)^2)
+	 DOT F=f*1 |  F=10*F-scale
+	 yy=10*exp(-xx^2/(2*sigmasq))/sqrt(2*PI*sigmasq)-scale
+	 error=2*(F-yy)+0.5*scale
+	 dispxy xx,yy,F,error |  -- yy and F are scaled and offset	
+

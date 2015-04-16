@@ -1,0 +1,21 @@
+
+
+	 --             LORENZ ATTRACTOR
+	 -- phase-plane plot of chaos-type differential equations
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  irule 15 |  ERMAX=0.00001
+	 NN=50000 |  scale=25
+	 DT=0.000001 |  TMAX=35
+	 x=0.0095 |  y=0.001 |  z=0.001
+	 b=28 |  c=2.6667 |  A=10
+	 drun
+	 ------------------------------
+	 DYNAMIC
+	 ------------------------------
+	 d/dt x=A*(y-x)
+	 d/dt y=x*(b-z)-y
+	 d/dt z=x*y-c*z
+	 -----------------
+	 zz=z-scale
+	 dispxy x,zz
+

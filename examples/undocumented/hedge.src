@@ -1,0 +1,21 @@
+
+
+	 scale=4/3
+	 b=1.5
+	 NN=6000 |  TMAX=1 |  DT=0.0001
+	 x=-scale
+	 display N1 |  display R
+	 FUNCTION member(x$)=SAT(tri(b*x$))
+	 drun
+	 ----------------------------------
+	 DYNAMIC
+	 ----------------------------------
+	 d/dt x=2*scale |  -- display sweep
+	 y=member(x)
+	 not=(1-y)
+	 somewhat=sqrt(member(abs(x)))
+	 greater=(1-member(lim(x)))-scale
+	 very=member(x)*member(x)-scale
+	 around=member(0.8*x)-scale
+	 dispt y,not,somewhat,greater,very,around
+

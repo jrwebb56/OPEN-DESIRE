@@ -1,0 +1,47 @@
+
+
+	 --   SERVO , LOW-PASS NOISE INPUT - MONTE CARLO
+	 --    note noise sampling and initialization
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 A=6 |  w=1
+	 B=300 |  maxtrq=1 |  g2=2 |  R=0.6 |  --  servo parameters
+	 k=150000 |  r=4000 |  --   controller parameters
+	 -----------------------------------------------------------------
+	 TMAX=20 |  DT=0.001 |  --    
+	 NN=5000
+	 --------
+	 n=1000
+	 STATE pp[n],u[n],x[n],xdot[n],v[n]
+	 ARRAY noise[n],voltage[n],torque[n],e[n]
+	 --
+	 -- for i=1 to n | noise[i]=A*ran() | next | --  intialize noise!
+	 --                                   or default to ) (switches at 
+	 drun
+	 write "eavg=";eavg;"     eeavg=";eeavg
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 Vectr d/dt pp=-w*pp+noise
+	 Vectr d/dt u=-w*u+pp |  -- low-pass noise filter
+	 --
+	 Vector e=x-u |  --                            servo error
+	 Vector voltage=-k*e-r*xdot |  --   motor voltage
+	 Vectr d/dt v=-B*v+voltage |  --   motor-field buildup 
+	 --
+	 Vector torque=maxtrq*tanh(g2*v/maxtrq)
+	 Vectr d/dt x=xdot |  Vectr d/dt xdot=torque-R*xdot
+	 ------------------------------------------------------------------
+	 OUT
+	 Vector noise=A*ran() |  --                         sampled noise
+	 --
+	 DOT eSum=e*1 |  DOT eeSum=e*e |  -- compute averages
+	 eAvg=eSum/n |  eeAvg=eeSum/n
+	 ------------------------------------------------------------------
+	 --                                offset curves for stripchart dis
+	 --
+	 X=x[10]+0.5*scale |  U=u[10]+0.5*scale
+	 errorx5=5*e[10]
+	 eAvgx50=50*eAvg-0.5*scale |  eeAvg400=400*eeAvg-scale
+	 dispt X,U,errorx5,eAvgx50,eeAvg400
+

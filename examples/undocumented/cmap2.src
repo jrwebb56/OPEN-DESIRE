@@ -1,0 +1,40 @@
+
+
+	 --                                QUASI-COUNTERPROP
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 n=64 |  --                           number of categories
+	 --
+	 ARRAY x[1]+target[1]=traindata,v[n],h[n],WW[n,2]
+	 ARRAY U[1,n],y[1] |  --    counterpropagation
+	 ARRAY X[1]+Y[1]=templates |  --  learned templates
+	 --
+	 for i=1 to n |  WW[i,1]=ran() |  next  |  -- initialize
+	 ------------------------------------------------------------------
+	 --                                                                
+	 Tnoise=0 |  Rnoise=0 |  NN=20000
+	 lrate=0.1 |  crit=0 |  --   (crit=0 for FSCL conscience)
+	 drun  |  --    competitive learning of input/output pairs
+	 ----------
+	 write "type go for a test run" |  STOP
+	 --
+	 --  create W and U from learned WW templates for recall
+	 for i=1 to n |  U[1,i]=WW[i,2] |  next
+	 lrate=0 |  crit=1 |  NN=5000
+	 drun RECALL |  --                     recall run
+	 ------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------
+	 x[1]=ran() |  target[1]=0.8*cos(5*x[1])+Tnoise*ran()
+	 CLEARN v=WW(traindata)lrate,crit |  -- compete/learn
+	 Vectr delta h=v |  --    optional conscience counter
+	 Vector templates=WW%*v
+	 dispxy X[1],Y[1]
+	 ------------------------------------------------------------
+	 --                                             recall run
+	    label RECALL
+	 x[1]=ran() |  target[1]=0.8*cos(5*x[1])+Rnoise*ran()
+	 CLEARN v=WW(traindata)lrate,crit
+	 Vector y=U*v |  --                        function output
+	 dispxy x[1],target[1],y[1]
+

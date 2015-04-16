@@ -1,0 +1,36 @@
+
+
+	
+	
+	y1=3
+	y2=2
+	y3=4
+	y4=6
+	y5=5
+	y6=1
+	
+	TMAX=6 | NN=2000 | DT=0.00001
+	scale=20
+
+                     drun
+
+                    DYNAMIC
+                    -------------------------------------------
+                    y0=0
+	d/dt x1=2*(y1*y1-y0*y0)
+	d/dt y1=(x2-x1)*y2
+	d/dt x2=2*(y2*y2-y1*y1)
+	d/dt y2=(x3-x2)*y2
+	d/dt x3=2*(y3*y3-y2*y2)
+	d/dt y3=(x4-x3)*y3
+	d/dt x4=2*(y4*y4-y3-y3)
+	d/dt y4=(x5-x4)*y4
+	d/dt x5=2*(y5*y5-y4*y4)
+	d/dt y5=(x6-x5)*y5
+	d/dt x6=2*(y6*y6-y5*y5) 
+	y7=0
+	d/dt y6=(x7-x6)*y6
+	d/dt x7=2*(y7*y7-y6*y6) 
+                    --------------------------------
+	-- dispt x1,x2,x3,x4,x5,x6,x7
+	dispt y1,y2,y3,y4,y5,y6

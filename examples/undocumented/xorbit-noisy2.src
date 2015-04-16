@@ -1,0 +1,17 @@
+
+
+	 -- orbit simulation with one sun
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display Q |  scale=2
+	 TMAX=100 |  DT=0.001 |  NN=10000
+	 x1=1 |  x2=0 |  x3=0 |  x4=1
+	 w1=0.1 |  w2=0.2 |  w3=0.15 |  w4=0.02
+	 drun
+	 ------------------------------------
+	 DYNAMIC
+	 ------------------------------------
+	 rr=(x1^2+x2^2)^(-1.5)
+	 d/dt x1=x3+w1*gauss(0) |  d/dt x2=x4+w2*gauss(0)
+	 d/dt x3=-x1*rr+w3*gauss(0) |  d/dt x4=-x2*rr+w4*gauss(0)
+	 dispxy x1,x2
+

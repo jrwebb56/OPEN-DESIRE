@@ -1,0 +1,47 @@
+
+
+	 -- TRIANGLE-WINDOW AMPLITUDE DISTRIBUTION
+	 ------------------------------------------------------------------
+	 display N1 |  display C16 |  display R
+	 n=1000
+	 ARRAY X[n],Y[n],fx[n],fy[n],fxy[n]
+	 h=0.4 |  --                          window width
+	 alpha=1/h
+	 beta=0.75*alpha |  --                  scale factor
+	 scale=1.3
+	 -- BETA=640*alpha*beta | --     match  for comparison
+	 ------------------------------------------------
+	 sx=0 |  bx=0.5 |  --                      distribution parameter
+	 sy=0 |  by=0.5
+	 ------------------------------------------------
+	 NN=n |  TMAX=40
+	 drun MEASURE
+	 ---------------------------------------------
+	 TMAX=1 |  NN=150
+	 delx=-0.3 |  dely=-scale |  dd=0.01
+	 for y=-1 to 0.5 step dd
+	   t=0
+	   delx=delx+0.005 |  dely=dely+dd
+	   drun
+	   display 2
+	   next
+	 -----------------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------------
+	 --                                               compute results
+	 --
+	 x=2*t-1 |  --                               display sweep
+	 Vector fx=beta*lim(tri(alpha*(X-x)))
+	 Vector fy=beta*lim(tri(alpha*(Y-y)))
+	 Vector fxy=fx*fy
+	 AVG Fxy=fxy*1
+	 -----------------------------------------------------------
+	 xx=x+delx |  FFF=1.5*Fxy+dely |  -- 3-D display
+	 dispxy xx,FFF
+	 ------------------------------------------------------------------
+	 --                                           measurement run
+	    label MEASURE
+	 xx=sx*(ran()+ran()+ran())+bx*sin(10*t)
+	 yy=sy*(ran()+ran()+ran())+by*cos(10*t)
+	 store X=xx |  store Y=yy
+

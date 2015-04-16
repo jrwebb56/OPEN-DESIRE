@@ -1,0 +1,52 @@
+
+
+	 -- SIMPLE HEAT EXCHANGER (Schiesser and Silebi, 1997)
+	 ------------------------------------------------------------------
+	 display N1 |  display C8
+	 ARRAY vx[1],v[1] |  -- dummy arrays for MACRO
+	 --
+	 --                Schiesser numerical-differentiation operator
+	 --
+	 SUBMODEL DDx(n$,bb$,v,vx)
+	   Vector vx=bb$*(v{1}-v{-1})
+	   vx[1]=bb$*(-3*v[1]+4*v[2]-v[3])
+	   vx[n$]=bb$*(3*v[n$]-4*v[n$-1]+v[n$-2])
+	   end
+	 ------------------------------------------------------------------
+	 irule 4 |  -- Schiesser RK 4/2 rule     
+	 ------------------------------------------------------------------
+	 L=200 |  --               length of heat exchanger
+	 V=10 |  --                 flow velocity
+	 rho=1 |  --                density of medium
+	 CP=1 |  --                 specific heat
+	 D=2 |  --                   tube diameter
+	 uu=0.1 |  --              heat-transfer coefficient
+	 Tac=100
+	 T0c=0
+	 Tec=0
+	 ---
+	 a=4*uu/(rho*CP*D)
+	 c=10 |  w=3
+	 -------------------------------------------------------
+	 n=100 |  --           declare solution and derivative arrays
+	 STATE u[n] |  ARRAY ux[n]
+	 --
+	 DX=L/(n-1) |  bb=0.5/DX
+	 DT=0.001
+	 TMAX=40 |  NN=5000 |  scale=100 |  display N15
+	 ---
+	 X=(n-1)*DX/V |  --     time delay, used in analytical solution
+	 -------------------------------------
+	 --                            set initial conditions u[k] (default
+	 for k=1 to n |  u[k]=T0c |  next
+	 U=Tac |  --              annulus temperature (constant here)
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 u[1]=Tec+c*sin(w*t) |  --             set boundary value for inpu
+	 invoke DDx(n,bb,u,ux) |  --         differentiate u to get ux
+	 Vectr d/dt u=-V*ux+a*(U-u)
+	 ----------------------------------------
+	 dispt u[n],u[n/2],u[n/4],u[n/8]
+

@@ -1,0 +1,33 @@
+
+
+	 -- PARZEN-WINDOW AMPLITUDE DISTRIBUTION
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=1/4
+	 n=10000
+	 ARRAY X[n],Y[n],fx[n],fy[n]
+	 NN=n
+	 drun
+	 ---------------------------------------------
+	 t=0 |  TMAX=4 |  NN=2000
+	 h=0.1
+	 alpha=-1/(2*h*h) |  beta=1/(h*n*sqrt(2*PI))
+	 drun READOUT
+	 -----------------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------------
+	 --                                            measurement run
+	 x=sqrt(-2*ln(abs(ran())))*cos(2*PI*abs(ran()))+0.5
+	 y=sqrt(-2*ln(abs(ran())))*cos(2*PI*abs(ran()))-0.5
+	 store X=x |  store Y=y
+	 ----------------------------------------------------------
+	    label READOUT
+	 --
+	 xx=2*t-TMAX |  --                      display sweep
+	 Vector fx=beta*exp((X-xx)*(X-xx)*alpha)
+	 Vector fy=beta*exp((Y-xx)*(Y-xx)*alpha)
+	 DOT Fx=fx*1 |  DOT Fy=fy*1
+	 Fx=Fx-scale |  Fy=Fy-scale
+	 normal=exp(-0.5*xx*xx)/sqrt(2*PI)-scale
+	 xx=xx*scale/TMAX |  -- rescale sweep
+	 dispxy xx,Fx,Fy,normal
+

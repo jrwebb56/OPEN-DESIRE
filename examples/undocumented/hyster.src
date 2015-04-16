@@ -1,0 +1,20 @@
+
+
+	 --                                       HYSTERESIS
+	 --------------------------------------------------------
+	 TMAX=3 |  DT=0.00001 |  NN=10001 |  --    timing               
+	 scale=2.5
+	 display N1 |  display C8 |  display R
+	 ---------------------------------------------                     
+	 x=0.7 |  --           initial value for input
+	 a=0.6 |  --           deadspace for backlash  
+	 b=1.8 |  c=2
+	 drun
+	 --------------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------------
+	 p=2.5*sgn(p-x) |  d/dt x=9*p |  --   square/triangle waves
+	 --
+	 y=y+a*deadz((x-y)/a) |  z=b*tanh(c*y)
+	 dispxy x,z
+

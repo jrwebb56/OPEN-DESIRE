@@ -1,0 +1,37 @@
+
+
+	 --    SERVO IMPULSE AND FREQUENCY RESPONSE
+	 -------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 NN=4096
+	 ARRAY X[NN],Y[NN] |  --      T arrays
+	 -------------------------------------------------
+	 u=0 |  xdot=4 |  --      get impulse response x 4
+	 gain=8 |  r=3 |  --        servo gain and damping
+	 -------------------------------------------------
+	 TMAX=13 |  DT=TMAX/(NN-1)
+	 --
+	 drunr  |  --     compute/display impulse response
+	 write 'type go to continue' |  STOP
+	 -------------------------------------------------
+	 FFT F,4096,X,Y |  --             Fourier transform
+	 -------------------------------------------------
+	 scale=25 |  NN=NN/64 |  --           change scales
+	 TMAX=NN/TMAX |  --    abscissa t is now frequency
+	 --
+	 display Y
+	 scale=scale*8
+	 drun FREQ |  --       display frequency response
+	 -------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------
+	 d/dt xdot=gain*(u-x)-r*xdot |  --        velocity
+	 d/dt x=xdot |  --                        position
+	 store X=x |  --                     store for FFT
+	 dispt x |  --            display impulse response
+	 -------------------------------------------------
+	    label FREQ
+	 get xx=X |  get yy=Y |  --     get FFT components
+	 q=sqrt(xx^2+yy^2) |  --  compute absolute value
+	 dispt q |  --          display frequency response
+

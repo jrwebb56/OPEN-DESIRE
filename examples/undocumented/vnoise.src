@@ -1,0 +1,48 @@
+
+
+	 --    SERVO WITH LOW-PASS NOISE INPUT - MONTE CARLO
+	 --    note noise sampling and initialization
+	 ------------------------------------------------------------------
+	 a=2.5 |  w=1
+	 k=40 |  r=2 |  g1=10000 |  --      controller parameters
+	 B=300 |  maxtrq=1 |  g2=2 |  R=0.6 |  --  servo parameters	 
+	 -----------------------------------------------------------------
+	 TMAX=20 |  DT=0.001 |  --        simulation-run parameters
+	 NN=10000 |  scale=0.5
+	 display N1 |  display C8 |  display R |  --    display colors
+	 --------
+	 n=1000
+	 STATE p[n],unoise[n],x[n],xdot[n],v[n]
+	 ARRAY noise[n],voltage[n],torque[n],e[n]
+	 --                                                                
+	 for i=1 to n |  noise[i]=a*(ran()+ran()+ran()+ran()) |  next
+	 --
+	 drun
+	 write "eAvg=";eAvg;"     eeAvg=";eeAvg
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 Vectr d/dt p=-w*p+noise |  --  two-section
+	 Vectr d/dt unoise=-w*unoise+p |  --                low-pass filte
+	 --
+	 Vector e=x-unoise |  --                            servo error
+	 Vector voltage=-k*e-r*xdot |  --      motor voltage
+	 Vectr d/dt v=-B*v+g1*voltage |  --     motor-field buildup 
+	 --
+	 Vector torque=maxtrq*tanh(g2*v/maxtrq) |  --  dynamics
+	 Vectr d/dt x=xdot |  Vectr d/dt xdot=torque-R*xdot
+	 ------------------------------------------------------------------
+	 --                                sample at communication points
+	 OUT
+	 Vector noise=a*gauss(0) |  -- sampled noise
+	 --
+	 DOT eSum=e*1 |  DOT eeSum=e*e
+	 eAvg=eSum/n |  eeAvg=eeSum/n
+	 ------------------------------------------------------------------
+	 --                    offset curves for stripchart display
+	 --
+	 X=x[17]+0.5*scale |  Unoise=unoise[17]+0.5*scale
+	 error10=10*e[17]
+	 eAvg400=400*eAvg-0.5*scale |  eeAvg20K=20000*eeAvg-scale
+	 dispt X,Unoise,error10,eAvg400,eeAvg20K
+

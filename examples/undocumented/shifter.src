@@ -1,0 +1,18 @@
+
+
+	 --                 SHIFT SAMPLES INTO VECTOR ARRAY
+	 --------------------------------------------------
+	 NN=20
+	 TMAX=NN-1 |  t=1 |  --     remember t starts at t=0
+	 -------------------
+	 ARRAY x[NN],X[NN]
+	 -------------------
+	 drun
+	 write 't = ';t,x
+	 --------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------
+	 input=t*t |  --              input a function of t
+	 --                                      and shift
+	 Vector X=x{1} |  X[NN]=input |  Vector x=X
+

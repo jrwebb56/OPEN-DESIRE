@@ -1,0 +1,48 @@
+
+
+	 --                 STATIC-NETWORK CLASSIFIER
+	 ----------------------------------------------------------------
+	 display N3 |  display C8 |  display R |  scale=4
+	 TMAX=PI/2 |  NN=5000
+	 ---------------
+	 nv=7 |  --  number of hidden neurons
+	 --  input, bias, hidden layer (context layer)
+	 ARRAY x[1]+x0[1]+error[1]=xx |  x0[1]=1
+	 ARRAY v[nv],deltav[nv]
+	 ARRAY y[1],deltay[1]
+	 ARRAY WW1[nv,3],WW2[1,nv]
+	 ---------------
+	 for i=1 to nv |  for k=1 to 3 |  -- initialize
+	     WW1[i,k]=0.1*ran()
+	     next  |  next
+	 -----------------------------------------------------------
+	 lrate1=0.012 |  lrate2=0.005
+	 noise=0.0
+	 -------------
+	 N=1 |  --                  number of training runs
+	 for i=1 to N |  drun  |  next
+	 ---------
+	 write 'type go for a recall test' |  STOP
+	 lrate1=0 |  lrate2=0 |  drun  |  -- test run
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 switch=swtch(sin(10*t)) |  --  alternate patterns
+	 p=0.8*switch*cos(200*t) |  -- sine waves
+	 q=(1-switch)*sgn(sin(100*t)) |  --  square waves
+	 x[1]=p+q+noise*ran()
+	 target=x[1]
+	 -------	
+	 Vector v=tanh(WW1*xx) |  --           includes bias
+	 Vector y=tanh(WW2*v)
+	 --
+	 Vector error=target-y
+	 Vector deltay=error*(1-y^2)
+	 Vector deltav=WW2%*deltay*(1-v^2) |  -- backprop
+	 DELTA WW1=lrate1*deltav*xx
+	 DELTA WW2=lrate2*deltay*v
+	 -----------------------------
+	 X=x[1]+0.5*scale |  errorx100=100*error[1]
+	 Y=y[1]-0.5*scale
+	 dispt X,Y
+

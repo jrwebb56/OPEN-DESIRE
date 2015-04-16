@@ -1,0 +1,41 @@
+
+
+	 --                      GROSSBERG FEEDFORWARD NORMALIZER
+	 --------------------------------------------------------
+	 n=400 |  ARRAY x[n],y[n],yy[n]
+	 --------------------------------------------------------
+	 NN=n |  TMAX=NN-1 |  t=1
+	 display N1 |  display C8 |  display R
+	 scale=.25
+	 w=0.1 |  r=0.2
+	 drun SHIFTIN |  --              shift input into x-array
+	 display 2
+	 --------------------------------------------------------
+	 --                                       main experiment
+	 NN=100 |  h=0.01
+	 A=0.1 |  ymax=20 |  ymin=-0.1 |  b=(ymax-ymin)*h
+	 drun
+	 --------------------------------------------------------
+	 --                         shift y-array out for display
+	 NN=n |  TMAX=NN-1 |  t=1
+	 display N2 |  --                   change display color
+	 drun SHIFTOUT
+	 --------------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------------
+	 --                          Grossberg normalizing filter
+	 --
+	 DOT xSUM=x*1 |  a=(A+xSUM)*h |  c=ymin*xSUM*h
+	 Vectr delta y=-a*y+b*x+c
+	 --------------------------------------------------------
+	    label SHIFTIN
+	 --
+	 INorOUT=r*abs(sin(0.1*w*t)*sin(w*t)) |  -- input pattern
+	 Vector x=x{-1} |  x[1]=INorOUT |  --   input is reversed
+	 dispt INorOUT
+	 --------------------------------------------------------
+	    label SHIFTOUT
+	 --
+	 INorOUT=y[n] |  Vector y=y{-1}
+	 dispt INorOUT
+

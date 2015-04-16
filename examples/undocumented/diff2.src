@@ -1,0 +1,10 @@
+
+
+	 NN=10
+	 drun
+	 DYNAMIC
+	 --  d/dt y=0.1
+	 --  step
+	 x=x+4
+	 type x
+

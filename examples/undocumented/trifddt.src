@@ -1,0 +1,27 @@
+
+
+	 --                               SUPER-TRIFFET NEURON
+	 ------------------------------------------------------------------
+	 display N1 |  display C8
+	 irule 2 |  -- Euler integration
+	 NN=10001 |  DT=0.0001 |  TMAX=3
+	 -------------------------------------------
+	 STATE y[3] |  ARRAY switch[3]
+	 a=0.01 |  --                       input amplitude
+	 b1=0.04 |  -- determines rise time
+	 b2=0.001 |  -- determines refractory time   
+	 c=2000 |  -- integrator gain              
+	 fire1=0.5 |  fire2=0.9 |  bound=1 |  --     levels
+	 drun
+	 --------------------------------------------------
+	 DYNAMIC
+	 --------------------------------------------------
+	 x=a*sin(2.5*t) |  --              external input
+	 Vector y=lim(y)
+	 Vectr d/dt y=c*(x+(b1-x)*swtch(y-fire1)+(b2-b1)*swtch(y-fire2)-(1+b_
+2)*10*swtch(y-bound))
+	 --------------------------------------------------
+	 X=40*x+0.5*scale |  --        offset display curves
+	 Y=y[1]-scale
+	 dispt X,Y
+

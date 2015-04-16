@@ -1,0 +1,59 @@
+
+
+	 --   FUNCTION-LEARNING COUNTERPROPAGATION NETWORK
+	 ---------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=2
+	 n=64 |  --                        number of pattern pairs
+	 --
+	 ARRAY INPUT[n,1],TARGET[n,1] |  --       input and output
+	 ARRAY x[1],v[n],hh[n],y[1] |  --                3 neuron layers
+	 ARRAY xx[1],error[1]
+	 ARRAY X[1],Y[1] |  --        duplicates for error display
+	 ARRAY W[n,1],U[1,n] |  --     connection- weight matrices
+	 --
+	 for i=1 to n |  --                            fill arrays
+	   W[i,1]=0.00001*ran()
+	   h=PI*(2*i-n-1)/(n-1)
+	   INPUT[i,1]=h |  TARGET[i,1]=cos(h)
+	   next
+	 ---------------------------------------------------------
+	 --                               set  learning parameters
+	 lratex=0.2 |  lratef=0.2 |  noise=0.0
+	 nlearn=160 |  crit=0.00001
+	 ---------------------------------------------------------
+	 NN=nlearn*n+60 |  --                 learn input, output
+	 drun
+	 write 'type go to continue' |  STOP
+	 ---------------------------------------------------------
+	 --                           run with test input (recall)
+	 NN=401 |  TMAX=2*PI
+	 t=-PI |  scale=1
+	 thresh=0.015 |  --          set interpolation threshold
+	 drun RECALL
+	 STOP
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 iRow=t/nlearn+1 |  Vector x=INPUT# |  --   use each value nlearn
+	 x[1]=x[1]+noise*ran()
+	 CLEARN v=W(x)lratex,crit |  -- learn/select input values
+	 --
+	 Vector error=TARGET#-U*v |  --               output error
+	 DELTA U=lratef*error*v |  --        learn function values
+	 ---------------------------------------------------------
+	 Vector X=W%*v |  --    reconstruct learned x values
+	 XERROR=0.5*(X[1]-x[1]+scale) |  -- offset x-error display
+	 YERROR=error[1]-0.5*scale |  --    offset y-error display
+	 dispt XERROR,YERROR
+	 ---------------------------------------------------------
+	 --                                 test run (no learning)
+	    label RECALL
+	 x[1]=t |  --                                   test input
+	 --	 --
+	 INTP v=W*x;thresh |  --               select/interpolate
+	 DOT vnormsqr=v*v |  vvv=1/vnormsqr
+	 Vector y=vvv*U*v
+	 ---------------------------------------------------------
+	 YY=y[1] |  target=cos(t) |  --            runtime display
+	 dispt YY,target
+

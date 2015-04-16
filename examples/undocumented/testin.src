@@ -1,0 +1,13 @@
+
+
+	 ARRAY aa[4]
+	 connect 'tester' as input 3
+	 for i=1 to 6
+	   input #3,aa
+	   if  eof  then go to 303 |  else proceed
+	   write aa
+	   next
+	 disconnect 3
+	 STOP
+	 write 'BBBBBBBbbbbbbbbbbbbbbb!!!!!!'
+

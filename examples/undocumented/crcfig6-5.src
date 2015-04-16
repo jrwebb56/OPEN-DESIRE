@@ -1,0 +1,44 @@
+
+
+	 --                                    SIMPLE ANALOG FILTER
+	 --      H  =  1/(s^2 + a[1]s + a[2]) 
+	 -- successive samples of the filter output are stored
+	 --     in an array that will be used to compute the FFT
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  --               disp
+	 NN=16384 |  DT=0.00001 |  TMAX=2
+	 n=2 |  STATE x[n] |  ARRAY a[n]+b[n]+b0[1]=ab
+	 ARRAY OUTPUT[NN],OUTPUTy[NN] |  --     arrays for FFT
+	 ------------------------------------------------------------------
+	 --                                                       specify f
+	 a[1]=20000 |  --  squared circular frequency
+	 a[2]=40 |  --                    damping coefficient
+	 b[1]=1 |  --             other a[i], b[i] default to 0
+	 b0[1]=0 |  --              feedforward coefficient
+	 ----------------------------------------------------------------
+	 t=0 |  --   (default initial t would be t = 1)
+	 x[1]=1 |  --         to get impulse response
+	 scale=0.005 |  --              display scale
+	 drunr  |  --                drunr resets t = 0
+	 write 'type go for FFT' |  STOP
+	 --------------------------------------------
+	 FFT F,NN,OUTPUT,OUTPUTy
+	 scale=2 |  NN=251
+	 drun SECOND |  --                        amplitude/phase display
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 input=0 |  --                        for impulse response
+	 output=x[n]+b0[1]*input |  --  note the feedforward term
+	 Vectr d/dt x=x{-1}+b*input-a*output
+	 dispt output
+	 ----------                                                        
+	 store OUTPUT=output
+	 ------------------------------------------------------------------
+	 ----                                                     amplitude
+	    label SECOND
+	 get xx=OUTPUT |  get yy=OUTPUTy |  --          FFT arrays
+	 r=sqrt(xx*xx+yy*yy)
+	 phi=0.5*atan2(yy,xx)
+	 dispt r,phi
+

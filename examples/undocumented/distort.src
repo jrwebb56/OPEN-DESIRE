@@ -1,0 +1,56 @@
+
+
+	 --                                COMPETITIVE LEARNING
+	 ------------------------------------------------------
+	 m=2 |  --                             number of inputs
+	 n=128 |  --         number of competitive-layer neurons
+	 --
+	 ARRAY x[m],y[n],h[n],w[m],hh[n],W[n,m],error[m],h1[n]
+	 --
+	 q=177456
+	 SEED q |  --                     random initial weights
+	 for i=1 to n
+	   h[i]=0.000001
+	   for k=1 to m
+	     W[i,k]=ran()
+	     next
+	   next
+	 display Q |  display N1 |  --        thin yellow dots
+	 ------------------------------------------------------
+	 --                           set experiment parameters
+	 lrate=0.6 |  --                             learn rate
+	 crit=0 |  --                         no ART emulation
+	 S=0.2 |  --                         decay rate for lrate
+	 scale=4
+	 NN=1000 |  t=1 |  TMAX=NN-1
+	 ------------------------------------------------------
+	 SS=S/TMAX |  lrate1=lrate
+	 drun  |  --                 simulation run (NN trials)
+	 STOP
+	 q=q+3271 |  SEED q |  --            repeat with new seed
+	 go to 1965
+	 ------------------------------------------------------
+	    label eee
+	 display F |  --                        edit parameters
+	 ed 250,260,1960,2050-2090,2220
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 --                                 weight-learning run
+	 lrate1=lrate*exp(-SS*t) |  --      decrease learn rate
+	 Vector x=ran()
+	 CLEARN y=W*x;lrate1,crit |  --           compete,learn
+	 --                               reconstruct templates
+	 Vector w=W%*y
+	 Vector error=w-x |  DOT distort=error*error
+	 --
+	 Vectr delta h=y |  --                  accumulate histogram
+	 nn=1/t
+	 Vector h1=h*nn
+	 Vector hh=-h1*ln(h1)
+	 DOT H=hh*1 |  ENTROPY=H/ln(2)-scale |  --   entropy
+	 --
+	 w1=w[1] |  w2=w[2] |  --  dispxy w1,w2
+	 ERRx100=100*distort-scale
+	 dispt ENTROPY,ERRx100
+

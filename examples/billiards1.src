@@ -1,0 +1,29 @@
+
+
+	 --                                          BILLIARDS
+	 -----------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 NN=2000 |  DT=0.01
+	 TMAX=20 |  Tstop=1000
+	 -----
+	 R=0.9 |  -- restitution parameter
+	 fric=0.0005 |  -- acceleration due to friction
+	 a=1 |  b=0.5
+	 xdot=0.15 |  ydot=0.035
+	 repeat
+	   drun  |  display 2 |  -- don't erase display
+	   if abs(x)>a then xdot=-R*xdot |  ydot=R*ydot
+	     else proceed
+	   if abs(y)>b then xdot=R*xdot |  ydot=-R*ydot
+	     else proceed
+	   until t>Tstop
+	 -----------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------
+	 v=sqrt(xdot^2+ydot^2)
+	 d/dt x=xdot |  d/dt y=ydot
+	 d/dt xdot=-fric*xdot/v |  d/dt ydot=-fric*ydot/v
+	 term abs(x)-a |  term abs(y)-b
+	 term t-Tstop
+	 dispxy x,y
+

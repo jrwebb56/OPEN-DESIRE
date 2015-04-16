@@ -1,0 +1,37 @@
+
+
+	 --  Bernoulli TRIAS, BINOMIAL DISTRIBUTION
+	 ------------------------------------------------------------------
+	 FUNCTION bernoulli(p$)=swtch(ran()+2*p$-1)
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display Y
+	 write "Specify the sample size n,"
+	 write "    the number nn of  samples of size n,"
+	 write "       and the success probability p for one play."
+	 write " Choose any p from 0 to 1."
+	 input n,nn,p
+	 --
+	 ARRAY x[nn],xSum[nn],f[nn]
+	 --------------------------
+	 -- generate nn=n samples of size n=NN, and
+	 --    compute all nn scores xSum[i] in one run.
+	 --               
+	 NN=n+1 |  --    note n+1
+	 drun
+	 --             estimate probabilities at t=n
+	 ------------------------------------------------------
+	 t=0 |  NN=n+1 |  scale=5/n |  TMAX=NN-1
+	 write "type go to continue" |  STOP
+	 drun PROB
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 Vector x=bernoulli(p) |  -- Bernoulli trials
+	 Vectr delta xSum=x |  -- score from n=t trials
+	 dispt x[1]
+	 ------------------------------------------------------
+	    label PROB
+	 Vector f=rect(2*(t-xSum))
+	 AVG prob=f*1 |  Prob=prob-scale
+	 dispt Prob
+

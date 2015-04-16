@@ -1,0 +1,93 @@
+
+
+	 --           5-BIT ENCODER LEARNING, creeping random search
+	 -----------------------------------------------------------
+	 n2=5 |  --         number of hidden-layer neurons
+	 n1=2^n2 |  --      number of network inputs
+	 N=n1 |  --         number of patterns
+	 --
+	 ARRAY INPUT[N,n1]
+	 ARRAY x1[n1]+x0[1]=layer1 |  x0[1]=1
+	 ARRAY v1[n2]+v0[1]=layer2 |  v0[1]=1
+	 ARRAY layer3[n1],error[n1]
+	 ------------
+	 ARRAY w12[n2,n1+1],w23[n1,n2+1]
+	 ARRAY DELw12[n2,n1+1],DELw23[n1,n2+1]
+	 ARRAY d12[n2,n1+1],d23[n1,n2+1],delw12[n2,n1+1],delw23[n1,n2+1]
+	 -----------------
+	 --                                   set up input patterns
+	 for i=1 to n1
+	   for k=1 to n1 |  INPUT[i,k]=-1 |  next
+	   INPUT[i,i]=1
+	   next
+	 ----------------------------------------------------------
+	 f1=0 |  --           initialize error-measure accumulation
+	 fsav=1000 |  fmin=1000
+	 ----------------------------------------------------------
+	 --                                          set parameters
+	 gain=0.02 |  gain1=0.01 |  q=1.2 |  crit=0.1
+	 scale=5 |  NN=40000
+	 --
+	 display N1 |  display C8 |  display Q |  --   colors, dots
+	 -----------------------------------------------------------
+	 drun  |  --     2 simulation runs (NN trials each)
+	 scale=0.01 |  crit=0.0001 |  drun
+	 -- write 'type go to make a test run' |  STOP
+	 -----------------------------------------------------------
+	 --             test routine, used on command after learning
+	 NN=N |  TMAX=NN-1 |  t=1
+	 drun RECALL |  --           makes a recall run
+	 write 'measure = ';measure
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 --                                      weight-learning run
+	 iRow=t |  Vector x1=INPUT#
+	 Vector v1=tanh(w12*layer1)
+	 Vector layer3=tanh(w23*layer2)
+	 --
+	 Vector error=x1-layer3
+	 ----------------
+	 measure=error[1]*error[1] |  --    accumulate error measure
+	 f1=f1+measure |  --                    over N patterns
+	 -----------------------------------------------------------
+	 SAMPLE N |  --  -------execute subsequent code only after N
+	 --                successive trials to update weights
+	 --                    and biases after N patterns!
+	 --------------------
+	 term crit-f1 |  --                 terminate run on success
+	 delf=(gain+1)*swtch(fsav-f1)-1 |  --      kills bad changes
+	 --           this is faster than delf=comp(fsav-f1,-1,gain)  
+	 fsav=f1 |  --                                       save f1
+	 FSAV=fsav-scale |  --                      offset the curve
+	 f1=0 |  --                         reset cumulative measure
+	 -----------------------------------------------------------
+	 --                                            	      update
+	 MATRIX d12=delw12
+	 MATRIX delw12=delf*DELw12 |  --                 note order!
+	 DELTA w12=delw12+q*d12 |  --     note use of previous value 
+	 DELTA w23=delf*DELw23 |  --      no second-order term here!
+	 -----------------------------------------------------------
+	 --        try new pseudorandom perturbations of w12 and w23
+	 --
+	 -- gain1=0.0003*fsav
+	 MATRIX DELw12=gain1*ran()+gain1*ran()
+	 MATRIX DELw23=gain1*ran()+gain1*ran()
+	 DELTA w12=DELw12 |  DELTA w23=DELw23
+	 -----------------------------------------------------------
+	 FF=fmin-fsav |  --                    (from preceding batch)
+	 if FF |  --                     
+	   fmin=fsav
+	   ------------
+	   FMIN=fmin-scale |  --                    offset the curve
+	   dispt FMIN,FSAV,FF |  --           display error measures
+	   ---------------------------------------------------------
+	   --                                               test run
+	      label RECALL
+	   iRow=t |  Vector x1=INPUT#
+	   Vector v1=tanh(w12*layer1)
+	   Vector layer3=tanh(w23*layer2)
+	   -----------------------------
+	   Vector error=x1-layer3
+	   measure=error[1]*error[1]
+

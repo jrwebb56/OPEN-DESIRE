@@ -1,0 +1,70 @@
+
+
+	 -- 2-DIMENSIONAL TORPEDO SIMULATION
+	 -- Monte Carlo statistics over 6500 effective simulation runs
+	 -- solves 39,000 differential equations!
+	 --------------------------------------
+	 display N1 |  display C8 |  display R |  scale=7
+	 DT=0.01 |  TMAX=100 |  NN=501
+	 irule 4 |  ERMAX=0.1
+	 -------------------------------------------------------
+	 ARRAY RT[48] |  -- RUDDER-COMMAND BREAKPOINT TABLES
+	 data 19,20,25,26 |  --                                     turn
+	 data 32,33,34,40,41,42,47,48,49 |  --            snake
+	 data 55,56,57,63,64,65,71,72,73,74,75
+	 data 0,0.25,0.25,0 |  --         attack - circle
+	 data 0,-0.25,0,0,0.25,0,0,-0.25,0,0,-0.25
+	 data 0,0,-0.25,0,0,0.25,0,0,-0.125
+	 read RT
+	 -------------------------------------------------------
+	 n=6500
+	 STATE u[n],v[n],psi[n],psiAVG[n],x[n],y[n] |  -- state variables
+	 ARRAY cosp[n],sinp[n],rr[n] |  --    defined variables
+	 ARRAY rrnoise[n] |  --                noisy steering 
+	 ------------------------------------------------------
+	 --              TORPEDO PARAMETERS
+	 UC=0.25
+	 X1=0.8155 |  X2=0.8155 |  --          u-equation parameters
+	 UT=X1*UC*UC
+	 Y1=-15.701 |  Y2=-0.23229 |  Y3=2.0002 |  --      v-params.
+	 N1=-303.801 |  N2=-44.866 |  N3=-243.866 |  --    r-params.
+	 noise=0.001 |  --                              noise fraction
+	 ------------------------------------------------------------------
+	 for k=1 to n |  x[k]=-2.4 |  y[k]=6 |  --       initial value
+	   --
+	   --        noise-perturbed steering command
+	   --
+	   rrnoise[k]=noise*(ran()+ran()+ran()+ran())
+	   next
+	 --
+	 aa=tim(0) |  --  time measurement
+	 drun
+	 bb=tim(0)
+	 write " you solved ";6*n;" nonlinear differential equations"
+	 write "    to compute ";n;" torpedo trajectories and statistics"
+	 write "    ";1000*(bb-aa)/n;" milliseconds per effective run"
+	 write "total time needed was ";bb-aa;" seconds"
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 rudder=func1(t,RT) |  --         rudder command function
+	 Vector rr=(rudder+rrnoise)*u |  --      noise-perturbed!
+	 --
+	 Vectr d/dt u=UT-X2*u*u
+	 Vectr d/dt v=u*(Y1*v+Y2*psiAVG+Y3*rr)
+	 Vectr d/dt psiAVG=u*(N1*v+N2*psiAVG+N3*rr)
+	 Vectr d/dt psi=psiAVG
+	 --
+	 Vector cosp=cos(psi) |  Vector sinp=sin(psi)
+	 Vectr d/dt x=u*cosp-v*sinp |  Vectr d/dt y=u*sinp+v*cosp
+	 --------------------------------------------------------
+	 --                                  compute Monte Carlo statistics
+	 --
+	 AVG xavg=x*1 |  AVG yavg=y*1
+	 AVG xxavg=x*x |  AVG yyavg=y*y
+	 --
+	 varx=xxavg-xavg^2 |  vary=yyavg-yavg^2
+	 sigmax=sqrt(abs(varx)) |  sigmay=sqrt(abs(vary))
+	 --
+	 DISPXY xavg,yavg,x[15],y[15],x[64],y[64]
+

@@ -1,0 +1,78 @@
+
+
+	 --           FUNCTION-LEARNING BACKPROPAGATION NETWORK
+	 -------------------------------------------------------
+	 N=1 |  --               trials per accumulation "epoch"
+	 m1=8 |  m2=9 |  --             number of hidden neurons
+	 --
+	 ARRAY x[1],v1[m1],v2[m2],y[1]
+	 ARRAY error[1],v1delta[m1],v2delta[m2],ydelta[1]
+	 ARRAY w1[m1,1],w2[m2,m1],w3[1,m2]
+	 ARRAY b1[m1],b2[m2]
+	 ARRAY W1[m1,1],W2[m2,m1],W3[1,m2] |  --     duplicates
+	 ARRAY B1[m1],B2[m2]
+	 --                                          initialize
+	 for i=1 to m1
+	   W1[i,1]=ran() |  B1[i]=ran()
+	   for k=1 to m2
+	     W2[k,i]=ran() |  next  |  next
+	 for k=1 to m2 |  W3[1,k]=ran() |  B2[k]=ran()
+	   next
+	 --
+	 f1=0 |  --          initialize error-measure accumulation
+	 y0=0
+	 -------------------------------------------------------
+	 --                            set experiment parameters
+	 --
+	 W1gain=0.070 |  B1gain=0.070
+	 W2gain=0.020 |  B2gain=0.020
+	 W3gain=0.010 |  Ygain=0.010
+	 W1moment=0 |  W2moment=0 |  W3moment=0
+	 B1moment=0 |  B2moment=0 |  Ymoment=0
+	 Y0=0 |  --                               initial offset
+	 NN=10000 |  scale=2 |  MM=5 |  -- MM needed for Ubuntu!
+	 --
+	 display N1 |  display C8 |  --        set display colors
+	 drun
+	 write "type go to continue" |  STOP
+	 drun  |  STOP
+	 -------------------------------------------------------
+	    label eee
+	 edit 230,260,440-510,1012
+	 -------------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------------
+	 x1=ran() |  Vector x=x1
+	 Vector v1=tanh(w1*x+b1)
+	 Vector v2=tanh(w2*v1+b2)
+	 Vector y=w3*v2+y0
+	 --
+	 target=0.8*sin(8*x1)
+	 Vector error=target-y
+	 Vector ydelta=error
+	 Vector v2delta=W3%*ydelta*tri(v2)
+	 Vector v1delta=W2%*v2delta*tri(v1)
+	 --
+	 Y0=Y0+Ygain*ydelta[1]+Ymoment*Y0
+	 Vectr delta B2=B2gain*v2delta+B2moment*B2
+	 Vectr delta B1=B1gain*v1delta+B1moment*B1
+	 --
+	 DELTA W1=W1gain*v1delta*x+W1moment*W1
+	 DELTA W3=W3gain*ydelta*v2+W3moment*W3
+	 --
+	 y1=y[1]+0.5*scale |  TARGET=target+0.5*scale
+	 v11=0.5*(v1[1]-scale) |  v21=0.5*(v2[1]-scale)
+	 v13=0.5*(v1[3]-scale) |  v23=0.5*(v2[3]-scale)
+	 v14=0.5*(v1[4]-scale) |  v24=0.5*(v2[4]-scale)
+	 v15=0.5*(v1[5]-scale) |  v25=0.5*(v2[5]-scale)
+	 X1=2*x1
+	 f1=f1+error[1]*error[1] |  --         accumulate measure
+	 DOT E=error*error |  Ex1000=1000*E-scale
+	 dispxy X1,TARGET,v11,v13,v21,y1,v13,v23,v14,v15,v24,v25
+	 -------------------------------------------------------
+	 SAMPLE N
+	 fsave=f1 |  f1=0
+	 -------------------
+	 MATRIX w1=W1 |  MATRIX w2=W2 |  MATRIX w3=W3
+	 Vector b1=B1 |  Vector b2=B2 |  y0=Y0
+

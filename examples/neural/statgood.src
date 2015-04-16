@@ -1,0 +1,56 @@
+
+
+	 --              STATISTICAL LEARNING: VECTOR QUANTIZATION
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=0.1
+	 nv=8 |  --                            number of categories
+	 A=0.1 |  --                              signal amplitude
+	 NN=13000 |  a=1/NN |  --       NN is the number of trials
+	 lrate=0.8 |  crit=0
+	 ---------------------------------------------------------
+	 ARRAY x[1],v[nv],h[nv],hh[nv] |  --          2 neuron layers
+	 ARRAY W[nv,1] |  --                        template matrix
+	 --
+	 ---------------------------------------------------------
+	 for i=1 to nv
+	   W[i,1]=0.01*ran(0) |  --  initialize template matrix
+	   next
+	 ---------------------------------------------------------
+	 drun  |  --                       vector-quantization run
+	 write 'type go to continue' |  STOP
+	 ---------------------------------------------------------
+	 NN=3000 |  a=1/NN |  --               now take statistics
+	 write ' .... running NN =';NN;' trials!'
+	 drun RECALL
+	 ---------------------------------------------------------
+	 ONE=0 |  H=0 |  --        initialize checksum and entropy
+	 for i=1 to nv
+	   hh[i]=a*hh[i] |  --    statistical relative frequencies
+	   ONE=ONE+hh[i] |  --                 accumulate checksum
+	   H=H-hh[i]*ln(hh[i]+1.0E-25) |  --    accumulate entropy
+	   next
+	 -----------------------------             display results
+	 write hh |  write
+	 write 'entropy =';H/ln(2);' bits','          checksum =';ONE
+	 STOP
+	 ---------------------------------------------------------
+	    label eee
+	 edit 240-290 |  --        display  parameters for editing
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 x[1]=A*ran()
+	 lrate=lrate*0.9996
+	 CLEARN v=W(x)lrate,crit |  --   learn/select input values
+	 Vectr delta h=v
+	 ---------------------------------------------------------
+	 W1=W[1,1] |  W2=W[2,1] |  W3=W[3,1] |  W4=W[4,1]
+	 W5=W[5,1] |  W6=W[6,1] |  W7=W[7,1] |  W8=W[8,1]
+	 dispt W1,W2,W3,W4,W5,W6,W7,W8 |  --     display templates
+	 ---------------------------------------------------------
+	    label RECALL
+	 --
+	 x[1]=A*ran() |  x[2]=r |  --                  TWO inputs
+	 Vector v^=W*x |  --     simple competition - no learning!
+	 Vectr delta hh=swtch(v) |  --            accumulate histogram
+

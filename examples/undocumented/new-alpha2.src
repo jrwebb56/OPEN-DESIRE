@@ -1,0 +1,50 @@
+
+
+	 --  PSEUDO-ART COMPETITIVE LEARNING - new 
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=0.5
+	 -----
+	 nx=25 |  --                        input-pattern dimension       
+	 n=26 |  --                                 number of templates
+	 N=26 |  --                                  number of patterns
+	 ------------------
+	 ARRAY input[nx],INPUT[N,nx] |  --   input pattern
+	 ARRAY x[nx],v[n],h[n],w[nx],error[nx]
+	 ARRAY W[n,nx] |  --                     template matrix
+	 -----
+	 for i=1 to n |  for k=1 to nx |  -- initialize
+	     W[i,k]=0.02*ran() |  next  |  next
+	 ----------------------
+	 connect './competitive/alphabet.txt' as input 2
+	 input #2,INPUT
+	 disconnect 2
+	 -----------------------       set experiment parameters
+	 lrate=0.3 |  --       learning rate (slow for display)
+	 crit=0.01 |  --                                          resoluti
+	 cc=5.5 |  --      scales template SHOW operation
+	 NN=50 |  --                                         trials per ru
+	 Tnoise=0.1
+	 ------------------------------------------------------
+	 for i=1 to N |  --                        N simulation runs
+	   drun
+	   for k=1 to 30000 |  --   slow display for demo!
+	     write "wait" |  next
+	   next
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 iRow=i |  Vector input=INPUT#
+	 Vector x=input+Tnoise*ran()
+	 CLEARN v=W(x)lrate,crit |  --      compete/learn    
+	 Vector w=W%*v |  --                        get template 
+	 -----
+	 Vector error=w-x
+	 DOT enormsqr=error*error |  --    squared error norm
+	 ENORMSQR=sat(enormsqr)-scale |  --  offset display
+	 -------------------------------------------------------
+	 --                                         SHOW display of pattern
+	 Vector x=cc*x |  --    scale and show input and
+	 Vector w=cc*w |  --                         template arrays
+	 SHOW  |  SHOW input,5 |  SHOW x,5 |  SHOW w,5
+	 dispt ENORMSQR
+

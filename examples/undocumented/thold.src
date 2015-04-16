@@ -1,0 +1,19 @@
+
+
+	 --               TRACK/HOLD DEMONSTRATION            
+	 --------------------------------------------------------------
+	 TMAX=15 |  DT=0.001 |  NN=10000 |  scale=5
+	 display N1 |  display C8 |  display R
+	 -------------------------------------------------------
+	 w=6 |  --  signal parameter                    
+	 x=1 |  u=4 |  --                     initial values
+	 drun
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 d/dt u=udot/2 |  d/dt udot=-u/2 |  --  cosine wave
+	 p=sgn(p-x) |  d/dt x=w*p |  --  square/triangle waves
+	 step
+	 U=U+swtch(p)*(u-U) |  -- track-hold
+	 dispt p,U
+

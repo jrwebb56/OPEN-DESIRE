@@ -1,0 +1,42 @@
+
+
+	 --  VECTORIZED MONTE CARLO:
+	 --      CANNONBALL TRAJECTORIES
+	 -------------------------------------------------------------
+	 DT=0.008 |  TMAX=50 |  NN=5000 |  -- timing
+	 display N1 |  display C8
+	 scale=5000
+	 ----------------------------------
+	 R=7.5E-05 |  g=32.2
+	 v0=900 |  --                     muzzle velocity
+	 a=0.03 |  --                      noise amplitude
+	 --    
+	 n=1000
+	 STATE x[n],y[n],xdot[n],ydot[n]
+	 ARRAY theta[n],v[n],ximpact[n],Ximpact[n],Y[n]
+	 --      
+	 aa=tim(0)
+	 for i=1 to n |  --        noisy elevation angle, radians
+	   theta[i]=70*PI/180+a*(ran()+ran()+ran()+ran())
+	   xdot[i]=v0*cos(theta[i]) |  ydot[i]=v0*sin(theta[i])
+	   next
+	 drun
+	 --
+	 DOT xsum=ximpact*1 |  xavg=xsum/n
+	 DOT xxsum=ximpact*ximpact |  xxavg=xxsum/n
+	 s=sqrt(xxavg-xavg^2)
+	 bb=tim(0) |  write bb-aa
+	 write "xavg = ";xavg,"    s = ";s
+	 ------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------
+	 Vector v=sqrt(xdot^2+ydot^2)
+	 Vectr d/dt x=xdot |  Vectr d/dt y=ydot
+	 Vectr d/dt xdot=-R*v*xdot |  Vectr d/dt ydot=-R*v*ydot-g
+	 --
+	 step
+	 Vector ximpact=ximpact+swtch(y)*(x-ximpact)
+	 -------------------         runtime trajectory display
+	 Vector Y=y-scale |  Vector Ximpact=ximpact-scale
+	 -- dispt Y[3],Ximpact[3],Y[4],Ximpact[4]
+

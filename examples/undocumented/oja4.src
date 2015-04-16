@@ -1,0 +1,44 @@
+
+
+	 --   RIVAL-PENALIZED COMPETITIVE LEARNING (OJA)
+	 ------------------------------------------------------------------
+	 m=2 |  --                             number of inputs
+	 n=18 |  --         number of competitive-layer neurons
+	 N=4 |  --                           number of clusters
+	 --
+	 ARRAY x[m],v[n],h[n],w[m],W[n,m],INPUT[N,2]
+	 data -3,-1;-3,1;-1,-1;-1,1
+	 read INPUT
+	 --
+	 for i=1 to n
+	   W[i,1]=2*ran() |  W[i,2]=3*ran() |  next
+	 display Q |  display N1 |  display C8 |  --   thick dots
+	 --                           set experiment parameters
+	 lrate=-0.08 |  --                           learn rate
+	 crit=0 |  --                           chose algorithm
+	 S=0 |  --                         decay rate for lrate
+	 a=0.2 |  scale=4
+	 NN=70000 |  t=1 |  TMAX=NN-1
+	 ------------------------------------------------------
+	 lrate1=lrate |  SS=S/TMAX
+	 drun  |  drun  |  drun  |  --   simulation  run (NN trials)
+	 STOP
+	 ------------------------------------------------------
+	    label eee
+	 display F |  --                        edit parameters
+	 edit 250-265,310,1000-2090
+	 ------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 --                                 weight-learning run
+	 --
+	 lrate1=lrate*exp(-SS*t) |  --      decrease learn rate
+	 iRow=t
+	 Vector x=INPUT#+a*ran()+a*ran()+a*ran()+a*ran()
+	 --
+	 CLEARN v=W(x)lrate1,crit |  --           compete,learn
+	 Vectr delta h=v
+	 --                                 produce test output
+	 Vector w=W%*v
+	 DISPXY w[1],w[2],x[1],x[2]
+

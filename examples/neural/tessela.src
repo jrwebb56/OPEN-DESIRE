@@ -1,0 +1,62 @@
+
+
+	 -- LINEAR-PERCEPTRON PATTERN CLASSIFIER/ASSOCIATOR
+	 --                        no bias terms are needed
+	 --------------------------------------------------
+	 --                              Network Definition
+	 m=2 |  N=2
+	 ARRAY input[m],INput[m],x[m],v[N],y[N],bias[N]
+	 ARRAY INPUT[N,m],TARGET[N,N]
+	 ARRAY W[N,m]
+	 --
+	 ARRAY error[N],Yerror[m]
+	 --
+	 for i=1 to N |  for k=1 to m
+	     W[i,k]=ran() |  next  |  next
+	 data -0.5,0.5;-0.5,0.7
+	 read INPUT
+	 --
+	 MATRIX TARGET=1 |  -- (one-of-n classifier)
+	 ---------------------------------------
+	 lrate=.3
+	 scale=0.001
+	 NN=10000
+	 display N3 |  display C8 |  display R
+	 ---------------------------------------
+	 drun
+	 write 'type go for a recall run' |  STOP
+	 ----------
+	 t=1 |  NN=10000 |  restore
+	 read input
+	 scale=1
+	 drun RECALL
+	 write INPUT,y
+	 STOP
+	    label eee
+	 edit 700,1310-1355
+	 ----------------------------------------
+	 DYNAMIC
+	 ----------------------------------------
+	 iRow=t
+	 VECTOR input=INPUT# |  VECTOR x=input
+	 VECTOR v=W*x+bias
+	 --
+	 VECTOR error=TARGET#-v
+	 LEARN W=lrate*error*x |  UPDATE bias=lrate*error
+	 --
+	 VECTOR y=INPUT%*v |  VECTOR Yerror=y-input
+	 --
+	 DOT enormsq=error*error |  DOT Yenormsq=Yerror*Yerror
+	 YENORMSQ=Yenormsq-scale
+	 dispt enormsq,YENORMSQ
+	 ----------------------------------------
+	    label RECALL
+	 --
+	 VECTOR x=ran()
+	 VECTOR v=W*x+bias
+	 VECTOR v^=v |  VECTOR v=swtch(v)
+	 VECTOR y=INPUT%*v
+	 --
+	 z1=v[1]*x[2] |  z2=v[2]*x[2]
+	 dispxy x[1],z1,z2
+

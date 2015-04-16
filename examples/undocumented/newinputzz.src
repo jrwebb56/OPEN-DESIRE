@@ -1,0 +1,10 @@
+
+
+	 n=21
+	 ARRAY gee[n]
+	 connect './gerste/geez.txt' as input 3
+	 input #3,gee
+	 -- for i=1 to n |  input #3,gee[i] |  next
+	 disconnect 3
+	 write gee
+

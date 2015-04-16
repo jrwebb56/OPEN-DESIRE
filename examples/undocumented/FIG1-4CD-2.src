@@ -1,0 +1,23 @@
+
+
+	 --             Duffing's Differential Equation
+	 ---------------------------------------------------------
+	 scale=10 |  display R
+	 TMAX=30 |  DT=0.0002 |  NN=10000
+	 a=0.099 |  b=15 |  --        parameters
+	 x=0.02 |  -- initial value
+	 drun
+	 write "type go to continue" |  STOP
+	 TMAX=200 |  display 0 |  drun
+	 write " note how solution becomes periodic!"
+	 TMAX=30 |  display 1 |  drun
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 z=cos(t)
+	 d/dt x=xdot |  d/dt xdot=-a*xdot-x*x*x+b*z
+	 Z=0.5*(z+scale) |  X=0.5*x |  XDOT=0.5*(xdot-scale)
+	 -- dispt Z,X,XDOT
+	 xx=2*x
+	 dispxy xx,xdot
+

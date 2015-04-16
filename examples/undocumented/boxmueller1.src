@@ -1,0 +1,30 @@
+
+
+	 -- PARZEN-WINDOW AMPLITUDE DISTRIBUTION
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=4
+	 n=10000 |  --                     sample size
+	 ARRAY X[n],f[n]
+	 NN=n |  Ascale=15
+	 drun
+	 ---------------------------------------------
+	 NN=3000
+	 h=0.2 |  -- analyzer Parzen-window width
+	 alpha=1/(2*h*h)
+	 aa=Ascale/sqrt(2*PI) |  beta=aa/(n*h) |  -- scale
+	 drun READOUT
+	 -----------------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------------
+	 --                                            measurement run
+	 x=gauss(0)
+	 store X=x
+	 ----------------------------------------------------------
+	    label READOUT
+	 --
+	 xx=scale*ran() |  --                  display abscissa
+	 Vector f=beta*exp(alpha*(xx-X)*(X-xx))
+	 DOT F=f*1
+	 normal=aa*exp(-0.5*xx*xx)-scale |  --  true normal
+	 F=F-scale |  dispxy xx,F,normal
+

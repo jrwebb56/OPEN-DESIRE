@@ -1,0 +1,81 @@
+
+
+	 --      RADIAL-BASIS FUNCTION NETWORK
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 cc=10
+	 N=26 |  nx=25 |  -- number and dimension of patterns
+	 ARRAY input[nx],x[nx]
+	 ARRAY INPUT[N,nx],TARGET[N,N]
+	 ARRAY f[N]+f0[1]=ff |  f0[1]=1 |  --  N RBFs and bias 
+	 ARRAY W[N,N+1] |  --               weights include biases
+	 ARRAY Prob[N],q[N],y[nx],yy[nx]
+	 ARRAY error[N]
+	 ARRAY P[N,nx],pp[N]
+	 --------------------------------------------------------
+	 connect 'alphabet.txt' as input 2
+	 input #2,INPUT
+	 disconnect 2
+	 ------------------------   set parameters                         
+	 lrate=2
+	 a=0.16
+	 Tnoise=0.15 |  Rnoise=1
+	 NN=500
+	 ----------------------------   	 read INPUT
+	 MATRIX TARGET=1 |  --  (binary-classifier rows)
+	 ------------------------------------------------------------------
+	 ---     template matrix P generates squared radii
+	 MATRIX P=INPUT
+	 for k=1 to N
+	   pp[k]=0
+	   for j=1 to nx |  pp[k]=pp[k]+P[k,j]^2 |  next
+	   next
+	 ----------------------------------------------------------------
+	 --                  train radial-basis-function network
+	 drun
+	 ---------------------------------------------------------------- 
+	 write 'type go for successive recall runs' |  STOP
+	 display F
+	 ----------
+	 NN=2
+	 for i=1 to N
+	   drun RECALL
+	   write Prob |  -- show probabilities
+	   for k=1 to 15000 |  write "wait" |  next
+	   next
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 iRow=t |  Vector input=INPUT#
+	 Vector x=input+Tnoise*ran()
+	 --
+	 --       rr=xx -2* P*x + pp is the vector of squared radii
+	 DOT xx=x*x |  Vector f=exp(a*(2*P*x-xx-pp))
+	 -- 
+	 --                   softmax radial-basis-function expansion 
+	 Vector Prob=exp(W*ff) |  DOT Probsum=Prob*1
+	 Vector Prob=Prob/Probsum |  -- probability estimate
+	 ------------------------------------------------
+	 Vector error=TARGET#-Prob
+	 DELTA W=lrate*error*ff |  -- LMS algorithm
+	 DOT enormsq=error*error
+	 -- 
+	 ENORMSQ=enormsq-scale |  -- offset display
+	 dispt ENORMSQ
+	 ----------------------------------------
+	    label RECALL
+	 iRow=i
+	 Vector input=INPUT#
+	 Vector x=input+Rnoise*ran()
+	 DOT xx=x*x |  Vector f=exp(a*(2*P*x-xx-pp))
+	 Vector Prob=exp(W*ff) |  DOT Probsum=Prob*1
+	 Vector Prob=Prob/Probsum |  -- probability estimate
+	 --
+	 Vector q^=Prob |  Vector q=swtch(q) |  -- binary selector
+	 Vector yy=INPUT%*Prob
+	 Vector y=INPUT%*q |  -- associative memory
+	 ---------------------------------------------------------------
+	 Vector input=cc*input |  Vector x=2*cc*x
+	 Vector yy=2*cc*yy |  Vector y=cc*y
+	 SHOW  |  SHOW input,5 |  SHOW x,5 |  SHOW yy,5 |  SHOW y,5
+

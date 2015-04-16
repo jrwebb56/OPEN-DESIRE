@@ -1,0 +1,12 @@
+
+
+	 ARRAY aa[4],bb[4]
+	 connect 'tester' as input 3
+	 connect 'bippy' as input 4
+	 for i=1 to 4
+	   input #3,aa
+	   input #4,bb
+	   write aa,bb
+	   next
+	 disconnect 3,4
+

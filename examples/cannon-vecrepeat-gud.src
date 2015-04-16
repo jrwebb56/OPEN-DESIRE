@@ -1,0 +1,50 @@
+
+
+	 --     REPEATED/VECTORIZED MONTE CARLO SIMULATION
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  scale=5000
+	 DT=0.008 |  TMAX=50 |  NN=1000
+	 --------------------------------------
+	 R=7.5E-05 |  g=32.2
+	 v0=900 |  --                                     muzzle velocity
+	 a=0.03 |  --                                    noise amplitude
+	 --    
+	 n=100 |  nn=5 |  M=n*nn |  --      sample size
+	 STATE x[n],y[n],xdot[n],ydot[n]
+	 ARRAY theta0[n],v[n],xI[n],Y[n],XI[n],xImpact[M]
+	 --
+	 ARRAY XXI[M] |  --             combined-sample array
+	 --
+	 for k=1 to nn |  --  nn vectorized simulation runs        
+	   --                    
+	   for i=1 to n |  --                          noisy elevation ang
+	     theta0[i]=70*PI/180+a*(ran()+ran()+ran()+ran())
+	     xdot[i]=v0*cos(theta0[i]) |  ydot[i]=v0*sin(theta0[i])
+	     xI[i]=0 |  --           reset difference-equation state varia
+	     next
+	   --                 make a vectorized simulation run and read its
+	   drunr  |  --  n sample values into the combined sample XXI
+	   --	 
+	   for i=1 to n |  XXI[i+(k-1)*n]=xImpact[i] |  next
+	   next
+	 --
+	 DOT xSum=xI*1 |  DOT xxSum=xI*xI
+	 xAvg=xSum/n |  xxAvg=xxSum/n
+	 s=sqrt(abs(xxAvg-xAvg^2))
+	 write "xAvg = ";xAvg,"    s = ";s |  --         the resulting sta
+	 ------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------
+	 Vector v=sqrt(xdot^2+ydot^2)
+	 Vectr d/dt x=xdot |  Vectr d/dt y=ydot
+	 Vectr d/dt xdot=-R*v*xdot
+	 Vectr d/dt ydot=-R*v*ydot-g
+	 --
+	 step
+	 Vector xI=xI+swtch(y)*(x-xI) |  --  hold impact abscissa
+	 --
+	 -------------------                                  runtime traje
+	 OUT
+	 Vector Y=y-scale |  Vector XI=xI-scale
+	 dispt Y[3],XI[3],Y[4],Y[6],XI[4],XI[6]
+

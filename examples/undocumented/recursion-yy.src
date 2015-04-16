@@ -1,0 +1,17 @@
+
+
+	 --         RECURRENCE OPERATION
+	 ------------------------------------------------------
+	 connect 'recursion-xx-1' as output 2
+	 NN=10
+	 t=1
+	 x=0
+	 drun
+	 disconnect 2
+	 --------------------
+	 DYNAMIC
+	 --------------------
+	 X=x+t
+	 x=X
+	 type x
+

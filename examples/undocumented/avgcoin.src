@@ -1,0 +1,20 @@
+
+
+	 -- COIN-TOSSING PROCESS
+	 ---------------------------------------------
+	 display N1 |  display C8
+	 NN=2000000 |  scale=0.01
+	 a=0.
+	 x=sgn(ran()-a)
+	 m=1
+	 drun
+	 write x,xavg
+	 ----------------------
+	 DYNAMIC
+	 ----------------------
+	 SAMPLE m
+	 x=sgn(ran()-a)
+	 xavg=xavg+(x-xavg)/t
+	 dispt xavg
+	 -- type x,xavg
+

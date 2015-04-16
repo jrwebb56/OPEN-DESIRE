@@ -1,0 +1,87 @@
+
+
+	 --   SPIRAL-LEARNING CLASSIFIER NETWORK
+	 ------------------------------------------------------------
+	 display N1 |  display C8 |  display Q
+	 -- 
+	 N=194 |  -- number of patterns
+	 n=N |  -- number of categories
+	 nx=2 |  -- pattern dimension
+	 nv=52 |  -- hidden-layer dimension 
+	 ARRAY x[nx]+xsq[nx]=xx
+	 ARRAY input[2]
+	 ARRAY v[nv]
+	 ARRAY y[n],error[n],P[n]
+	 ARRAY deltav[nv]
+	 ARRAY INPUT[N,2]
+	 ------------------	 
+	 --  make N/2 patterns and targets for each of two spirals
+	 --	 
+	 ARRAY r[N/2],phi[N/2]
+	 for k=1 to N/2
+	   r[k]=0.8*(7+k)/104 |  phi[k]=PI*(97-k)/16
+	   INPUT[2*k,1]=r[k]*cos(phi[k])
+	   INPUT[2*k,2]=r[k]*sin(phi[k])
+	   --
+	   INPUT[2*k-1,1]=-INPUT[2*k,1]
+	   INPUT[2*k-1,2]=-INPUT[2*k,2]
+	   next
+	 ---------------
+	 -- connection weights
+	 ARRAY WW[n,2*nx]
+	 --
+	 --   random initial weights "break symmetry"
+	 for i=1 to n |  for k=1 to 2*nx
+	     WW[i,k]=0.1*ran() |  next  |  next
+	 --
+	 ARRAY TARGET[N,N]
+	 MATRIX TARGET=1
+	 ------------------------------------------------------------ 
+	 --                                          set   parameters
+	 lrate=0.3
+	 Tnoise=0.0 |  Rnoise=0
+	 ------------------------------------------------------------
+	 NN=3000000
+	 drun showspirals
+	 write "type go to continue" |  STOP
+	 scale=0.5
+	 drun
+	 write "type go to continue" |  STOP
+	 ------------------------------------------------------------
+	 --                              run with test input (recall)
+	 NN=10000
+	 drun RECALL
+	 ------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------	 
+	 --                                                       network
+	 iRow=t
+	 Vector x=INPUT#+Tnoise*ran()
+	 Vector xsq=x*x
+	 --
+	 Vector y=exp(WW*xx) |  DOT ysum=y*1
+	 Vector P=y/ysum |  -- probability estimates
+	 --
+	 --------------------------------------       backprop
+	 Vector error=TARGET#-P
+	 --
+	 --    "momentum" adds part of last change
+	 DELTA WW=lrate*error*xx
+	 --
+	 DOT enormsqr=error*error |  MSQERR=enormsqr-scale
+	 dispt MSQERR |  --    offset and display error measure
+	 ------------------------------------------------------------------
+	    label showspirals
+	 iRow=abs(ran())*2000
+	 Vector x=INPUT#+0.01*ran()
+	 dispxy x[1],x[2]
+	 -----------------------------------------------------------------
+	    label RECALL
+	 Vector xx=ran()
+	 Vector xsq=x*x
+	 --
+	 Vector y=exp(WW*xx) |  DOT ysum=y*1
+	 Vector P=y/ysum |  -- probability estimates
+	 Vector x=y[1]*x
+	 dispxy x[1],x[2]
+

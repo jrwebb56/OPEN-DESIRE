@@ -1,0 +1,68 @@
+
+
+	 --            PILOT EJECTION STUDY AND CROSSPLOT
+	 ------------------------------------------------------------------
+	 display N1 |  display C8 |  display R
+	 DT=0.002 |  TMAX=2 |  NN=800
+	 -----------
+	 g=32.2 |  --                       gravity acceleration, ft/sec
+	 m=7 |  --                           mass of pilot and seat, slugs
+	 y1=4 |  --                            vertical rail height, ft
+	 theta=15/57.2958 |  --            ejection angle, radians
+	 veject=40 |  --                      ejection velocity, ft/sec
+	 CD=1 |  --                             drag coefficient
+	 h=-50 |  --                            initial altitude will be 0
+	 va=100 |  --                      initial aircraft speed, ft/sec
+	 xtail=30 |  ytail=20 |  --    obstruction (tail) coordinates
+	 rho=2.377 |  --                  initial relative air density
+	 C=0.5E-02*CD/m |  --       drag factor
+	 ------------------------------------------------------------------
+	 --                     Table: Relative Air Density RHO versus h
+	 ARRAY RHO[24]
+	 data 0,1E+3,2E+3,4E+3,6E+3,1E+4,1.5E+4,2E+4,3E+4,4E+4,5E+4,6E+4
+	 data 2.377,2.308,2.241,2.117,1.987,1.755,1.497,1.267
+	 data 0.891,0.587,0.364,0.2238
+	 read RHO
+	 ------------------------------------------------------------------
+	 ARRAY H[20],VA[20] |  -- storage arrays for crossplot
+	 ----------------------------
+	 x=-y1*sin(theta)/cos(theta) |  y=y1 |  --    initial condition
+	 vx=va-veject*sin(theta) |  vy=veject*cos(theta)
+	 -----------------------------------------------
+	 i=0 |  kk=0
+	 repeat
+	   write "va=";va
+	   repeat
+	     h=h+500 |  --                        set new altitude
+	     drun  |  yf=y |  reset  |  display 2 |  -- run, read y=yf
+	     kk=kk+1
+	     until yf>ytail |  --                   he must clear the tail
+	   --
+	   i=i+1 |  H[i]=h |  VA[i]=va |  --                   record h
+	   va=va+50 |  vx=vx+50 |  --                        
+	   until va>900
+	 -------
+	 write kk;' runs done; type go for crossplot' |  STOP
+	 ------------------------------------------------------------------
+	 --     CROSSPLOT FOR PILOT EJECTION EXPERIMENT
+	 ----------------------------------------------------
+	 TMAX=1 |  NN=17 |  display 1
+	 drun crossplt |  --            uses dummy integration rule 0
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 rho=func1(y+h,RHO) |  --   compute air density
+	 CV=C*rho*sqrt(vx*vx+vy*vy) |  --      = C*rho*v
+	 d/dt vx=-CV*vx |  d/dt vy=-CV*vy-g
+	 d/dt x=vx |  d/dt y=vy
+	 term va*t-x-xtail |  --           stop run at or over obstruction
+	 ------------------------------------------------------------------
+	 X=0.003*x-0.95 |  Y=0.075*y-1 |  --        RUNTIME TRAJECTORY
+	 dispxy X,Y
+	 ----------------------------------------------------
+	    label crossplt
+	 get Va=VA |  -- read storage arrays
+	 get Ha=H
+	 vv=0.002*Va-scale |  hh=0.000025*Ha-scale
+	 dispxy vv,hh
+

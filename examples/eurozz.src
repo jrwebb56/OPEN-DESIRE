@@ -1,0 +1,31 @@
+
+
+	 --            EUROSIM PENDULUM-AND-PEG
+	 ------------------------------------------------------------------
+	 NN=1000 |  TMAX=1 |  DT=0.001
+	 display N1 |  display C8
+	 ------------------------------------------------------------------
+	 m=1.02 |  L=1 |  Ls=0.3 |  g=9.81 |  d=0.2
+	 kl=g/L |  ks=g/Ls |  r=d/m |  a=L/Ls |  A=1/a
+	 phip=-PI/12 |  --   peg position                                 
+	 phi=PI/6 |  --   initial displacement                            
+	 Tmax=1 |  --   maximum compound-run time                         
+	 ------------------------------------------------------------------
+	 repeat
+	   k=kl |  ctrl=1 |  --                                
+	   drun  |  display 2 |  --   run with long string               
+	   ----------
+	   k=ks |  ctrl=-1 |  --      run with short string 
+	   phidot=phidot*a |  drun
+	   phidot=phidot*A |  --   run again with long string
+	   until T>Tmax
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 d/dt phi=phidot |  d/dt phidot=-k*sin(phi)-r*phidot
+	 term ctrl*(phip-phi) |  --    terminate on peg 
+	 --------------------------------
+	 T=0.2*t-scale |  --            compound-run time
+	 -- term T-Tmax
+	 dispxy T,phi
+

@@ -1,0 +1,13 @@
+
+
+	 n=4
+	 ARRAY aa[n],bb[n]
+	 connect './gerste/tester' as input 3
+	 connect './gerste/bippy' as input 4
+	 for i=1 to n
+	   input #3,aa[i]
+	   input #4,bb[i]
+	   next
+	 write aa,bb
+	 disconnect 3,4
+

@@ -1,0 +1,73 @@
+
+
+	 --                SPIRAL-LEARNING COUNTERPROPAGATION NETWORK
+	 --                 combined-pattern learner!
+	 --                 try fast-learn mode, too!
+	 ------------------------------------------------------------
+	 null=0 |  minus=-1
+	 mx=2 |  my=1 |  --                 number of dimensions
+	 ------------------------------------------------------------
+	 ARRAY r[97],phi[97] |  --      pattern array for two spirals
+	 ARRAY X[194,2]
+	 ARRAY target[194,1]
+	 for k=1 to 97
+	   r[k]=0.8*(7+k)/104 |  phi[k]=PI*(97-k)/16
+	   X[2*k,1]=r[k]*cos(phi[k]) |  X[2*k,2]=r[k]*sin(phi[k])
+	   X[2*k-1,1]=-X[2*k,1] |  X[2*k-1,2]=-X[2*k,2]
+	   target[2*k,1]=1 |  target[2*k-1,1]=0
+	   next
+	 ------------------------------------------------------------
+	 n=394 |  --                             number of categories
+	 --
+	 ARRAY x[mx]+y[my]=xx
+	 ARRAY v[n],h[n],vx[n],hx[n]
+	 ARRAY W[n,mx+my],Wx[n,mx] |  -- template matrices
+	 ARRAY wx[mx]+wy[my]=w,zx[mx]
+	 ARRAY U[my,n],errory[my],yy[my]
+	 --
+	 for i=1 to n |  for k=1 to mx+my |  W[i,k]=0.01*ran() |  next  | _
+ next
+	 for i=1 to n |  for k=1 to mx |  Wx[i,k]=0.01*ran() |  next  | _
+ next
+	 ------------------------------------------------------------
+	 display N1 |  display C8 |  display R |  --   set up display
+	 scale=2
+	 ------------------------------------------------------------
+	 --                                  set  learning parameters
+	 lrate=0.9 |  lratef=1
+	 crit=0.000001
+	 critx=0.01
+	 noise=0.0
+	 ------------------------------------------------------------
+	 NN=20000 |  --                            learn input, output
+	 drun
+	 ------------------------------------------------------------
+	 --                              run with test input (recall)
+	    label test
+	 NN=40000 |  t=1 |  scale=1 |  display R
+	 write 'type go to continue'
+	 STOP
+	 drun RECALL
+	 ------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------
+	 iRow=1000*abs(ran())+1 |  --             select pattern-matrix ro
+	 Vector x=X#+noise*ran()
+	 Vector y=target#
+	 CLEARN v=W(xx)lrate,crit# |  --   learn/select 
+	 CLEARN vx=Wx(x)lrate,critx#
+	 --
+	 Vector w=W%*v
+	 Vector errory=wy-U*vx
+	 DELTA U=lratef*errory*vx
+	 dispt errory[1]
+	 -- dispxy wx[1],wx[2]
+	 -----------------------------------------------------------
+	    label RECALL
+	 --                                                test run (no lea
+	 Vector x=ran() |  --                            test input
+	 CLEARN vx=Wx(x)null,minus |  --             select
+	 Vector yy=U*vx
+	 Vector zx=yy[1]*x |  --               suppresses display if 0
+	 dispxy zx[1],zx[2]
+

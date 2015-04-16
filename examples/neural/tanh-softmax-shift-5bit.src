@@ -1,0 +1,63 @@
+
+
+	 --    4-BIT ENCODER LEARNING, BACKPROPAGATION
+	 -----------------------------------------------------------
+	 display N1 |  display C8 |  display Q |  --        display
+	 scale=1 |  cc=8 |  CC=2
+	 ------------------------------------------------
+	 nv=5 |  --               number of hidden-layer neurons
+	 n=32 |  --                        number of network inputs
+	 --
+	 ARRAY x0[1]+x[n]=xx |  x0[1]=1 |  -- input and bias
+	 ARRAY v[nv],deltav[nv] |  --               hidden layer
+	 ARRAY y[n],error[n],deltay[n] |  --      output layer	
+	 ARRAY W1[nv,n+1],W2[n,nv]
+	 ARRAY DW1[nv,n+1],DW2[n,nv]
+	 --	 
+	 ARRAY LAYER1[n],LAYER2[n]
+	 --
+	 --    random initial weights "break symmetry"
+	 --
+	 for i=1 to nv |  for k=1 to n+1
+	     W1[i,k]=ran() |  next  |  next
+	 for i=1 to n |  for k=1 to nv
+	     W2[i,k]=ran() |  next  |  next
+	 -----------------------------------------------------------
+	 --                                set experiment parameters
+	 lrate1=0.09 |  lrate2=0.03
+	 mom1=0.1 |  mom2=0.1
+	 c=10
+	 NN=20000
+	 --
+	 x[5]=1 |  -- start binary selector patterns
+	 drun  |  --   make a simulation run (NN steps)
+	 write x,y
+	 -----------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------
+	 --                                      weight-learning run
+	 q=x[n]
+	 Vector x=x{-1} |  x[1]=q |  -- recirculate selector
+	 Vector v=tanh(W1*xx)
+	 Vector y=exp(c*W2*v)
+	 DOT ysum=y*1 |  Vector y=y/ysum
+	 ------------------------------------------------------------
+	 Vector error=x-y |  --                backpropagation
+	 Vector deltay=error*y*(1-y)
+	 Vector deltav=W2%*deltay*(1-v^2)
+	 --
+	 --                                          "moment" method
+	 MATRIX DW1=lrate1*deltav*xx+mom1*DW1
+	 MATRIX DW2=lrate2*error*v+mom2*DW2
+	 DELTA W1=DW1 |  DELTA W2=DW2
+	 ----------------------------------------------------------
+	 DOT enormsqr=error*error |  --          accumulate enormsqr
+	 ENORMSQR=enormsqr-scale |  --            offset display curve
+	 dispt ENORMSQR |  --                    display error measure
+	 --
+	 --                            SHOW display of layers
+	 if t-0.996*TMAX
+	   Vector LAYER1=cc*x+CC
+	   Vector LAYER2=cc*swtch(y-0.1)+CC
+	   SHOW  |  SHOW LAYER1 |  SHOW LAYER2
+

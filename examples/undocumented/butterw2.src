@@ -1,0 +1,54 @@
+
+
+	 --                                 SIMPLE ANALOG FILTER
+	 -- H = 1/(s^2 + a[1]s + a[2]) 
+	 -- successive samples of the filter output are stored
+	 --      in an array that will be used to compute the FFT
+	 --------------------------------------------------------
+	 display N1 |  display C8 |  display R |  --     display
+	 NN=8192 |  DT=0.001 |  TMAX=150
+	 n=3 |  STATE x[n] |  ARRAY a[n]+b[n]+b0[1]=ab
+	 ARRAY OUTPUTx[NN],OUTPUTy[NN] |  -- array for FFT
+	 ------------------------------------------------ 	
+	 --          specify filter parameters 	 
+	 a[1]=1
+	 a[2]=2
+	 a[3]=2
+	 b[1]=1 |  -- other a[i], b[i] default to 0
+	 b0[1]=0 |  --         feedforward coefficient
+	 --------------------------------------------
+	 x[1]=1 |  -- to get impulse response
+	 scale=0.5 |  --       display scale
+	 drunr
+	 write 'type go for FFT' |  STOP
+	 -----------------------------------
+	 display R |  -- thick dots
+	 FFT F,NN,OUTPUTx,OUTPUTy
+	 scale=100
+	 NN=101 |  t=1
+	 drunr FFT |  --            drunr resets t=1
+	 write 'type go for amplitude/phase display' |  STOP
+	 scale=100
+	 drun SECOND |  -- amplitude/phase display
+	 ---------------------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------------------
+	 input=0 |  -- for impulse response
+	 output=x[n]+b0[1]*input |  --       note the feedforward term
+	 Vectr d/dt x=x{-1}+b*input-a*output
+	 dispt output
+	 ----------                                fill FFT array
+	 store OUTPUTx=output
+	 ---------------------------------------------------------
+	    label FFT
+	 get xx=OUTPUTx |  get yy=OUTPUTy |  --    FFT arrays
+	 outx=xx-0.5*scale |  --             offset
+	 outy=0.5*yy+0.5*scale
+	 dispt outx,outy
+	 ----------------------------   AMPLITUDE/PHASE DISPLAY
+	    label SECOND
+	 get xx=OUTPUTx |  get yy=OUTPUTy |  --    FFT arrays
+	 r=sqrt(xx*xx+yy*yy)
+	 phix10=20*atan2(yy,xx)
+	 dispt r,phix10
+

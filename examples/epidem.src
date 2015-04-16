@@ -1,0 +1,24 @@
+
+
+	 --                               EPIDEMIC PROPAGATION
+	 ------------------------------------------------------------------
+	 DT=0.02 |  TMAX=50 |  display N1 |  display C8 |  display R
+	 NN=2500 |  scale=620
+	 ----------------------------------------------
+	 A=0.001 |  --    contagion rate
+	 B=0.07 |  --     cure rate
+	 C=0.01 |  --     death rate
+	 ----------------------------------------------
+	 suscpt=620 |  sick=10 |  cured=70
+	 drun
+	 ------------------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------------------
+	 d/dt suscpt=-A*suscpt*sick
+	 d/dt sick=(A*suscpt-B-C)*sick
+	 d/dt cured=B*sick
+	 popul=suscpt+sick+cured |  --  total population
+	 -----------------------------------------------
+	 SICK=sick-scale |  --    offset one of the curves
+	 dispt suscpt,SICK,cured
+

@@ -1,0 +1,19 @@
+
+
+	 --                            A SIMPLE "STIFF" SYSTEM
+	 -----------------------------------------------------
+	 irule 15 |  --       Gear rule
+	 display N1 |  display C8 |  display R
+	 NN=801
+	 TMAX=10
+	 k=100 |  r=101 |  --    time constants are 1 and 0.01
+	 DT=0.00001
+	 x=1
+	 drun
+	 write ' - time constants are 1 and 0.01'
+	 ------------------------------------
+	 DYNAMIC
+	 -----------------------------------
+	 d/dt x=xdot |  d/dt xdot=-k*x-r*xdot
+	 dt=5*DT-1 |  dispt x,dt
+

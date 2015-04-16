@@ -1,0 +1,32 @@
+
+
+	 --       AMPLITUDE-DISTRIBUTION MEASUREMENT
+	 ------------------------------------------------------------------
+	 display A |  display Y
+	 Xmin=-1 |  Xmax=1 |  -- interval for analysis
+	 n=50 |  --            number of class intervals
+	 ARRAY v[n],h[n],w[n]
+	 for k=1 to n |  w[k]=(k-0.5)*(Xmax-Xmin)/n+Xmin |  next
+	 ------------------------------------------------------
+	 NN=200000 |  --                           number of samples     
+	 a=1.5*n/NN |  --                           for display scaling
+	 scale=1
+	 bias=0.01 |  --                                 abs(w-x) might be
+	 ------------------------------------------------------
+	 s=0.7 |  b=0.08 |  --      random-process parameters
+	 drun  |  --                     measurement run, NN samples
+	 --
+	 -----------------------------------------      show the histogram
+	 for k=1 to n
+	   plot w[k],a*h[k]-scale,14 |  --   scale, offset h
+	   next
+	 -------------------------------------------------------
+	 DYNAMIC
+	 ------------------------------------------------------
+	 --  generate a random process
+	 --
+	 x=s*sin(t)+b*ran()+b*ran()+b*ran()
+	 ----------------------------------------------
+	 Vector v^=bias-abs(w-x) |  --                    compete   
+	 delta h=swtch(v) |  --                                        cou
+

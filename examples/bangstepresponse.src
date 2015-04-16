@@ -1,0 +1,42 @@
+
+
+	 --     BANG-BANG SERVOMECHANISM
+	 --    fixes integration by using step and
+	 --             programs DT with irule 5
+	 ------------------------------------------------------------------
+	 irule 5
+	 ------------------------------------------------------------------
+	 scale=2 |  display N1 |  display C8 |  display R
+	 TMAX=2 |  NN=10000
+	 ------------------------------------------------------------------
+	 A=0.1 |  w=0 |  --              signal parameters
+	 B=40 |  maxtrq=1 |  --     motor parameters
+	 g1=10000 |  g2=1 |  R=0.6
+	 k=40 |  r=2.5 |  --                  control parameters
+	 --
+	 pp=100 |  DT0=0.0002 |  DTMIN=DT0/10
+	 -------
+	 voltage=0 |  -- initialize
+	 drun
+	 write "maxDT=";DT0+DTMIN
+	 -------------------------------------------------
+	 DYNAMIC
+	 -------------------------------------------------
+	 u=A*cos(w*t) |  --                input 
+	 error=x-u |  --                        servo error
+	 ------------------------------------------------------------------
+	 d/dt V=-B*V+g1*voltage |  --  motor field delay
+	 torque=maxtrq*tanh(g2*V/maxtrq)
+	 d/dt x=xdot |  d/dt xdot=torque-R*xdot
+	 --
+	 step
+	 DT=DT0*SAT(abs(error*pp))+DTMIN
+	 voltage=-sgn(k*error+r*xdot-0.01*voltage)
+	 --	
+	 --------------------------  rescaled stripchart display
+	 X=5*x+0.5*scale |  U=5*u+0.5*scale
+	 ERROR=6*error
+	 TORQUE=0.25*torque-0.5*scale
+	 dt=2500*DT-scale
+	 dispt X,U,TORQUE,ERROR,dt
+

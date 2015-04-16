@@ -1,0 +1,53 @@
+
+
+	 --    PULSED TRIGA NUCLEAR REACTOR
+	 ----------------------------
+	 --    REACTIVITY = R DOLLARS
+	 --    NORMALIZED POWER = EN (INITIAL VALUE 1.0)
+	 --    POWER IN MW = ENP
+	 --    INITIAL POWER IN MW = EN0
+	 --    NORMALIZED PRECURSOR DENSITY = DI, I=1,...,6
+	 --    BETA/L = BOL, LAMBDA = ALI, I=1,...,6
+	 --    NORMALIZED DELAYED NEUTRON FRACTION = FI, I=1,...,6
+	 --    TEMP. COEFF. OF REACTIVITY (DOLLAR/CDEG) = ALF
+	 --    RECIPROCAL HEAT CAPACITY (CDEG/MJ) = AK
+	 ------------------------
+	 --    REF:  D. HETRICK, "DYNAMICS OF NUCLEAR REACTORS"
+	 --          UNIVERSITY OF CHICAGO PRESS (1971), CH. 5
+	 --------------------
+	 TMAX=0.2 |  NN=4001 |  scale=200
+	 A=2.0 |  B=0.0
+	 BOL=140.0
+	 AL1=0.0124 |  F1=0.033
+	 AL2=0.0305 |  F2=0.219
+	 AL3=0.111 |  F3=0.196
+	 AL4=0.301 |  F4=0.395
+	 AL5=1.14 |  F5=0.115
+	 AL6=3.01 |  F6=0.042
+	 ALF=0.016 |  AK=12.5 |  GAMMA=.0267
+	 EN0=.001
+	 EN=1. |  D1=1. |  D2=1. |  D3=1. |  D4=1. |  D5=1. |  D6=1.
+	 ----------------------------
+	 display N1 |  display C8 |  display R
+	 drun  |  STOP
+	 ---------------------------------------------
+	    label eee
+	 edit 360-500
+	 ---------------------------------------------
+	 DYNAMIC
+	 ---------------------------------------------
+	 R=A+B*t-ALF*TEMP
+	 ENP=EN0*EN
+	 SUM=F1*D1+F2*D2+F3*D3+F4*D4+F5*D5+F6*D6
+	 ENDOT=BOL*((R-1.0)*EN+SUM)
+	 OMEGA=ENDOT/EN
+	 ENLOG=0.4342945*ln(EN)
+	 --
+	 d/dt EN=ENDOT
+	 d/dt D1=AL1*(EN-D1) |  d/dt D2=AL2*(EN-D2)
+	 d/dt D3=AL3*(EN-D3) |  d/dt D4=AL4*(EN-D4)
+	 d/dt D5=AL5*(EN-D5) |  d/dt D6=AL6*(EN-D6)
+	 d/dt TEMP=AK*ENP-GAMMA*TEMP
+	 -------------------------------
+	 enp=ENP-scale |  dispt enp
+

@@ -1,0 +1,25 @@
+
+
+	 -- SAMPLING DEMONSTRATION
+	 ---------------------------------------------------
+	 irule 1 |  --  fixed-step RK
+	 ----------------------------------------
+	 NN=6 |  TMAX=10 |  DT=TMAX/(10*(NN-1))
+	 x=0 |  xdot=1 |  -- initialize
+	 m=2
+	 X=x |  -- initialize sampled-data state variable
+	 connect 'sample2' as output 3
+	 drun
+	 disconnect 3
+	 sh             cat sample2.dat
+	 -----------------------------------------------------------------
+	 DYNAMIC
+	 -----------------------------------------------------------------
+	 d/dt x=0.2*xdot |  d/dt xdot=-0.2*x |  -- signal
+	 --
+	 y=X |  --                       D/A converter
+	 SAMPLE m
+	 X=x |  --                       A/D converter
+	 ------------------------      
+	 type #3,x,X,y |  --  output listing to file
+

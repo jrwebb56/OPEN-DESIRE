@@ -1,0 +1,26 @@
+
+
+	 --                                      ORBIT WITH MOONLET
+	 ----------------------------------------------------------
+	 NN=10000 |  DT=3 |  TMAX=220000 |  --              timing
+	 scale=3.0E+08 |  display N1 |  display C8 |  --  display scale 
+	 ----------------------------------------------------------
+	 irule 4 |  CHECKN=1 |  --        variable-step integration
+	 ERMAX=1000 |  DTMAX=3000 |  ERMIN=10 |  DTMIN=1
+	 ----------------------------------------------------------
+	 GK=1.42E+16
+	 r=21.0E+06 |  v=36000 |  thdot=v/r |  --    initial values
+	 aa=3.0E+07 |  bb=0.0015
+	 ----------------------------------------------------------
+	 drun
+	 DYNAMIC
+	 -----------------------------------       SYSTEM EQUATIONS
+	 d/dt r=rdot |  d/dt theta=thdot
+	 d/dt rdot=-GK/(r*r)+r*thdot*thdot
+	 d/dt thdot=-2*rdot*thdot/r
+	 -----------------------------------
+	 OUT  |  --                          scaled runtime display
+	 XX=r*cos(theta)+0.8*scale |  YY=r*sin(theta)
+	 xa=XX+aa*cos(bb*t) |  ya=YY+aa*sin(bb*t)
+	 DISPXY XX,YY,xa,ya
+

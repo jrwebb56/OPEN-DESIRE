@@ -1,0 +1,26 @@
+
+
+	 --     Step Response of a Linear System
+	 --   vectorized parameter-influence study
+	 ------------------------------------------------------
+	 display N1 |  display C8
+	 TMAX=0.5 |  DT=0.0001 |  NN=1000
+	 ww=400 |  u=440
+	 ------------------------------------------------------
+	 n=5
+	 ARRAY r[n],X[n] |  STATE x[n],xdot[n]
+	 ------------------------------------------------------	 
+	 for i=1 to n |  -- set parameter values
+	   r[i]=10*i
+	   next
+	 --
+	 drun
+	 --------------------------------
+	 DYNAMIC
+	 --------------------------------
+	 Vectr d/dt x=xdot
+	 Vectr d/dt xdot=-ww*x-r*xdot+u
+	 --
+	 Vector X=x-scale |  --        offset display
+	 dispt X[1],X[2],X[3],X[4],X[5]
+

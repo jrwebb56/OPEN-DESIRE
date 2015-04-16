@@ -1,0 +1,19 @@
+
+
+	 -- MAX/MIN ENVELOPE OF PERTURBED SIMULATION RUNS
+	 -------------------------------------------------
+	 display N3 |  NN=240 |  DT=0.0003 |  TMAX=1
+	 scale=0.25
+	 ARRAY XMAX[310],XMIN[310] |  -- storage arrays
+	 repeat
+	   drunr  |  display 2
+	   until 1<0
+	 DYNAMIC
+	 -------------------------------------------------
+	 d/dt x=10*ran()
+	 get xmax=XMAX |  get xmin=XMIN
+	 xmax=xmax+lim(x-xmax) |  -- this is max(x,xmax)
+	 xmin=xmin-lim(xmin-x) |  -- this is min(x,xmin)
+	 store XMAX=xmax |  store XMIN=xmin
+	 dispt xmax,xmin,x
+

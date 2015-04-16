@@ -1,0 +1,56 @@
+
+
+	 -- LINEAR-PERCEPTRON PATTERN CLASSIFIER
+	 --                      with bias terms
+	 ---------------------------------------
+	 --                   Network Definition
+	 m=8 |  N=6
+	 ARRAY x[m]+x0[1]=xx |  x0[1]=1
+	 ARRAY y[N],W[N,m+1]
+	 ARRAY INPUT[N,m],TARGET[N,N],error[N]
+	 ---------------------------------------    input patterns
+	 data 1.7,-1,0,0,2,0,0,-3;0,0.1,-1,0,0,0,0,0
+	 data 0,0,1,1,0,0.5,0,5;0,0,0,3,1,0,0,0
+	 data 0,0,0,0,1,-0.1,0,0;0.3,2.2,0,0,0,1,1,0
+	 read INPUT
+	 ---------------------------------------   target patterns
+	 data 1,0,0,0,0,0;0,1,0,0,0,0 |  --  (one-of-n classifier)
+	 data 0,0,1,0,0,0;0,0,0,1,0,0
+	 data 0,0,0,0,1,0;0,0,0,0,0,1
+	 read TARGET
+	 ---------------------------------------
+	 lrate=.05
+	 scale=.1
+	 NN=1000
+	 display N1 |  display C8 |  display R
+	 ---------------------------------------
+	 drun
+	 write 'type go for a recall run' |  STOP
+	 ----------
+	 NN=N |  TMAX=NN-1 |  t=1
+	 -- thresh=0.1
+	 restore
+	 drun RECALL
+	 ----------------------------------------
+	 DYNAMIC
+	 ----------------------------------------
+	 iRow=t
+	 Vector x=INPUT#
+	 Vector y=W*xx
+	 --
+	 Vector error=TARGET#-y
+	 DELTA W=lrate*error*xx
+	 DOT enormsq=error*error
+	 ENORMSQ=enormsq-scale |  -- offset display
+	 dispt ENORMSQ
+	 ----------------------------------------
+	    label RECALL
+	 --
+	 iRow=t
+	 Vector x=INPUT#
+	 Vector y=W*xx
+	 -------------------------  clean up y!
+	 -- Vector y=swtch(y-thresh)
+	 ----
+	 type y[1],y[2],y[3],y[4],y[5]
+
