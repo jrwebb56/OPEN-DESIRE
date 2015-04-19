@@ -1,0 +1,23 @@
+                DESIRE INTEGRATION RULES (to 20,000 state variables)
+
+irule 0      (default if program contains no d/dt) - simply executes
+                the current DYNAMIC program segment NN times for graph
+                plotting, fast compiled loops, recursion, difference
+                equations, etc. 
+
+irule 1      (default integration rule) - a fast fixed-step 2nd-order
+                Runge-Kutta rule. DT is not programmable during a run.
+
+irule 2      Euler rule, useful mainly for difference equations and
+                for double-precision accumulation of statistics and
+                other sums.  DT is programmable during a run.
+
+irule 3      fixed-step 4th-order Runge-Kutta rule, programmable DT
+irule 4      variable-step 4/2 Runge-Kutta rule
+irule 5      2nd-order Runge-Kutta rule with programmable DT
+irule 6      spare (not currently implemented)
+irule 7      variable-step 2/1 Runge-Kutta rule (not very useful)
+irule 8      variable-step 3/2 Runge-Kutta rule
+
+   - see stiff.txt for 8 more (variable-step/variable-order) rules
+ 

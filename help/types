@@ -1,0 +1,34 @@
+                             DATA TYPES
+------------------------------------------------------------------------------
+Variable names can have up to 8 alphanumeric characters or $, must start with a 
+letter.  fred1, FRED1, and Fred1 are three different variables.  Variables
+are REAL (32-bit floating-point) unless specifically declared as arrays or as
+INTEGER or COMPLEX quantities, as follows:
+
+  REAL array (up to 10 dimensions):        ARRAY vec[3],Mat4b[5,7]
+  INTEGER variable or array:               INTEGER a,b,c, AA[3,4,2], ss[34]
+  COMPLEX variable or array:               COMPLEX z,w, ZZ[3,3]
+
+Note: each declaration can define more than one variable and/or array.
+
+-----------------------------------------------------------------------------
+The imaginary number j = sqrt(-1) is automatically defined as soon as you
+declare any COMPLEX quantity.  Otherwise, the symbol j is available for
+other purposes; any conflict returns an error message.
+
+COMPLEX quantities are accepted in the form a + j*b, as COMPLEX expressions
+such as w = z*z + 2.2*j, or as a pair of REAL expressions in brackets, like
+w = [2*a-b,33.6].  "plot" statements plot COMPLEX expressions as points (x,y)
+in a user-specified color.
+
+Mixed REAL, INTEGER, and/or COMPLEX expressions are ok:
+
+                COMPLEX z,w,Z[6] | INTEGER k
+                w = z*z + 3.4*j*[2*x-3,aa-9] - 12*Z[3] - k*q  + 11.555
+
+--------------------------------------------------------------------------
+
+"write", "input", "data", and "read" statements recognize data types (see manual).
+
+Vector, DOT, MATRIX statements and DYNAMIC program segments admit only REAL
+quantities.

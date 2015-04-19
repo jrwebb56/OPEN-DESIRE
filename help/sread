@@ -1,0 +1,319 @@
+
+NOTE                                                  NOTE
+
+   
+------------------------------------------------------------------------
+
+DISTRIBUTION FILES: DIFFERENTIAL-EQUATION PROBLEMS
+
+In the following, * and ? are standard DOS or UNIX
+metacharacters; for example,autoass*.lst might refer to
+autoass1.lst, autoas2x,lst, etc..
+
+linear differential equations           damp.lst, oscilltr.lst,
+                                                couple.lst
+
+ -- , in matrix form                   matdamp.lst, matcoup?.lst
+
+nonlinear differential equations,
+chaos                                  vdp.lst, newvdp.lst,
+                                           lorenz.lst, scroll.lst
+
+stiff systems, DT changes              stiff?.lst, fuel*.lst,
+                                            gear?.lst, rule15.lst
+
+McKay-Glass differential equation
+  with delay (chaos)                    mglas*.lst
+
+delay-line problem (1991 ODEs)          del2000.lst (use WORDPAD editor)
+  (1800+ ODEs)                          del1500.lst
+  in matrix notation                    line?.lst
+
+servomechanisms                         satser?.lst, satcomp.lst
+                                        
+ - with fuzzy-logic control             fuzzlin?.lst, fuzznoi?.lst
+
+servo impulse and frequency 
+response                                servof.lst
+
+servo optimization                      optrun.lst
+
+satellite roll control, macros          howe.lst
+
+biological clock                        clock.lst
+
+digital PID controller                  pid.lst
+ (sampled-data control)
+
+ballistic trajectories                  cannon.lst
+
+bouncing ball                           bouncer.lst
+
+EUROSIM test problems                   euro?.lst
+
+signal-generator demo                   signal.lst
+
+satellite orbit                         orbit?.lst
+
+torpedo simulation                      to22x.lst
+
+pitch-lane flight simulation            airpln?.lst
+
+autopilot                               auto.lst, howe.lst
+
+pilot-ejection problem                  pilot1.lst (also pilot.prc)
+
+population dynamics, ecosystems         host?.lst, epidem.lst, 
+
+Forrester world model                   world.lst
+
+nuclear reactors                        triga.lst, step.lst, fuel?.lst
+
+blood-circulation model                 physb*.lst
+
+glucose-metabolism model                gluc.lst
+
+function demos                          fun.lst, atan.lst, exp.lst.
+                                                        etc.
+
+matrix inversion                        invert?.lst
+
+FFTs, convolutions                      fft?.lst, conv.lst
+
+complex frequency response              freq.lst
+
+conformal mapping                       plot?.lst, conforma.lst
+
+time delays, function storage           ?delay,lst, thold.lst,
+                                           store?.lst (also store1.prc)
+
+file I/O examples                       output*.lst, input*.lst (run
+                                                        after output*.lst);      
+                              
+
+
+
+
+DISTRIBUTION FILES FOR THE MIT PRESS BOOK
+
+We included multiple files for some examples to exhibit the
+effects of various program changes.  In the following, * and ?
+are standard DOS or UNIX metacharacters; for example,
+autoass*.lst might refer to autoass1.lst, autoas2x,lst, etc..
+
+LINEAR AND QUASILINEAR PERCEPTRONS
+
+Fig.  4-3, 4                            percept.lst
+                                        percep1.lst
+      4-5, 6                            auto3.lst
+
+
+STATIC BACKPROPAGATION NETWORKS
+
+Fig.  5-2                               sweeptst.lst
+      5-3                               skip.lst
+      5-4 to 7                          xormin.lst
+      5-8,9                             parity*.lst
+      5-11,12                           func.lst 
+      5-13,14                           bpmap?.lst      
+      5-15,16                           bpxy*.lst
+
+
+CREEPING RANDOM SEARCH
+
+Fig.  5-18,19a                          creepmin.lst
+      5-19b                             creepity.lst
+     
+
+UNSUPERVISED COMPETITIVE LEARNING
+
+Fig.  6-2 to 4a                         pquant.lst
+      6-4b                              oja?.lst          
+      6-7, 8                            alpha.lst     
+                                        art.lst
+      6-9, 10                           vquant.lst
+                                        vquant2.lst
+                                        vquant4.lst
+                                        statgood.lst
+      6-11                              entr?.lst, distort*.lst
+      6-12, 13                          vq.lst      
+      6-14                              qual1.lst     
+          
+
+COUNTERPROPAGATION NETWORKS
+
+Fig.  7-2,3                             cpmap.lst
+      7-4, 5                            cpgood.lst
+      7-6, 7                            spiral?.lst , qiral.lst
+
+
+NONLINEAR FEEDFORWARD AND FEEDBACK
+
+Fig.  7-11 to 13                        ?feed.lst
+
+
+COMPETITIVE LEARNING, MULTIPLE WINNERS
+
+(Sec. 7-10)                             multiwin.lst
+
+
+SELF-ORGANIZING MAP
+
+Fig. 7-14, 16                           pmap.lst     
+
+AMARI/HOPFIELD-TYPE NETWORKS
+
+Fig. 8-2,3                              hop*.lst
+
+
+
+BIDIRECTIONAL ASSOCIATIVE MEMORIES
+
+Fig. 8-6, 7                             bam.lst
+                                        *bam?.lst
+
+     8-9, 10                            jet*.lst 
+
+
+PRINCIPAL-COMPONENTS LEARNING
+
+Fig  9-2, 3                             hry?.lst
+
+
+BACKPROPAGATION ENCODERS     
+
+Fig. 9-5                                code.lst
+                                        cheb*.lst
+
+INDEX-SHIFTING LAYERS
+
+Fig. 9-6                                shift*.lst
+
+
+ADAPTIVE PREDICTOR
+
+Fig. 9-9, 10                            predict.lst
+
+
+2D MATCHED-FILTER DETECTOR
+
+Fig. 9-11 to 13                         nconv.lst
+
+
+
+HERAULT-JUTTEN NETWORKS
+
+Fig. 9-15, 16                           herault.lst
+                                        cohen?.lst
+
+PULSED NEURON
+
+Fig. 9-17                               trif.lst
+
+
+
+ARMA-MODEL MATCHING
+
+Fig. 10-11,12                           narendra.lst
+
+
+FUZZY-SET MEMBERSHIP FUNCTIONS
+
+Fig. 11-2, 3                            member?.lst
+     11-4                               hedge.lst
+     11-7                               geva?.lst
+     11-8 to 10                         member?.lst
+
+ fuzzy logic                            logic.lst
+
+
+FUZZY-LOGIC-CONTOLLED SERVO
+
+Fig. 11-11                              fuzzh?t.lst
+                                        fuzzy.lst
+                                        fuzz2.lst
+                                        fuzznoi?.lst
+                                        fuzzlin.lst
+
+
+RADIAL-BASIS-FUNCTION NETWORKS
+
+Fig. 11-15                              radial*.lst
+                                        casasent.lst
+
+
+FUZZY-BASIS-FUNCTION NETWORKS
+
+Fig.  11-18                             fuzzr?d?.lst
+
+
+HELP SCREENS AND MENUS 
+(you can add your own)
+
+0     (called with help)
+
+proc
+nonlin
+show
+nquant
+examples
+irule
+if
+why
+func
+programs
+stiff
+xor
+babybam
+program
+edit
+vector
+parity3
+code
+next
+menu
+types
+display
+creepmin
+keywords
+art
+sweeptst
+parity
+files
+loops
+fun
+cpmap
+vquant
+entropy
+hquant
+
+
+
+dedit.com        old (DESIRE/W)screen editor
+deditb.com       old screen editor for monochrome or LCD screen
+editerr.msg      old edit error messages
+dos4gw.exe      DOS extender
+pminfo.exe       memory tester for extended DOS
+
+********************************************************************
+NOTE!                       HOW TO USE THE MS-DOS EDITOR WITH DESIRE
+********************************************************************
+
+Type "ed" instead of "edit" to substitute the MS-DOS editor (edit)
+for dedit.com. This editor has mouse operations, nice menus and help
+displays, and it lets you change its display colors.  But you must
+explicitly "save" and "exit", while dedit does both in one operation.
+
+"ed" calls the batch file dedit.bat, which currently reads
+
+                \dos\edit syspic.lst
+
+This assumes that the MS-DOS editor is kept in your \DOS directory, as
+is usually the case.  Note that you can edit dedit.bat to substitute
+other editors!
+
+If you want to use Function Key F9 (or the command "edit") to call a
+different editor, simply erase or rename dedit.com, or move it to a
+different directory.
+
+

@@ -1,0 +1,24 @@
+PROCEDURES AND FUNCTIONS
+----------------------------------------------------------------
+ PROCEDURE name(x,y,...;X,Y,...)   | --    procedure definition
+    ...  statements ...
+    end
+
+  -  parameters x,y,... (before semicolon) are value parameters;
+  -  parameters X,Y,... (after semicolon) are VAR parameters.
+
+PROCEDURE foo(a,b), PROCEDURE moo(;xx,u1), PROCEDURE noo() are
+all legal.  Never omit parentheses.  "exit" causes early return.
+The procedure is subsequently called with
+
+                   call name(a,b,...;A,B,...)
+
+----------------------------------------------------------------
+ FUNCTION name(x,y,...) = expression | --   function definition
+
+Functions then work in expressions, even in DYNAMIC segments, e.g.
+
+                   vv = rr1 - name(a,b,...)
+----------------------------------------------------------------
+Dummy parameters are in PROCEDUREs and FUNCTIONs are "protected"
+after definition.  Recursive calls and definitions are illegal.

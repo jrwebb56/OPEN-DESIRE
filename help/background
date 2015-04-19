@@ -1,0 +1,26 @@
+TRICKS AND TREATS: RUNNING A SIMULATION IN THE BACKGROUND UNDER LINUX
+
+It can be very useful to run a large statistical or optimization study, or
+train a neural network, IN THE BACKGROUND while you use LINUX to do
+something else (even if it is only a solitaire game).
+
+To run long simulations or multi-run simulation studies in the background,
+suppress runtime graphics with a display 0 statement (Manual Sec. 6-4), or
+by omitting dispt, dispxy, and DISPXY display requests in your DYNAMIC
+segments.
+
+You can still watch the progress of your simulation in a suitably sized 
+Command Window  by using write statements in the experiment protocol, or
+type statements in a DYNAMIC program segment. The simulation program will
+continue even while you work in other windows.
+
+Once your Command Window shows that the simulation program is done, you can
+edit the program to include graphics showing, say, the time history of the
+last simulation run, or a crossplot and restart the new program.  You can
+also run another program reading results of the earlier simulation from
+.dat or .tim files.
+
+We recommend that you omit dispt, dispxy, or DISPXY statements when you
+want to run your simulation program in the background.
+
+

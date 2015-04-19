@@ -1,0 +1,62 @@
+The following variable-order/variable-step integration rules admit only 600
+rather than the usual 40,000 state variables, since they may perform double-
+precision Jacobian inversions.
+
+     Adams-type Rules:
+
+     irule 9:            functional iteration
+     irule 10:           chord/user-furnished Jacobian
+     irule 11:           chord/differenced Jacobian
+     irule 12:           chord/diagonal Jacobian approximation
+
+     Gear-type Rules:
+
+     irule 13:           functional iteration
+     irule 14:           chord/user-furnished Jacobian
+     irule 15:           chord/differenced Jacobian
+     irule 16:           chord/diagonal Jacobian approximation
+
+These variable-step rules employ a user-specified maximum relative error
+ERMAX for all state variables (state-variable values equal to 0 are au-
+tomatically replaced by 1).  ERMAX should be specified in the interpre-
+ter program (examples); it takes an automatic default value as in our
+Runge-Kutta routines, but this is not usually the value you will want.
+Set the initial value of DT low enough to prevent lockup.
+
+irule 10 and irule 14 require a user-furnished Jacobian matrix, whose
+elements must be given as functions of the problem's state variables,
+defined variables, and constant parameters in a JACOBIAN segment at the
+end of the DYNAMIC segment, as shown in our examples.
+
+The n by n Jacobian matrix for n state variables can be given any desired
+DESIRE identifier, say J.  A "dimension" statement declaring J, say
+
+                      dimension J[5,5]
+
+MUST precede any other data declaration or assignment in the interpreter
+program (failure to do this returns an integration-deadlock error message).
+A missing or duplicated JACOBIAN statement also returns an error message.
+
+The JACOBIAN segment simply contains assignments like
+
+                      J[2,3]=3*x-sin(t)
+
+for each Jacobian element which is not identically 0.  Only nonzero ele-
+ments need be entered (see the example problems).
+     
+irule 10 and 14 were not designed for use in more than one DYNAMIC seg-
+ment.  They would work, if at all, only if all DYNAMIC segments using them
+had the same number n of state variables.
+
+References: 
+            Gear, C.W.: DIFSUB, Algorithm 407, Comm. ACM, 14, No. 3,                  3/71.
+            Hindmarsh, A.C.: LSODE and LSODI, ACM/SIGNUM Newsletter, 15
+                No. 4, 1980.
+
+
+
+
+
+
+
+

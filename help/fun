@@ -1,0 +1,26 @@
+                  DESIRE LIBRARY FUNCTIONS
+
+Both interpreter programs and DYNAMIC segments admit the REAL functions
+
+  abs(x)    round(x)   sqrt(x)   sin(x)    cos(x)    exp(x)   
+  asin(x)   acos(x)    tan(x)    sinh(x)   cosh(x)   tanh(x) 
+  sigmoid(x)  SIGMOID(x)         log(x) (base 10)    ln(x) (base e)
+
+  atan(x)              atan2(y,x) = arctan(y/x)  between -PI and +PI
+
+and also the piecewise-linear functions (see "help nonlin")
+
+  lim(x)   sgn(x)   swtch(x)   sat(x)   deadz(x)   deadc(x)   rect(x)
+
+where x is a REAL argument.  Refer to the manual for ran() and tim().
+
+
+       Interpreter programs admit the additional functions of REAL x
+ 
+  trnc(x) (truncation)         expj(x) = cos(x) + j*sin(x)
+
+and the functions
+
+  Re(z)   Im(z)   Cabs(z)   Arg(z)   Conjug(z)   exp(z)
+
+of a COMPLEX argument z.

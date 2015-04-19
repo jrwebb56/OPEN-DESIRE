@@ -1,0 +1,5 @@
+vquant*.src examples demonstrate vector quantization of
+a two-dimensional random input by competitive template matching.
+
+vquant.src uses a uniform input distribution, while vquant2.src approximates a circularly Gaussian input distribution by summing 4 independent pseudorandom inputs.
+

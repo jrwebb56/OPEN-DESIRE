@@ -1,0 +1,21 @@
+                     IF/ELSE/PROCEED STATEMENTS
+-----------------------------------------------------------------------
+Every "if ... then" always has a unique corresponding "else"
+                           and a unique corresponding "proceed"
+ - clause following "then" and "else" can have more than one statement
+                           and may occupy more than one line
+ - "if" statements can be nested; automatic prettyprinting shows levels
+
+EXAMPLE:      if a=10 then if b=0 then write 'a=10, b=0' | q1=a*a
+                  else write 'a=10, b<>0' | q1=0 | proceed
+                else if b=0 then write 'a<>10, b=0'
+                  else write 'a<>10,b<>0'
+                  proceed
+                proceed
+              write 'done'
+
+An "if" clause admits a single "and" OR a single "or" ONLY (no general
+logic expression):
+                    if a=10 and b=0 then p=q else proceed
+
+                    (a=10) and (b=0) or q=2       IS ILLEGAL!

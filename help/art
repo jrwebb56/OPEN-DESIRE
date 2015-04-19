@@ -1,0 +1,11 @@
+(this was written for Windows)
+
+ART.src  demonstrates competitive pattern learning.
+
+All patterns are learned in a single pass through
+the program. go to eeedisplays a parameter-editing screen.
+When you set the vigilance parameter crit to a 
+negative value, ART functionality is suppressed. 
+Watch the resulting changes in the template-norm 
+time history). The templates must now re-learn some
+of the patterns in each new pass.

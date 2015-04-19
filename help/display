@@ -1,0 +1,27 @@
+"display ..." statements can be commands or program lines.
+-------------------------------------------------------------------------
+
+display 0        simulation-run display OFF
+display 1        simulation-run display ON (default)
+display 2        don't erase display between runs (no command mode)
+
+display A        produces xy-coordinate system for interpreter plot
+display B        produces xt-coordinate system for interpreter plot
+
+display Cn, display C n    sets color n for coordinate net;
+                            n=16 black (no coordinate net);
+                            n=17 white background
+
+display Nn, display N n    sets color n for first curve;
+                            n=15 all curves are white;
+                            n=16 all curves are black
+
+display F        erases all screens
+
+
+display Q        produces thin dots/lines (default)
+display R        produces thick dots/lines
+display S        turns graphics OFF after interpreter plots
+
+display W x,y	sets display-window origin
+

@@ -1,0 +1,7 @@
+creepmin.lst simulates simple creeping-random-search learning of
+the XOR function.
+
+"go to eee" produces a parameter-editing screen, and "go to jjj"
+displays this help screen.
+
+cruupity.lst and cheb32*.src cheb64*.src, cheb128*.src,cheb256*.src are similar, more sophisticated programs, using memory foofsuccessful trials.

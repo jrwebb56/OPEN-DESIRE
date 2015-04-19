@@ -1,0 +1,8 @@
+CPMAP.src simulates a counterpropagation function-mapping network.
+
+The network accepts one-dimensional pseudorandom input x1 and matches its
+utput y to a target function f(x1).  Typing "go to eee" produces an editing
+screen which allows you to change the number of categories, optimization
+parameters, and display scale. You can also substitute any target function you
+like. You can edit the programs to obtain different error displays.
+

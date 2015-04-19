@@ -1,0 +1,6 @@
+sweeptst.src displays the neuron activation functions sat(x)
+(hard limiter) and tanh(x) (soft limiter).  Also shown are the
+derivative of tanh(x) and its approximation tri(x). 
+
+Desire has many other activation functions, e.g. sigmoid(x).
+SIGMOID(x), sin(x), sgn(x), swtch(x), atan(x), etc..

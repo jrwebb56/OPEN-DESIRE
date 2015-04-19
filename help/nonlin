@@ -1,0 +1,49 @@
+TABLE 1.  Piecewise-linear Library Functions
+
+
+   1. Simple Limiter
+
+                  0 (x < 0)
+   lim(x) =
+                  x (x >= 0)     ( slope=1)
+
+   2. Saturation Limiters
+
+                  -1 (x <= -1)                                           
+   sat(x) =  x (-1 < x < 1)                       
+                   1 (x >= 1)     ( slope=1)                    
+
+                     0 (x <= 0)
+   SAT(x) =  x (0 < x < 1)  
+                    -1 (x >= 1)     ( slope=1)
+
+   3. Deadzone Limiter
+
+                        x + 1  (x < -1)
+   deadz(x) =  0      (-1 < x < 1)
+                        x - 1  (x > 1)       ( slope=1)
+
+   4. Simple Switch (Comparator)
+
+               0 (x <= 0)
+   swtch(x) =
+               1 (x > 0)
+
+   5. Sign Function (Comparator)
+
+              -1 (x < 0)
+   sgn(x) =    0 (x = 0)
+               1 (x > 0)
+
+   6. Deadspace Comparator
+
+                        -1 (x < -1)
+   deadc(x) =    0 (-1 < x < 1)
+                         1 (x >= 1)
+
+    7.    rect(x) = 1 for -1 < x < 1,  0 otherwise
+
+                                                       plus (u > 0)
+    8.    comp(u, plus, minus) =
+                                                       minus (u <= 0)
+

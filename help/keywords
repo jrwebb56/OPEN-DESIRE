@@ -1,0 +1,225 @@
+THE MOST FREQUENTLY USED DESIRE KEYWORDS
+        (References are to  the original DESIRE Reference Manual)
+---------------------------------------------------------------------------
+
+/                   toggles auto-line-number mode (Sec. 1-8).
+
+ARRAY ...           declares arrays (Sec. 5-1)
+
+auto ...            controls auto-line-number mode (Sec.1-8 ).
+
+call ppp(...)       calls a named PROCEDURE (Sec. 2-12 ).
+
+chain 'filespec'    chains a .prc file (rarely used, Sec. 1-18).
+
+clear               clears the symbol table of variables, arrays,
+                        procedures, and submodels (Sec. 1-10).
+
+CLEARN v=W(x)crit,lrate      competitive learning (Sec. 8-7):
+
+                        crit<0    simple "Kohonen" learning
+                        crit=0    FSCL algorithm (improved conscience-type);
+                                  with lrate<0 Oja RCPL algorithm
+                        crit>0    pseudo-adaptive-resonance learning;
+                                  with # fast-learn mode
+
+COMPLX var1,...     declares COMPLEX variables and/or arrays;
+                        automatically defines j=sqrt(-1) (Sec. 2-13).
+
+connect ...         connects (opens) a file or device (Sec. 2-3).
+
+d/dt ...            starts a differential equation (Sec. 4-2)
+
+data ...            for data/read operations (Sec. 2-10).
+
+delay y=DD,x,tau    time delay (Sec. 5-21)
+
+delta...	       replaced by Vectr delta
+Delta...            replaced by Vectr delta.
+
+DELTA ...           for matrix (connection-weight updating) (Sec. 8-6).     
+
+dimension ...       same as ARRAY (Sec. 5-1).
+
+disconnect ...      disconnects (closes) a file or device (Sec. 2-3).
+
+display ...         various display-control commands (Sec. 6-4).
+
+DOT ...             for vector dot products (Sec. 5-12)
+
+drun                compiles and runs first DYNAMIC program segment
+                        (Sec. 3-1); used with a label for multiple
+                        DYNAMIC segments; * suppresses disk storage.
+
+drunr               combines drun and reset for faster interaction;
+		* suppresses disk storage.
+
+dump                  displays all variables in symbol table (Sec. 7-4).
+dump 'filespec'             dump  directed to a file or device.
+
+DYNAMIC             starts first DYNAMIC (compiled) program
+                        segment (Sec. 3-1 and Chap. 4).
+
+ed                  starts text editor      gedit under Linux
+
+edit                starts text editor with DESIRE line numbers(Sec. 1-11)
+
+end                 ends PROCEDURE declarations (Sec. 2-12) and SUBMODEL
+                        declarations (Sec. 4-11)
+
+end while        ends a while loop (Sec. 2-7).
+
+erase ...          erases specified program lines (Sec. 1-7).
+
+exit                exits a loop (Sec. 2-7) or procedure (Sec. 2-12);
+                        or exits DOS shell.
+
+for ...             starts a for loop (Sec. 2-7).
+
+FFT ....            fast Fourier transforms, convolutions (Sec. 5-24).
+
+FUNCTION ...        starts a function definition (Secs. 2-11 and 4-4).
+
+func1	     one-inputtable-lookup/interpolation function
+                                           in DYNAMIC program segments
+func2...          two-input function in  DYNAMIC program segments)            
+
+go                  continue after STOP, or for stepwise run (Secs. 7-3, 7-4).
+
+go to ...           go to a label or line number (Sec. 2-6).
+
+help                displays a general help screen (Sec. 7-8).
+
+help filespec       (no quote marks) displays specified help screen
+                      	 in Command Window (Sec. 7-8).
+
+input ...           input from keyboard, file, or device (Sec. 2-4).
+
+invoke ...          invokes a submodel (Sec. 4-11).
+
+iRow                pattern-row selector variable (Sec. 5-8).
+
+irule               displays current integration rule (Sec. 3-3).
+irule n             sets integration rule n (Sec. 3-3).
+
+INTEGER var,...     declares INTEGER variables and/or arrays (Sec. 2-13).
+
+INTP v=W*x;thresh   old interpolation operator (Sec. 8-8).
+
+keep                saves source program under current PIC (Secs. 1-5, 1-14)
+keep 'filespec'     saves program as text file (.lst file, Secs. 1-5, 1-14)
+
+keep+,  keep+ 'filespec'      - saves without line numbers (.src file). 
+			      Not available in most UNIX versions; use list+.
+
+label               used for go to, restore, drun (q.v.).
+
+LEARN ...           for  connection-weight updating (Sec. 8-6). 
+                         replaced by DELTA
+
+list, list+         lists current program on the screen, without and
+                        with line numbers (Sec. 1-4); can specify
+                        line numbers and/or line-number ranges.
+
+list 'filespec'     lists current program to a file or device
+list+ 'filespec'        (Secs. 1-4, 1-5).
+
+load               
+load 'filespec'     loads a source file (Sec. 1-6, 2-1).
+
+MACRO             replaced with SUBMODEL
+                                    declares a submodel (Sec. 4-11).
+
+MAT d/dt ...        compiled vector/matrix differential equations
+    and                    (Sec. 5-18).
+Mat d/dt ...         replaced with Vectr d/dt
+
+MATRIX ...          compiled (Sec. 8-1) and interpreted (Sec. 5-23)
+                        matrix operations.
+
+new                 clears the memory (Sec. 1-10).
+new 'filespec'      clears memory and sets new PIC (Sec. 1-10).
+NEW                 "new" without user confirmation.
+
+note                saves time-history file (Sec. 7-5).
+note '...'          write comments or program lines into notebook
+note #                                  file (Sec. 7-5).
+
+old                 restores stored program (.prc file Sec. 1-4, 1-14),
+old 'filespec'		now rarely used.
+
+OUT                 causes subsequent statements to execute only
+                        at communication points (Secs. 4-3, 6-1).
+
+PIC                 displays current program identification code (Sec. 1-15).
+PIC 'filespec'      sets or changes program identification code (Sec. 1-15).
+
+plot ...            plots a point or COMPLEX point (Sec. 6-7).
+
+PROCEDURE ...       declares a procedure (Sec. 2-12).
+
+proceed             for if statements (Sec. 2-5).
+
+recover ...         recover time histories from a file (Sec. 6-6).
+
+read ...            for data/read statements (Sec. 2-10).
+
+repeat              starts a repeat loop (Sec. 2-7).
+
+reload (or rld)              loads source file (Secs. 1-1-4, 1-14).
+reload (or rld) 'filespec'
+
+reset               resets state variables (Sec. 3-5).
+
+restore             resets data pointer (Sec. 2-10).
+restore ...         resets data pointer to a specified label or line
+                        number (Sec. 2-10).
+
+run                 run the current program (Sec. 1-4).
+
+SAMPLE m     changes sampling rate for sampled-data problems (Sec. 4-8).
+
+save                save current program as .prc file under current PIC (Sec. 1-6, 1-14).
+save 'filespec'     save current program as .prc file 'filespec' (Sec. 1-6, 1-14).
+                        (for compatibility with earlier versions; now rarely used)
+
+SHOW                for NEUNET pattern graphics (Sec. 6-8 ).
+
+STATE ...           declares state variables or state-variable arrays for
+                        compiled matrix operations and submodels (Sec. 5-18)
+
+sh ....             spawns a DOS or UNIX operation (e.g. sh dir .lst; Secs.
+                    1-3, 7-7). Under DOS, "sh command" spawns a DOS shell;
+                    type "exit" to return to DESIRE.
+
+stash ...           saves time histories (Sec. 6-3).
+
+step                in DYNAMIC segments, subsequent operastions execute
+                        only once per integration step (Sec. 4-8).
+
+step ...            used in interpreter "for" loops (Sec. 2-7).
+
+STOP               pauses the program (Sec. 7-3).
+
+SUBMODEL   submodel declaration (see Manual).
+
+tdelay y=DD,x,tau   time delay (Sec. 5-21)
+
+time                displays current time and date..
+
+VECTOR ...       compiled (obsolete, Sec. 5-5) and interpreted (Sec. 5-22)
+                        vector/matrix operations.
+
+Vector ...          compiled vecor/matrix operations. 
+Vectr d/dt ...
+Vectr delta...
+
+while               starts while loop (Sec. 2-7).
+
+write ...           writes to screen, file, or device (Sec. 2-3).
+
+until               ends repeat loop (2-7).
+
+UPDATE ...          for NEUNET vector updating (Sec. 8-4).  
+                      replaced by Vectr delta.
+zz     	same as erun	    

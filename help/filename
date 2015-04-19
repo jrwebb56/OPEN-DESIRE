@@ -1,0 +1,26 @@
+---------------------------------------------------------------------------
+-- under Linux, type help (filename)
+---------------------------------------------------------------------------
+
+help files
+help irule
+help stiff
+help sread
+help vector
+help nonlin
+help if
+help GPL
+help keywords
+help fun
+help func
+help nquant
+help loops
+help parity
+help proc
+help types
+help sweeptst
+help show
+help vquant
+help xor
+
+*******> Add your own help screens!

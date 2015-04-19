@@ -1,0 +1,57 @@
+              VECTOR Assignments in the DYNAMIC Program Segment
+---------------------------------------------------------------------------
+
+In DYNAMIC program segments, compiled VECTOR assignments are obsolete: we normally useVector instead of VECTOR (see Manual Chap.5). But VECTOR assignments still work:
+
+Experiment-protocol programs do use interpreted VECTOR assignments
+
+                VECTOR v = a + b + ... 
+           
+adds or subtracts column matrices ("vectors") a, b, .... all having the same
+dimension.  Minus signs can replace plus signs, and a leading minus sign is
+admitted. 
+
+      Each vector term, say a, can be a product a1*a2*... of vectors a1, a2,
+... all of equal dimension;  such a product contributes a term
+a1[i]*a2[i]*... to the ith element v[i] of the vector sum.  Each factor, say
+a1, can be one of six types: 
+ 
+ 1.   an ordinary vector a1 with elements a1[i].
+
+ 2.   a scalar factor, say alpha.  This produces  a1[i] = alpha for all i.
+      Such scalars must be named variables or parameters, not expressions or
+      literal numbers. 
+
+ 3.   a conformable matrix product A*x.  x must not be identical with v (such
+      recursive updating requires an intermediate operation).  If A is marked
+      with % (e.g. weight%), then DESIRE transposes the matrix  before multi-
+      plication.
+ 
+ 4.   a pseudorandom vector ran(q), whose elements are uniformly distributed
+      between -1 and 1.   
+
+ 5.   a pattern-generator matrix A# with nrow rows, whose ith row is selected
+      as an input vector by a preceding assignment
+
+                          iRow = expression
+
+      to the REAL system variable iRow, where i = iRow mod(nrow).  Typical  
+      assignments for iRow are
+
+                iRow = t      and     iRow = k*ran(q)
+
+      which respectively produce periodic and pseudorandom cycling through
+      the pattern-matrix rows.  One iRow assignment can serve two or more
+      pattern matrices, or iRow can be reassigned for each pattern matrix.
+
+ 6.   an index-shifted vector  x{expression}  with elements x[i+ROUND(ex-
+      pression)].  The index shift expression is computed at compile        
+      time and remains constant until the next compilation.  VECTOR assign-
+      ments like
+
+                     VECTOR v = k1*x{t1} + k2*x{t2} + ...
+
+      efficiently produce simple one- and two-dimensional convolutions.  x
+      and v must not be identical if any ti < 0.
+
+

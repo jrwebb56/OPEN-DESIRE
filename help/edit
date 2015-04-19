@@ -1,0 +1,3 @@
+"ed" displays your file without line numbers, and "edit" displays the file with line numbers.
+
+Currently, DESIRE uses the Linux KDE editor kedit.  You can substitute other editors by editing the configuration files editcfg1 and editcfg2.

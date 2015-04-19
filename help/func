@@ -1,0 +1,33 @@
+
+     The DYNAMIC-segment arbitrary-function generator called by
+
+                        func y=F(x
+
+produces a wide variety of functions y of the input x through
+table-lookup and linear interpolation in a breakpoint-table array
+F dimensioned and filled by the experiment-protocol program before 
+drun is called.  
+
+     A single function array can serve two or more  functions of
+different variables:
+
+                     func y=F1(x | func u=F1(p
+
+      The array F must be filled with n/2 breakpoint abscissas F[1]
+through F[n/2], followed by n/2 breakpoint ordinates        
+F[n/2+1] through F[n] for a desired function (Fig. 4-2, DESIRE
+text).  Beyond the range of the table, the output is y=F[n/2+1] for
+x<=F[1], and y=F[n] for x>=F[n/2].
+
+
+NOTE: A better (and equivalent) way is to declare the function-table 
+array F with
+
+	ARRAY X[n/2]+Y[n/2]=F
+
+where X is an array of n/2 breakpoint absacissas, and Y is an array of n/2 
+breakpoint ordinates.
+
+     A program can compute entries for such function tables (DESIRE
+text), or one can use data/read assignments to fill a function array
+from a data list.

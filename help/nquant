@@ -1,0 +1,18 @@
+These examples demonstrate competitive learning with "conscience".
+Competition for correlation (NQUANT) or for template matching using
+CLEARN with crit=0 (NQUANTX, NQUANTY) is modified by a "conscience
+vector" hh which, in the case of CLEARN, must be declared immediately
+following the categorizer-layer vector y.  The conscience-vector
+elements hh[i] measure the category counts and can be used to bias
+the competition measure so as to prevent categories with excessive
+counts from winning.
+
+For NQUANTX and NQUANTY, replace crit=0 with crit=-1 to see what happens
+when you remove the conscience mechanism.  It is also interesting to
+see how the conscience affects the entropy of the CLEARN output.
+
+"go to r" produces estimates of statistical relative frequencies and
+entropy, as in VQUANT.PRC.  Increasing NN for both learning and recall
+tends to make the statistical relative frquencies more nearly equal.
+
+

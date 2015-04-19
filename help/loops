@@ -1,0 +1,20 @@
+		
+		LOOPS
+
+	for i=n to m {step N}
+ 	    ... statements ...
+ 	    next                            | --  NOTE: not next i !!
+
+	while a<b | ... statements ...
+  	   end while
+
+	repeat | ... statements ...
+ 	   until a+2*b>q*t
+
+	Conditions may contain one "and" OR one "or" (as in "if"), e.g.
+
+    	 while a<b and a<c*d            until a=b or a=c
+
+	"exit" causes jump to end of current innermost loop.
+	Loops can be nested but must not overlap.
+	Automatic prettyprinting clarifies nesting levels.

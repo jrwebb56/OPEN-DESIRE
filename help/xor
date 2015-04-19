@@ -1,0 +1,17 @@
+xormin.src  is a backpropagation program for learning the XOR function, uses
+batch mode.  xormin1.src does not use batch mode.
+
+The program displays the error in each trial and also a squared-
+error measure summed over all 4 possible 2-bit input patterns.
+
+Under Windows, Type F6 ( or F8 after a run) to display an editing screen
+which permits you to adjust optimization parameters, display scale,
+number of hidden neurons, etc..  shift-F11 displays this help
+screen, which you can replace or edit.
+
+Under Linux,  F6 isreplacedc with "go to eee", and shift-F11 is 
+replaced with "go to jjj".  You can "hot key" to any desired routine in this
+way!
+
+
+
