@@ -14,7 +14,7 @@ Public License found in the file GPL.txt in this software package.    <***/
 /*     added display Y, very big dots  12/13/11 */
 /* ------------------------------------------------------------------- */
 #include <string.h>
-
+#include <stdlib.h>
 #include  <stdio.h>
 #include  <math.h>
 #include  <X11/Xlib.h>       /* note order */

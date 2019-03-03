@@ -23,6 +23,7 @@ Public License found in the file GPL.txt in this software package.    <***/
 /* ------------------------------------------------------------------- */
 
 #include <string.h>
+#include <stdlib.h>
        
 #include "declare.h"
 #include "global.h"

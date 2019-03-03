@@ -12,6 +12,7 @@
 
 #include <setjmp.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "declare.h"
 #include "global.h"
 

@@ -1,5 +1,5 @@
 CC	=	gcc
-LD	=	icc
+LD	=	gcc
 HEADERS	=	global.h declare.h
 SRC	=	aexcut2.c ainit.c amain4reg.c call.c  complx.c \
 		def.c dprfile2.c dump.c error.c expr.c fft.c gearer.c \

@@ -12,7 +12,7 @@
 #include "declare.h"
 #include "global.h"
 
-extern derror() ;      extern ptr getvar() ;
+extern void derror() ;      extern ptr getvar() ;
 extern ptr instal() ;  extern double evalexp() ;
 
 /* ----------------------------------------------------------- */

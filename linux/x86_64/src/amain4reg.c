@@ -180,7 +180,7 @@ void abt_intr(int sig_num) {
 
 /* ------------------------------------------------------------------ */
 
-main(int argc)  {                          /* checks command-line argument */
+int main(int argc)  {                 /* checks command-line argument */
 
    initialize() ;   /* symbol table, flags, display, get command line */
 

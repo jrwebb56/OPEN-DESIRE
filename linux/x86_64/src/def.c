@@ -13,6 +13,7 @@ Public License found in the file GPL.txt in this software package.    <***/
 #include "declare.h"
 #include "global.h"
 #include <string.h>
+#include <stdlib.h>
 
 
 extern void derror() ;  extern void seekx() ;

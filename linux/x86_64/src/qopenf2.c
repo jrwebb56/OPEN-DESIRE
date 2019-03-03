@@ -15,6 +15,7 @@
 /* ------------------------------------------------------------------- */
 #include <fcntl.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "declare.h"
 #include "global.h"

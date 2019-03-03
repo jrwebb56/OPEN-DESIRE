@@ -60,7 +60,7 @@ extern ptr getvar() ;        extern ptr instal() ;    extern double evalexp() ;
 extern int getsub() ;        extern double ROUND() ;
 
 extern void goto00() ;     extern void call() ;     extern void derror() ;
-extern void showstart ;   extern void cshow() ;
+extern void showstrt() ;   extern void cshow() ;    extern void gitchn() ;
 
 int  typeflg ;               /* ## flag to make computer-readable file */
 /*** int  shiftflag ; <** not used; recompile whenever index-shifting? */  

@@ -12,7 +12,7 @@
 #include "declare.h"
 #include "global.h"
 
-extern void  derror() ;  extern void QuitGraph() ;
+extern void  derror() ;  extern void QuitGraph() ;  extern void prfile() ;
 
 
 void precomp() {                                        /* precompiler */

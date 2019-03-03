@@ -10,11 +10,11 @@ Public License found in the file GPL.txt in this software package.    <***/
 /** added more \t to conform to Windows program   9/12/10 **/
 
 /* ------------------------------------------------------------------------- */
-
+#include <stdlib.h>
 #include "declare.h"
 #include "global.h"
 
-extern void gitchn() ;   extern void derror() ;
+extern void gitchn() ;   extern void derror() ; extern void cvalexp() ;
 
 extern ptr getvar() ;   extern ptr instal() ;   extern double evalexp() ;
 extern int getsub() ;

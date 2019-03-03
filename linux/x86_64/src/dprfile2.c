@@ -16,13 +16,14 @@ Public License found in the file GPL.txt in this software package.    <***/
 /* ------------------------------------------------------------------------- */
 
 #include <string.h>
+#include <stdlib.h>
 #include "declare.h"
 #include "global.h"
 
 extern void exit (int __status) __THROW __attribute__ ((__noreturn__));
 extern void prepr1() ;  extern void derror() ;  extern void readname() ;
-extern void dlist() ;   extern void print() ;   extern quitX() ;
-extern QuitGraph() ;
+extern void dlist() ;   extern void print() ;   extern void quitX() ;
+extern void QuitGraph() ;
 
 /* ------------------------------------------------------------------- */
 
